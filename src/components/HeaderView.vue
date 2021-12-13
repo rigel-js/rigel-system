@@ -93,7 +93,7 @@ export default {
         keys.forEach((key, index) => {
           let valueList = [];
           jsonData.values.forEach((item) => {
-            valueList.push(item[index]);
+            valueList.push(item[key]);
           })
           attrInfo.push({
             tableName: jsonData.name,

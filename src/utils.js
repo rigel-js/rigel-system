@@ -96,6 +96,10 @@ const genRandomColor = (length) => {
   var r = Math.floor(Math.random() * 256); //随机生成256以内r值
   var g = Math.floor(Math.random() * 256); //随机生成256以内g值
   var b = Math.floor(Math.random() * 256); //随机生成256以内b值
+  var a = Math.random();
+  if (length == 1) {
+    return [`rgb(${r},${g},${b},${a})`];
+  }
   const baseAlpha = 0.1; //基准透明度
   var res = [];
   for (var i = 0; i < length; i++) {

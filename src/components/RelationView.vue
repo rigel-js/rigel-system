@@ -32,17 +32,23 @@
         class="attrInfo-box"
         v-for="(attr, index) in attrInfo"
         :key="`${attr.tableName}_${attr.attrName}_${index}`"
+        :data-info="JSON.stringify(attr)"
+        :draggable="true"
+        @dragstart="attrDragHandler"
+        @drop="attrDropHandler"
+        @dragover="attrAllowDrop"
       >
-        <div class="attrInfo-block" :style="{'background-color': attr.color }">  </div>
-        <div class="attrInfo-text">{{ attr.attrName }}</div>
+        <div class="attrInfo-block" :style="{'background-color': attr.color }" >  </div>
+        <div class="attrInfo-text" >{{ attr.attrName }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import Spreadsheet from "./Spreadsheet/Index.vue";
+import Utils from "@/utils.js";
 
 export default {
   name: "RelationView",
@@ -53,6 +59,7 @@ export default {
     }),
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
+    ...mapActions(["storeAttrInfo"]),
     onTabChange(targetIndex) {
       this.changeActivatedRelationIndex(targetIndex);
     },
@@ -61,6 +68,36 @@ export default {
         this.removeRelationByIndex(targetIndex);
       }
     },
+    attrDragHandler(event) {
+      event.dataTransfer.setData("info", event.target.dataset.info);
+    },
+
+    attrAllowDrop(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    },
+
+    attrDropHandler(event) {
+      event.preventDefault();
+      let op1 = JSON.parse(event.dataTransfer.getData("info"))
+      let op2 = JSON.parse(event.target.dataset.info);
+      //union
+      let colorList = Utils.genRandomColor(1);
+      let valueList = [];
+      op1.valueList.forEach(item => {
+        valueList.push(item); 
+      });
+      op2.valueList.forEach(item => {
+        valueList.push(item); 
+      });
+      let res = {
+        attrName: `union(${op1.attrName}, ${op2.attrName})`,
+        color: colorList[0],
+        valueList: valueList
+      };
+      this.storeAttrInfo(res);
+      console.log(res);
+    }
   },
   components: {
     Spreadsheet,
@@ -104,6 +141,7 @@ export default {
   width: 20px;
   height: 20px;
   vertical-align: middle;
+  pointer-events: none;
 }
 
 .attrInfo-container .attrInfo-text {
@@ -114,6 +152,7 @@ export default {
   vertical-align: middle;
   display: inline-block;
   margin-left: 9px;
+  pointer-events: none;
 }
 
 .relations-container::-webkit-scrollbar {
