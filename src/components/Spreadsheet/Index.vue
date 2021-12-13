@@ -7,7 +7,7 @@
         v-for="(cellValue, i) in head"
         :key="`${name}_head_${i}`"
       >
-        <cell :initValue="cellValue" :editable="false" :draggable="false" />
+        <cell :initValue="cellValue" :editable="false" :draggable="false" :cellColor="headColor[i]"/>
       </div>
     </div>
     <!-- Content -->
@@ -39,6 +39,7 @@ export default {
   props: {
     table: Array,
     head: Array,
+    headColor: Array,
     name: {
       type: String,
       default: "initTable",

@@ -37,6 +37,7 @@
 </template>
 <script>
 import { mapActions } from "vuex";
+import Utils from "@/utils.js";
 export default {
   name: "HeaderView",
   data() {
@@ -44,7 +45,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["storeRelation"]),
+    ...mapActions(["storeRelation", "storeAttrInfo"]),
     async selectData() {
       return new Promise((resolve, reject) => {
         let input = document.createElement('input');
@@ -78,13 +79,31 @@ export default {
           })
           relation.push(newItem);
         })
+        let colorList = Utils.genRandomColor(keys.length);
+        console.log("color", colorList)
         let res = {
           name: jsonData.name,
           entityOrder: keys,
-          relation: relation
+          relation: relation,
+          color: colorList
         };
         console.log("res: ", res);
         this.storeRelation(res);
+        let attrInfo = [];
+        keys.forEach((key, index) => {
+          let valueList = [];
+          jsonData.values.forEach((item) => {
+            valueList.push(item[index]);
+          })
+          attrInfo.push({
+            tableName: jsonData.name,
+            attrName: key,
+            color: colorList[index],
+            valueList: valueList
+          });
+        })
+        console.log("attrInfo:", attrInfo)
+        this.storeAttrInfo(attrInfo);
       } catch(e) {
         console.log(e);
         this.$message.error("Unsupported File Type");

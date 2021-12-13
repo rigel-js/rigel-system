@@ -89,4 +89,20 @@ const linkEntityNamesByOperator = (entityNames, operator) => {
   });
 };
 
-export default { generateSuggestions };
+const genRandomColor = (length) => {
+  if (length == 0) {
+    return [];
+  }
+  var r = Math.floor(Math.random() * 256); //随机生成256以内r值
+  var g = Math.floor(Math.random() * 256); //随机生成256以内g值
+  var b = Math.floor(Math.random() * 256); //随机生成256以内b值
+  const baseAlpha = 0.1; //基准透明度
+  var res = [];
+  for (var i = 0; i < length; i++) {
+    let alpha = baseAlpha + (1.0 - baseAlpha) / length * (1 + i);
+    res.push(`rgb(${r},${g},${b},${alpha})`);
+  }
+  return res;
+}
+
+export default { generateSuggestions, genRandomColor };

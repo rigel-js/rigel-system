@@ -20,11 +20,22 @@
               :name="relation.name"
               :head="relation.entityOrder"
               :table="relation.relation"
+              :headColor="relation.color"
               :editable="false"
             ></spreadsheet>
           </div>
         </a-tab-pane>
       </a-tabs>
+    </div>
+    <div class="attrInfo-container" v-if="attrInfo && attrInfo.length > 0"> 
+      <div
+        class="attrInfo-box"
+        v-for="(attr, index) in attrInfo"
+        :key="`${attr.tableName}_${attr.attrName}_${index}`"
+      >
+        <div class="attrInfo-block" :style="{'background-color': attr.color }">  </div>
+        <div class="attrInfo-text">{{ attr.attrName }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -35,7 +46,11 @@ import Spreadsheet from "./Spreadsheet/Index.vue";
 
 export default {
   name: "RelationView",
-  computed: mapState(["relations"]),
+  computed: 
+    mapState({
+      relations: state => state.relations,
+      attrInfo: state => state.attrInfo
+    }),
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
     onTabChange(targetIndex) {
@@ -61,10 +76,44 @@ export default {
 }
 
 .relations-container {
-  height: calc(100% - 76px);
+  min-height: 10%;
   overflow: scroll;
   text-align: left;
   margin: 20px 0 5px 0;
+}
+
+.attrInfo-container {
+  min-height: 30%;
+  width: 90%;
+  overflow: auto;
+  text-align: left;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 20px;
+}
+
+.attrInfo-container .attrInfo-box {
+  height: 40px;
+  width: auto;
+  display: inline-block;
+  margin-right: 30px;
+}
+
+.attrInfo-container .attrInfo-block {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.attrInfo-container .attrInfo-text {
+  line-height: 20px;
+  height: 20px;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
+  margin-left: 9px;
 }
 
 .relations-container::-webkit-scrollbar {

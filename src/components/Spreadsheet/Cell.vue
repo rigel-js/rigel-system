@@ -8,6 +8,7 @@
     @drop="dropHandler"
     @dragover="allowDrop"
     @input="inputHandler"
+    :style="{ 'background-color': cellColor}"
   >
     {{ initValue }}
   </div>
@@ -28,6 +29,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    cellColor: {
+      type: String,
+      default: 'white'
+    }
   },
   data() {
     return {

@@ -9,6 +9,7 @@ Vue.use(Vuex);
 const state = {
   activatedRelationIndex: -1,
   relations: [],
+  attrInfo: [],
   suggestions: [],
 };
 
@@ -21,6 +22,10 @@ const mutations = {
       state.activatedRelationIndex = 0;
       // state.suggestions = Utils.generateSuggestions(relation, "");
     }
+  },
+
+  addAttrInfo(state, attrInfo) {
+    state.attrInfo = state.attrInfo.concat(attrInfo);
   },
 
   changeActivatedRelationIndex(state, index) {
@@ -53,6 +58,9 @@ const actions = {
   },
   storeRelation({ commit }, relation) {
     commit("addRelation", relation);
+  },
+  storeAttrInfo({ commit }, attrInfo) {
+    commit("addAttrInfo", attrInfo);
   }
 };
 
