@@ -68,8 +68,25 @@ export default {
       try {
         let jsonData = JSON.parse(rawData);
         console.log(jsonData);
-        this.storeRelation(jsonData.data);
+        // 这里留个坑，先只做一次导入一张表，多张表的情况后面迭代吧
+        let keys = Object.keys(jsonData.values[0]);
+        let relation = [];
+        jsonData.values.forEach((item) => {
+          let newItem = [];
+          keys.forEach((key) => {
+            newItem.push(item[key]);
+          })
+          relation.push(newItem);
+        })
+        let res = {
+          name: jsonData.name,
+          entityOrder: keys,
+          relation: relation
+        };
+        console.log("res: ", res);
+        this.storeRelation(res);
       } catch(e) {
+        console.log(e);
         this.$message.error("Unsupported File Type");
       }
     }

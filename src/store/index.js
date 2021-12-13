@@ -14,12 +14,12 @@ const state = {
 
 const mutations = {
   addRelation(state, relation) {
-    relation.name = `Relation ${state.relations.length + 1}`;
+    // relation.name = `Relation ${state.relations.length + 1}`;
     state.relations.push(relation);
 
     if (state.relations.length === 1) {
       state.activatedRelationIndex = 0;
-      state.suggestions = Utils.generateSuggestions(relation, "");
+      // state.suggestions = Utils.generateSuggestions(relation, "");
     }
   },
 

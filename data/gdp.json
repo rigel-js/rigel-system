@@ -1,0 +1,9 @@
+{
+    "name": "gdp",
+    "values": [
+      { "state": "Alabama", "year": 2005, "gdp": 100 },
+      { "state": "Alabama", "year": 2006, "gdp": 120 },
+      { "state": "Alaska", "year": 2005, "gdp": 50 },
+      { "state": "Alaska", "year": 2006, "gdp": 55 }
+    ]
+  }

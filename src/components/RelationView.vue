@@ -8,6 +8,7 @@
         type="editable-card"
         @edit="onTabEdit"
         @change="onTabChange"
+        :hideAdd="true"
       >
         <a-tab-pane
           v-for="(relation, index) in relations"
@@ -16,7 +17,7 @@
         >
           <div class="spreadsheet-container">
             <spreadsheet
-              :name="`relation.name`"
+              :name="relation.name"
               :head="relation.entityOrder"
               :table="relation.relation"
               :editable="false"
