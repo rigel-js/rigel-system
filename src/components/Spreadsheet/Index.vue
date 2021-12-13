@@ -25,6 +25,10 @@
           :initValue="cellValue"
           :editable="editable"
           @cell-change="cellChangeHandler(i, j, $event)"
+          @left-change="leftChangeHandler(i, j, $event)"
+          @upper-change="upperChangeHandler(i, j, $event)"
+          @left-hover="leftHoverHandler(i, j, $event)"
+          @upper-hover="upperHoverHandler(i, j, $event)"
         />
       </div>
     </div>
@@ -66,6 +70,18 @@ export default {
   },
   methods: {
     cellChangeHandler(row, column, value) {
+      console.log(row, column, value);
+    },
+    leftChangeHandler(row, column, value) {
+      console.log(row, column, value);
+    },
+    upperChangeHandler(row, column, value) {
+      console.log(row, column, value);
+    },
+    leftHoverHandler(row, column, value) {
+      console.log(row, column, value);
+    },
+    upperHoverHandler(row, column, value) {
       console.log(row, column, value);
     },
   },

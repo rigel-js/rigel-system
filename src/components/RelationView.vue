@@ -70,6 +70,7 @@ export default {
     },
     attrDragHandler(event) {
       event.dataTransfer.setData("info", event.target.dataset.info);
+      event.dataTransfer.setData("type", "attr");
     },
 
     attrAllowDrop(event) {
@@ -79,6 +80,9 @@ export default {
 
     attrDropHandler(event) {
       event.preventDefault();
+      if(event.dataTransfer.getData("type") !== "attr"){
+        return;
+      }
       let op1 = JSON.parse(event.dataTransfer.getData("info"))
       let op2 = JSON.parse(event.target.dataset.info);
       //union
