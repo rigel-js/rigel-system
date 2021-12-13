@@ -36,6 +36,7 @@
     </div>
 </template>
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "HeaderView",
   data() {
@@ -43,6 +44,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["storeRelation"]),
     async selectData() {
       return new Promise((resolve, reject) => {
         let input = document.createElement('input');
@@ -66,6 +68,7 @@ export default {
       try {
         let jsonData = JSON.parse(rawData);
         console.log(jsonData);
+        this.storeRelation(jsonData.data);
       } catch(e) {
         this.$message.error("Unsupported File Type");
       }

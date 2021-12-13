@@ -51,6 +51,9 @@ const actions = {
       throw new Error(resp.statusText);
     }
   },
+  storeRelation({ commit }, relation) {
+    commit("addRelation", relation);
+  }
 };
 
 export default new Vuex.Store({
