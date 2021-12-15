@@ -8,7 +8,7 @@
         :key="`${name}_head_${i}`"
       >
         <cell
-          :value="cellValue"
+          :value="cellValue ? String(cellValue) : ''"
           :editable="false"
           :draggable="false"
           :cellColor="headColor[i]"
@@ -27,7 +27,7 @@
         }"
       >
         <cell
-          :value="cellValue"
+          :value="cellValue ? String(cellValue) : ''"
           :key="cellValue"
           :editable="editable"
           @cell-change="cellChangeHandler(i, j, $event)"
