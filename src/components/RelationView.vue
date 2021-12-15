@@ -59,7 +59,7 @@ export default {
     }),
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
-    ...mapActions(["storeAttrInfo"]),
+    ...mapActions(["storeAttrInfo", "setDragSource"]),
     onTabChange(targetIndex) {
       this.changeActivatedRelationIndex(targetIndex);
     },
@@ -71,6 +71,7 @@ export default {
     attrDragHandler(event) {
       event.dataTransfer.setData("info", event.target.dataset.info);
       event.dataTransfer.setData("type", "attr");
+      this.setDragSource(false);
     },
 
     attrAllowDrop(event) {

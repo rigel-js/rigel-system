@@ -11,6 +11,7 @@ const state = {
   relations: [],
   attrInfo: [],
   suggestions: [],
+  dragSourceIsCell: false
 };
 
 const mutations = {
@@ -38,6 +39,10 @@ const mutations = {
       state.activatedRelationIndex--;
     }
   },
+
+  mutateDragSource(state, isCell) {
+    state.dragSourceIsCell = isCell;
+  }
 };
 
 const actions = {
@@ -61,6 +66,9 @@ const actions = {
   },
   storeAttrInfo({ commit }, attrInfo) {
     commit("addAttrInfo", attrInfo);
+  },
+  setDragSource({ commit }, isCell) {
+    commit("mutateDragSource", isCell);
   }
 };
 

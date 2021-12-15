@@ -7,28 +7,35 @@
         v-for="(cellValue, i) in head"
         :key="`${name}_head_${i}`"
       >
-        <cell :initValue="cellValue" :editable="false" :draggable="false" :cellColor="headColor[i]"/>
+        <cell
+          :value="cellValue"
+          :editable="false"
+          :draggable="false"
+          :cellColor="headColor[i]"
+        />
       </div>
     </div>
     <!-- Content -->
-    <div
-      class="row"
-      v-for="(row, i) in table ? table : initTable"
-      :key="`${name}_row_${i}`"
-    >
+    <div class="row" v-for="(row, i) in this.Table" :key="`${name}_row_${i}`">
       <div
         class="cell-container"
         v-for="(cellValue, j) in row"
         :key="`${name}_cell_${i}_${j}`"
+        :class="{
+          leftHightlightedCell: checkLeftHightlighted(i, j),
+          topHightlightedCell: checkTopHightlighted(i, j),
+        }"
       >
         <cell
-          :initValue="cellValue"
+          :value="cellValue"
+          :key="cellValue"
           :editable="editable"
           @cell-change="cellChangeHandler(i, j, $event)"
-          @left-change="leftChangeHandler(i, j, $event)"
-          @upper-change="upperChangeHandler(i, j, $event)"
+          @left-drop="leftDropHandler(i, j, $event)"
+          @top-drop="topDropHandler(i, j, $event)"
           @left-hover="leftHoverHandler(i, j, $event)"
-          @upper-hover="upperHoverHandler(i, j, $event)"
+          @top-hover="topHoverHandler(i, j, $event)"
+          @drag-leave="dragLeaveHandler()"
         />
       </div>
     </div>
@@ -36,7 +43,9 @@
 </template>
 
 <script>
+import Vue from "vue";
 import Cell from "./Cell.vue";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "Spreadsheet",
@@ -61,28 +70,114 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      Table: [[]],
+      leftHightlightedRow: -1,
+      leftHightlightedColumn: -1,
+      topHightlightedRow: -1,
+      topHightlightedColumn: -1,
+      leftHovered: false,
+      topHovered: false,
+    };
+  },
+  created() {
+    this.initTable();
+  },
   computed: {
-    initTable() {
-      return new Array(this.initRowNum).fill(
-        new Array(this.initColNum).fill("")
-      );
-    },
+    ...mapState(["dragSourceIsCell"]),
   },
   methods: {
+    initTable() {
+      if (this.table) {
+        this.Table = this.table;
+      } else {
+        this.Table = new Array(this.initRowNum);
+        for (let i = 0; i < this.initRowNum; i++) {
+          this.Table[i] = new Array(this.initColNum);
+        }
+      }
+    },
     cellChangeHandler(row, column, value) {
-      console.log(row, column, value);
+      // this.Table[row][column] = value;
+      const newRow = this.Table[row].slice(0);
+      newRow[column] = value;
+      this.$set(this.Table, row, newRow);
+      console.log(row, column, value, this.Table);
     },
-    leftChangeHandler(row, column, value) {
+    leftDropHandler(row, column, value) {
+      this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
+      if (value.valueList.length <= this.Table[row].length) {
+        var newRow = new Array(this.Table[row].length);
+        for (let i = 0; i < value.valueList.length; i++) {
+          newRow[i] = value.valueList[i];
+        }
+        this.$set(this.Table, row, newRow);
+      } else {
+        let delta = value.valueList.length - this.Table[0].length;
+        for (let i = 0; i < this.Table.length; i++) {
+          for (let j = 0; j < delta; j++) {
+            this.Table[i].push(null);
+          }
+        }
+        for (let i = 0; i < value.valueList.length; i++) {
+          this.Table[row][i] = value.valueList[i];
+        }
+        this.$forceUpdate();
+      }
     },
-    upperChangeHandler(row, column, value) {
+    topDropHandler(row, column, value) {
+      this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
+      if (value.valueList.length <= this.Table.length) {
+        for (let i = 0; i < value.valueList.length; i++) {
+          this.Table[i][column] = value.valueList[i];
+        }
+        this.$forceUpdate();
+      } else {
+        let delta = value.valueList.length - this.Table.length;
+        for (let i = 0; i < delta; i++) {
+          this.Table.push(new Array(this.Table[0].length));
+        }
+        for (let i = 0; i < value.valueList.length; i++) {
+          this.Table[i][column] = value.valueList[i];
+        }
+        this.$forceUpdate();
+      }
     },
     leftHoverHandler(row, column, value) {
+      this.topHovered = false;
+      if (this.dragSourceIsCell) return;
+      this.leftHovered = true;
+      this.leftHightlightedRow = row;
+      this.leftHightlightedColumn = 0;
       console.log(row, column, value);
     },
-    upperHoverHandler(row, column, value) {
+    topHoverHandler(row, column, value) {
+      this.leftHovered = false;
+      if (this.dragSourceIsCell) return;
+      this.topHovered = true;
+      this.topHightlightedRow = 0;
+      this.topHightlightedColumn = column;
       console.log(row, column, value);
+    },
+    dragLeaveHandler() {
+      this.leftHovered = this.topHovered = false;
+    },
+    checkLeftHightlighted(row, col) {
+      return (
+        this.leftHovered &&
+        row == this.leftHightlightedRow &&
+        col == this.leftHightlightedColumn
+      );
+    },
+    checkTopHightlighted(row, col) {
+      return (
+        this.topHovered &&
+        row == this.topHightlightedRow &&
+        col == this.topHightlightedColumn
+      );
     },
   },
   components: {
@@ -133,23 +228,33 @@ export default {
   transform: translate(0, -50%);
 }
 
+.leftHightlightedCell {
+  border-left-color: red;
+  border-left-width: 3px;
+}
+
+.topHightlightedCell {
+  border-top-color: red;
+  border-top-width: 3px;
+}
+
 .cell-container::-webkit-scrollbar {
   display: none; /* Chrome Safari */
 }
 
-.row:first-child .cell-container {
-  border-top: 1.5px solid #bbb;
+/* .row:first-child .cell-container {
+  border-top: 1.5px solid ;
 }
 
 .row .cell-container:first-child {
-  border-left: 1.5px solid #bbb;
+  border-left: 1.5px solid;
 }
 
 .row .cell-container:last-child {
-  border-right: 1.5px solid #bbb;
+  border-right: 1.5px solid ;
 }
 
 .row:last-child .cell-container {
-  border-bottom: 1.5px solid #bbb;
-}
+  border-bottom: 1.5px solid ;
+} */
 </style>

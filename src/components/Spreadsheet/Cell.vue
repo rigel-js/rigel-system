@@ -1,25 +1,28 @@
 <template>
   <div
     class="cell"
-    :title="value"
+    :title="this.cellValue"
     :contenteditable="editable"
     :draggable="draggable"
     @dragstart="dragHandler"
     @drop="dropHandler"
     @dragover="allowDrop"
+    @dragleave="dragLeaveHandler"
     @input="inputHandler"
     :style="{ 'background-color': cellColor }"
   >
-    {{ initValue }}
+    {{ this.cellValue }}
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "SpreadsheetCell",
   props: {
-    initValue: {
-      required: true,
+    value: {
+      type: String,
+      default: "",
     },
     editable: {
       type: Boolean,
@@ -36,22 +39,29 @@ export default {
   },
   data() {
     return {
-      value: this.initValue,
+      cellValue: "",
     };
   },
+  created() {
+    this.cellValue = this.value;
+  },
   methods: {
+    ...mapActions(["setDragSource"]),
     dragHandler(event) {
       event.dataTransfer.setData("dragValue", event.target.innerText);
       event.dataTransfer.setData("type", "cell");
+      this.setDragSource(true);
     },
 
     allowDrop(event) {
       if (this.editable) {
         event.preventDefault();
-        if(event.offsetX < 10) {  //左边沿
+        if (event.offsetY > 3) {
+          //左边沿
           this.$emit("left-hover");
-        } else {  //上边沿
-          this.$emit("upper-hover");
+        } else {
+          //上边沿
+          this.$emit("top-hover");
         }
       }
     },
@@ -59,18 +69,20 @@ export default {
     dropHandler(event) {
       if (this.editable) {
         event.preventDefault();
-        if(event.dataTransfer.getData("type") === "cell"){
-          event.target.innerText = event.dataTransfer.getData("dragValue");
-          this.value = event.target.innerText;
-          this.$emit("cell-change", this.value);
+        if (event.dataTransfer.getData("type") === "cell") {
+          // event.target.innerText = event.dataTransfer.getData("dragValue");
+          this.$emit("cell-change", event.dataTransfer.getData("dragValue"));
+          this.$emit("drag-leave");
         } else {
           console.log("attr!");
           console.log(event.offsetX, event.offsetY);
           let attr = JSON.parse(event.dataTransfer.getData("info"));
-          if(event.offsetX < 10) {  //左边沿
-            this.$emit("left-change", attr);
-          } else {  //上边沿
-            this.$emit("upper-change", attr);
+          if (event.offsetY > 5) {
+            //左边沿
+            this.$emit("left-drop", attr);
+          } else {
+            //上边沿
+            this.$emit("top-drop", attr);
           }
         }
       }
@@ -80,6 +92,17 @@ export default {
       this.value = event.target.innerText;
       this.$emit("cell-change", this.value);
     },
+
+    dragLeaveHandler(event) {
+      this.$emit("drag-leave");
+    },
+
+    // setClass(leftHightlighted, topHightlighted) {
+    //   let cl = {cell: true};
+    //   if(leftHightlighted) cl['leftHightlightedCell'] = true;
+    //   if(topHightlighted) cl['topHightlightedCell'] = true;
+    //   return cl;
+    // }
   },
 };
 </script>
