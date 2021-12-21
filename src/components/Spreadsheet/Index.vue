@@ -204,23 +204,6 @@ export default {
     },
 
     /* 推荐计算部分 */
-
-    // 为当前表格计算推荐视图，在每次更新target table后调用
-    calSuggestion() {
-      if (this.name !== "targetTable") return;
-      matchValueToColumn();
-    },
-
-    matchValueToColumn() {
-      let table = this.Table;
-      for (var i = 0; i < table.length; i++) {
-        for (var j = 0; j < table[0].length; j++) {
-          if (!table[i][j] || table[i][j].source) continue;
-          table[i][j].suggestedSource = searchValue(table[i][j].value);
-        }
-      }
-    },
-
     searchValue(value) {
       let res = [];
       let attrInfo = this.attrInfo;
@@ -236,7 +219,23 @@ export default {
         }
       }
       return res;
-    }
+    },
+    
+    matchValueToColumn() {
+      let table = this.Table;
+      for (var i = 0; i < table.length; i++) {
+        for (var j = 0; j < table[0].length; j++) {
+          if (!table[i][j] || table[i][j].source) continue;
+          table[i][j].suggestedSource = this.searchValue(table[i][j].value);
+        }
+      }
+    },
+
+    // 为当前表格计算推荐视图，在每次更新target table后调用
+    calSuggestion() {
+      if (this.name !== "targetTable") return;
+      this.matchValueToColumn();
+    },
   },
   components: {
     Cell,
