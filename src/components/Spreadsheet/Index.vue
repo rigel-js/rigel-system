@@ -85,7 +85,7 @@ export default {
     this.initTable();
   },
   computed: {
-    ...mapState(["dragSourceIsCell"]),
+    ...mapState(["dragSourceIsCell", "attrInfo"]),
   },
   methods: {
     initTable() {
@@ -101,16 +101,18 @@ export default {
     cellChangeHandler(row, column, value) {
       // this.Table[row][column] = value;
       const newRow = this.Table[row].slice(0);
-      if(value.isDrag) {
+      if (value.isDrag) {
         newRow[column] = JSON.parse(value.value);
         console.log("notice", newRow[column]);
       } else {
         newRow[column] = {
-          value: value.value
-        };
+          value: value.value,
+          source: undefined,
+        }; // 这里需要推荐匹配的attr
       }
       this.$set(this.Table, row, newRow);
       console.log(row, column, value, this.Table);
+      this.calSuggestion();
     },
     leftDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
@@ -120,7 +122,7 @@ export default {
         for (let i = column; i < column + value.valueList.length; i++) {
           newRow[i] = {
             value: value.valueList[i - column],
-            source: value.strName
+            source: value.strName,
           };
         }
         this.$set(this.Table, row, newRow);
@@ -134,10 +136,11 @@ export default {
         for (let i = column; i < column + value.valueList.length; i++) {
           this.Table[row][i] = {
             value: value.valueList[i - column],
-            source: value.strName
+            source: value.strName,
           };
         }
         this.$forceUpdate();
+        this.calSuggestion();
       }
     },
     topDropHandler(row, column, value) {
@@ -147,7 +150,7 @@ export default {
         for (let i = row; i < row + value.valueList.length; i++) {
           this.Table[i][column] = {
             value: value.valueList[i - row],
-            source: value.strName
+            source: value.strName,
           };
         }
         this.$forceUpdate();
@@ -159,10 +162,11 @@ export default {
         for (let i = row; i < row + value.valueList.length; i++) {
           this.Table[i][column] = {
             value: value.valueList[i - row],
-            source: value.strName
+            source: value.strName,
           };
         }
         this.$forceUpdate();
+        this.calSuggestion();
       }
     },
     leftHoverHandler(row, column, value) {
@@ -198,6 +202,41 @@ export default {
         col == this.topHightlightedColumn
       );
     },
+
+    /* 推荐计算部分 */
+
+    // 为当前表格计算推荐视图，在每次更新target table后调用
+    calSuggestion() {
+      if (this.name !== "targetTable") return;
+      matchValueToColumn();
+    },
+
+    matchValueToColumn() {
+      let table = this.Table;
+      for (var i = 0; i < table.length; i++) {
+        for (var j = 0; j < table[0].length; j++) {
+          if (!table[i][j] || table[i][j].source) continue;
+          table[i][j].suggestedSource = searchValue(table[i][j].value);
+        }
+      }
+    },
+
+    searchValue(value) {
+      let res = [];
+      let attrInfo = this.attrInfo;
+      for(let relationAttrInfo in attrInfo) {
+        for(let attr in relationAttrInfo) {
+          if(value in attr.valueList) {
+            res.push({
+              op: "attr",
+              tableName: attr.tableName,
+              attrName: attr.attrName
+            });
+          }
+        }
+      }
+      return res;
+    }
   },
   components: {
     Cell,

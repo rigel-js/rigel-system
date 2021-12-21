@@ -3,6 +3,7 @@
     <div class="view-title">Target Table</div>
     <div class="spreadsheet-container">
       <spreadsheet
+        :name="targetTable"
         :initRowNum="50"
         :initColNum="8"
         :editable="true"
