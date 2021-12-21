@@ -56,7 +56,7 @@ export default {
     allowDrop(event) {
       if (this.editable) {
         event.preventDefault();
-        if (event.offsetY > 3) {
+        if (event.offsetY > 5) {
           //左边沿
           this.$emit("left-hover");
         } else {

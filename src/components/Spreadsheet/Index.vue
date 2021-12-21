@@ -108,21 +108,21 @@ export default {
     leftDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
-      if (value.valueList.length <= this.Table[row].length) {
+      if (column + value.valueList.length <= this.Table[row].length) {
         var newRow = new Array(this.Table[row].length);
-        for (let i = 0; i < value.valueList.length; i++) {
-          newRow[i] = value.valueList[i];
+        for (let i = column; i < column + value.valueList.length; i++) {
+          newRow[i] = value.valueList[i - column];
         }
         this.$set(this.Table, row, newRow);
       } else {
-        let delta = value.valueList.length - this.Table[0].length;
+        let delta = column + value.valueList.length - this.Table[0].length;
         for (let i = 0; i < this.Table.length; i++) {
           for (let j = 0; j < delta; j++) {
             this.Table[i].push(null);
           }
         }
-        for (let i = 0; i < value.valueList.length; i++) {
-          this.Table[row][i] = value.valueList[i];
+        for (let i = column; i < column + value.valueList.length; i++) {
+          this.Table[row][i] = value.valueList[i - column];
         }
         this.$forceUpdate();
       }
@@ -130,18 +130,18 @@ export default {
     topDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
-      if (value.valueList.length <= this.Table.length) {
-        for (let i = 0; i < value.valueList.length; i++) {
-          this.Table[i][column] = value.valueList[i];
+      if (row + value.valueList.length <= this.Table.length) {
+        for (let i = row; i < row + value.valueList.length; i++) {
+          this.Table[i][column] = value.valueList[i - row];
         }
         this.$forceUpdate();
       } else {
-        let delta = value.valueList.length - this.Table.length;
+        let delta = row + value.valueList.length - this.Table.length;
         for (let i = 0; i < delta; i++) {
           this.Table.push(new Array(this.Table[0].length));
         }
-        for (let i = 0; i < value.valueList.length; i++) {
-          this.Table[i][column] = value.valueList[i];
+        for (let i = row; i < row + value.valueList.length; i++) {
+          this.Table[i][column] = value.valueList[i - row];
         }
         this.$forceUpdate();
       }
@@ -151,14 +151,14 @@ export default {
       if (this.dragSourceIsCell) return;
       this.leftHovered = true;
       this.leftHightlightedRow = row;
-      this.leftHightlightedColumn = 0;
+      this.leftHightlightedColumn = column;
       console.log(row, column, value);
     },
     topHoverHandler(row, column, value) {
       this.leftHovered = false;
       if (this.dragSourceIsCell) return;
       this.topHovered = true;
-      this.topHightlightedRow = 0;
+      this.topHightlightedRow = row;
       this.topHightlightedColumn = column;
       console.log(row, column, value);
     },

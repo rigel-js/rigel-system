@@ -1,6 +1,6 @@
 <template>
   <div class="view relation-view">
-    <div class="view-title">Relations</div>
+    <div class="view-title">Raw Tables</div>
     <div class="relations-container">
       <spreadsheet v-if="relations.length == 0"></spreadsheet>
       <a-tabs
