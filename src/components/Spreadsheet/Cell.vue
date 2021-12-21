@@ -4,14 +4,21 @@
     :title="this.cellValue"
     :contenteditable="editable"
     :draggable="draggable"
+    :data-info="JSON.stringify(this.cellValue)"
     @dragstart="dragHandler"
     @drop="dropHandler"
     @dragover="allowDrop"
     @dragleave="dragLeaveHandler"
-    @input="inputHandler"
+    @blur="inputHandler"
     :style="{ 'background-color': cellColor }"
   >
-    {{ this.cellValue }}
+    {{
+      this.cellValue
+        ? this.cellValue.value
+          ? String(this.cellValue.value)
+          : String(this.cellValue)
+        : ""
+    }}
   </div>
 </template>
 
@@ -20,10 +27,7 @@ import { mapActions } from "vuex";
 export default {
   name: "SpreadsheetCell",
   props: {
-    value: {
-      type: String,
-      default: "",
-    },
+    value: Object,
     editable: {
       type: Boolean,
       default: false,
@@ -48,9 +52,11 @@ export default {
   methods: {
     ...mapActions(["setDragSource"]),
     dragHandler(event) {
-      event.dataTransfer.setData("dragValue", event.target.innerText);
+      // event.dataTransfer.setData("dragValue", event.target.innerText);
+      event.dataTransfer.setData("info", event.target.dataset.info);
       event.dataTransfer.setData("type", "cell");
       this.setDragSource(true);
+      this.$emit("drag-start");
     },
 
     allowDrop(event) {
@@ -70,8 +76,11 @@ export default {
       if (this.editable) {
         event.preventDefault();
         if (event.dataTransfer.getData("type") === "cell") {
-          // event.target.innerText = event.dataTransfer.getData("dragValue");
-          this.$emit("cell-change", event.dataTransfer.getData("dragValue"));
+          let info = {
+            value: event.dataTransfer.getData("info"),
+            isDrag: true
+          };
+          this.$emit("cell-change", info);
           this.$emit("drag-leave");
         } else {
           console.log("attr!");
@@ -89,8 +98,12 @@ export default {
     },
 
     inputHandler(event) {
-      this.value = event.target.innerText;
-      this.$emit("cell-change", this.value);
+      console.log("input");
+      let info = {
+        value: event.target.innerText,
+        isDrag: false
+      };
+      this.$emit("cell-change", info);
     },
 
     dragLeaveHandler(event) {

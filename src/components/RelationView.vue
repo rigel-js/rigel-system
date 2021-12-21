@@ -95,10 +95,15 @@ export default {
       op2.valueList.forEach(item => {
         valueList.push(item); 
       });
+      let strName = {
+        op: "union",
+        params: [op1.strName, op2.strName]
+      };
       let res = {
+        strName: strName,
         attrName: `union(${op1.attrName}, ${op2.attrName})`,
         color: colorList[0],
-        valueList: valueList
+        valueList: Utils.unique(valueList)
       };
       this.storeAttrInfo(res);
       console.log(res);

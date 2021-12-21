@@ -1,39 +1,49 @@
 <template>
-    <div class="header-view">
-        <div id="rigel-title">Rigel</div>
-        <div id="dataset-toolbar">
-          <div class="header-title">Datasets:</div>
-          <div id="dataset-select">
-            <a-select
-              placeholder="Select Example Data"
-              style="width:100%"
-              :allowClear="true"
-              @change="loadExampleData"
-            >
-              <a-select-option
-                v-for="data in EXAMPLE_DATA"
-                :key="data.id"
-                :value="data.id"
-              >
-                {{ data.name }}
-              </a-select-option>
-            </a-select>
-          </div>
-          <a-button class="header-button" style="width:62px" @click="importData" id="chooseFile">Import</a-button>
-        </div>
-        <div id="undo-redo-toolbar">
-          <a-button class="header-button" style="width:62px">Undo</a-button>
-          <a-button class="header-button" style="width:62px">Redo</a-button>
-        </div>
-        <div id="associate-toolbar">
-          <div class="header-title">Associate:</div>
-          <a-button class="header-button" style="width:125px">Union(Outer Join)</a-button>
-          <a-button class="header-button" style="width:160px">Intersection(Inner Join)</a-button>
-        </div>
-        <div id="manipulate-toolbar">
-          <a-button class="header-button" style="width:100px">Manipulate</a-button>
-        </div>
+  <div class="header-view">
+    <div id="rigel-title">Rigel</div>
+    <div id="dataset-toolbar">
+      <div class="header-title">Datasets:</div>
+      <div id="dataset-select">
+        <a-select
+          placeholder="Select Example Data"
+          style="width: 100%"
+          :allowClear="true"
+          @change="loadExampleData"
+        >
+          <a-select-option
+            v-for="data in EXAMPLE_DATA"
+            :key="data.id"
+            :value="data.id"
+          >
+            {{ data.name }}
+          </a-select-option>
+        </a-select>
+      </div>
+      <a-button
+        class="header-button"
+        style="width: 62px"
+        @click="importData"
+        id="chooseFile"
+        >Import</a-button
+      >
     </div>
+    <div id="undo-redo-toolbar">
+      <a-button class="header-button" style="width: 62px">Undo</a-button>
+      <a-button class="header-button" style="width: 62px">Redo</a-button>
+    </div>
+    <div id="associate-toolbar">
+      <div class="header-title">Associate:</div>
+      <a-button class="header-button" style="width: 125px"
+        >Union(Outer Join)</a-button
+      >
+      <a-button class="header-button" style="width: 160px"
+        >Intersection(Inner Join)</a-button
+      >
+    </div>
+    <div id="manipulate-toolbar">
+      <a-button class="header-button" style="width: 100px">Manipulate</a-button>
+    </div>
+  </div>
 </template>
 <script>
 import { mapActions } from "vuex";
@@ -41,24 +51,23 @@ import Utils from "@/utils.js";
 export default {
   name: "HeaderView",
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     ...mapActions(["storeRelation", "storeAttrInfo"]),
     async selectData() {
       return new Promise((resolve, reject) => {
-        let input = document.createElement('input');
-        input.value = 'select file';
-        input.type = 'file';
-        input.onchange = event => {
-            let file = event.target.files[0];
-            let file_reader = new FileReader();
-            file_reader.onload = () => {
-                let fc = file_reader.result;
-                resolve(fc); // 返回文件文本内容到Promise
-            };
-            file_reader.readAsText(file, 'UTF-8');
+        let input = document.createElement("input");
+        input.value = "select file";
+        input.type = "file";
+        input.onchange = (event) => {
+          let file = event.target.files[0];
+          let file_reader = new FileReader();
+          file_reader.onload = () => {
+            let fc = file_reader.result;
+            resolve(fc); // 返回文件文本内容到Promise
+          };
+          file_reader.readAsText(file, "UTF-8");
         };
         input.click();
       });
@@ -75,17 +84,24 @@ export default {
         jsonData.values.forEach((item) => {
           let newItem = [];
           keys.forEach((key) => {
-            newItem.push(item[key]);
-          })
+            newItem.push({
+              value: item[key],
+              source: {
+                op: "attr",
+                tableName: jsonData.name,
+                attrName: key,
+              },
+            });
+          });
           relation.push(newItem);
-        })
+        });
         let colorList = Utils.genRandomColor(keys.length);
-        console.log("color", colorList)
+        console.log("color", colorList);
         let res = {
           name: jsonData.name,
           entityOrder: keys,
           relation: relation,
-          color: colorList
+          color: colorList,
         };
         console.log("res: ", res);
         this.storeRelation(res);
@@ -94,22 +110,23 @@ export default {
           let valueList = [];
           jsonData.values.forEach((item) => {
             valueList.push(item[key]);
-          })
+          });
           attrInfo.push({
             tableName: jsonData.name,
             attrName: key,
+            strName: { op: "attr", tableName: jsonData.name, attrName: key },
             color: colorList[index],
-            valueList: valueList
+            valueList: Utils.unique(valueList),
           });
-        })
-        console.log("attrInfo:", attrInfo)
+        });
+        console.log("attrInfo:", attrInfo);
         this.storeAttrInfo(attrInfo);
-      } catch(e) {
+      } catch (e) {
         console.log(e);
         this.$message.error("Unsupported File Type");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

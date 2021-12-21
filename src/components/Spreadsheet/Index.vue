@@ -8,7 +8,7 @@
         :key="`${name}_head_${i}`"
       >
         <cell
-          :value="cellValue ? String(cellValue) : ''"
+          :value="cellValue"
           :editable="false"
           :draggable="false"
           :cellColor="headColor[i]"
@@ -27,7 +27,7 @@
         }"
       >
         <cell
-          :value="cellValue ? String(cellValue) : ''"
+          :value="cellValue"
           :key="cellValue"
           :editable="editable"
           @cell-change="cellChangeHandler(i, j, $event)"
@@ -101,7 +101,14 @@ export default {
     cellChangeHandler(row, column, value) {
       // this.Table[row][column] = value;
       const newRow = this.Table[row].slice(0);
-      newRow[column] = value;
+      if(value.isDrag) {
+        newRow[column] = JSON.parse(value.value);
+        console.log("notice", newRow[column]);
+      } else {
+        newRow[column] = {
+          value: value.value
+        };
+      }
       this.$set(this.Table, row, newRow);
       console.log(row, column, value, this.Table);
     },
@@ -111,7 +118,10 @@ export default {
       if (column + value.valueList.length <= this.Table[row].length) {
         var newRow = new Array(this.Table[row].length);
         for (let i = column; i < column + value.valueList.length; i++) {
-          newRow[i] = value.valueList[i - column];
+          newRow[i] = {
+            value: value.valueList[i - column],
+            source: value.strName
+          };
         }
         this.$set(this.Table, row, newRow);
       } else {
@@ -122,7 +132,10 @@ export default {
           }
         }
         for (let i = column; i < column + value.valueList.length; i++) {
-          this.Table[row][i] = value.valueList[i - column];
+          this.Table[row][i] = {
+            value: value.valueList[i - column],
+            source: value.strName
+          };
         }
         this.$forceUpdate();
       }
@@ -132,7 +145,10 @@ export default {
       console.log(row, column, value);
       if (row + value.valueList.length <= this.Table.length) {
         for (let i = row; i < row + value.valueList.length; i++) {
-          this.Table[i][column] = value.valueList[i - row];
+          this.Table[i][column] = {
+            value: value.valueList[i - row],
+            source: value.strName
+          };
         }
         this.$forceUpdate();
       } else {
@@ -141,7 +157,10 @@ export default {
           this.Table.push(new Array(this.Table[0].length));
         }
         for (let i = row; i < row + value.valueList.length; i++) {
-          this.Table[i][column] = value.valueList[i - row];
+          this.Table[i][column] = {
+            value: value.valueList[i - row],
+            source: value.strName
+          };
         }
         this.$forceUpdate();
       }

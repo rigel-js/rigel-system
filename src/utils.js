@@ -89,6 +89,7 @@ const linkEntityNamesByOperator = (entityNames, operator) => {
   });
 };
 
+// 生成随机颜色
 const genRandomColor = (length) => {
   if (length == 0) {
     return [];
@@ -109,4 +110,9 @@ const genRandomColor = (length) => {
   return res;
 }
 
-export default { generateSuggestions, genRandomColor };
+// 数组去重
+const unique = (a) => {
+  return Array.from(new Set(a));
+}
+
+export default { generateSuggestions, genRandomColor, unique };
