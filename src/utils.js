@@ -1,3 +1,5 @@
+import { clearConfigCache } from "prettier";
+
 class Spec {
   constructor() {
     // this. ...
@@ -115,4 +117,45 @@ const unique = (a) => {
   return Array.from(new Set(a));
 }
 
-export default { generateSuggestions, genRandomColor, unique };
+// 判断spec是否合法
+const checkValidSpec = (spec) => {
+  if (!("row_header" in spec) && !("column_header" in spec)) {
+    return false;
+  }
+  if (!("body" in spec)) {
+    return false;
+  }
+  return true;
+}
+
+// 字符串化spec
+const calString = (spec) => {
+  if (!spec) return "";
+  if (spec.operator === "attr") {
+    return `${spec.data}.${spec.attribute}`;
+  } else {
+    let res = [];
+    spec.parameters.forEach(item => {
+      res.push(calString(item));
+    })
+    let tmp = spec.operator + "(";
+    for (let i = 0; i < res.length; i++) {
+      if (i == 0) {
+        tmp = tmp + res[i];
+      } else {
+        tmp = tmp + ", " + res[i];
+      }
+    }
+    tmp = tmp + ")";
+    return tmp;
+  }
+}
+
+const stringfySpec = (spec) => {
+  let row = calString(spec["row_header"]);
+  let column = calString(spec["column_header"]);
+  let body = calString(spec["body"]);
+  return `(${row}), (${column}) => (${body})`;
+}
+
+export default { generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec };

@@ -42,6 +42,10 @@ const mutations = {
 
   mutateDragSource(state, isCell) {
     state.dragSourceIsCell = isCell;
+  },
+
+  changeSuggestion(state, suggestions) {
+    state.suggestions = suggestions;
   }
 };
 
@@ -69,6 +73,9 @@ const actions = {
   },
   setDragSource({ commit }, isCell) {
     commit("mutateDragSource", isCell);
+  },
+  storeSuggestion({ commit }, suggestions) {
+    commit("changeSuggestion", suggestions);
   }
 };
 

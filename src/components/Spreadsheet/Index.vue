@@ -46,6 +46,7 @@
 import Vue from "vue";
 import Cell from "./Cell.vue";
 import { mapState, mapMutations, mapActions } from "vuex";
+import Utils from "@/utils.js";
 
 export default {
   name: "Spreadsheet",
@@ -88,6 +89,7 @@ export default {
     ...mapState(["dragSourceIsCell", "attrInfo"]),
   },
   methods: {
+    ...mapActions(["storeSuggestion"]),
     initTable() {
       if (this.table) {
         this.Table = this.table;
@@ -105,10 +107,14 @@ export default {
         newRow[column] = JSON.parse(value.value);
         console.log("notice", newRow[column]);
       } else {
-        newRow[column] = {
-          value: value.value,
-          source: undefined,
-        }; // 这里需要推荐匹配的attr
+        if(value.value == "") {
+          newRow[column] = null;
+        } else {
+          newRow[column] = {
+            value: value.value,
+            source: undefined,
+          }; // 这里需要推荐匹配的attr
+        }
       }
       this.$set(this.Table, row, newRow);
       console.log(row, column, value, this.Table);
@@ -140,8 +146,8 @@ export default {
           };
         }
         this.$forceUpdate();
-        this.calSuggestion();
       }
+      this.calSuggestion();
     },
     topDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
@@ -166,8 +172,8 @@ export default {
           };
         }
         this.$forceUpdate();
-        this.calSuggestion();
       }
+      this.calSuggestion();
     },
     leftHoverHandler(row, column, value) {
       this.topHovered = false;
@@ -207,36 +213,152 @@ export default {
     searchValue(value) {
       let res = [];
       let attrInfo = this.attrInfo;
-      for(let relationAttrInfo in attrInfo) {
-        for(let attr in relationAttrInfo) {
-          if(value in attr.valueList) {
+      for (let relationAttrInfo in attrInfo) {
+        for (let attr in relationAttrInfo) {
+          if (value in attr.valueList) {
             res.push({
-              op: "attr",
-              tableName: attr.tableName,
-              attrName: attr.attrName
+              operator: "attr",
+              data: attr.data,
+              attribute: attr.attribute,
             });
           }
         }
       }
       return res;
     },
-    
+
     matchValueToColumn() {
       let table = this.Table;
       for (var i = 0; i < table.length; i++) {
         for (var j = 0; j < table[0].length; j++) {
-          if (!table[i][j] || table[i][j].source) continue;
+          if (!table[i][j] || table[i][j].source || table[i][j].value == "" || !(table[i][j].value)) continue;
           table[i][j].suggestedSource = this.searchValue(table[i][j].value);
         }
       }
     },
 
-    mapColumnToSpec() {
+    dfsAttrOptions(okList, candidateList, tmpList, res, index) {
+      if(index == candidateList.length) {
+        let tmp = new Array();
+        for(let i in okList) tmp.push(i);
+        for(let i in tmpList) tmp.push(i);
+        res.push(tmp);
+        return;
+      }
+      for(let attr in candidateList[index]) {
+        tmpList.push(attr);
+        this.dfsAttrOptions(okList, candidateList, tmpList, res, index+1);
+        tmpList.splice(-1, 1);
+      }
+    },
 
+    getAttrOptions() {
+      let table = this.Table;
+      let res = [];
+      let okList = [];
+      let candidateList = [];
+      for (var i = 0; i < table.length; i++) {
+        for (var j = 0; j < table[0].length; j++) {
+          if (!table[i][j]) continue;
+          if (table[i][j].source) {
+            if(-1 == okList.findIndex(value => {
+              return JSON.stringify(table[i][j].source) == JSON.stringify(value);
+            })) {
+              okList.push(table[i][j].source);
+            }
+          } else {
+            if(-1 == candidateList.findIndex(value => {
+              return JSON.stringify(table[i][j].suggestedSource) == JSON.stringify(value);
+            })) {
+              candidateList.push(table[i][j].suggestedSource);
+            }
+          }
+        }
+      }
+      if (candidateList.length == 0) {
+        return [okList];
+      }
+      this.dfsAttrOptions(okList, candidateList, [], res, 0);
+      return res;
+    },
+
+    dfsSpecOptions(option, rowHeaderList, columnHeaderList, bodyList, specOptions, index) {
+      if(index == option.length) {
+        var item = new Object();
+        // row_header
+        if(rowHeaderList.length == 1) {
+          item["row_header"] = rowHeaderList[0];
+        } else if(rowHeaderList.length > 1) {
+          let tmp = rowHeaderList[0];
+          for(let i=1;i<rowHeaderList.length;i++){
+            tmp = {
+              operator: "cross",
+              parameters: [tmp, rowHeaderList[i]]
+            };
+          }
+          item["row_header"] = tmp;
+        }
+        // column_header
+        if(columnHeaderList.length == 1) {
+          item["column_header"] = columnHeaderList[0];
+        } else if(columnHeaderList.length > 1) {
+          let tmp = columnHeaderList[0];
+          for(let i=1;i<columnHeaderList.length;i++){
+            tmp = {
+              operator: "cross",
+              parameters: [tmp, columnHeaderList[i]]
+            };
+          }
+          item["column_header"] = tmp;
+        }
+        // body
+        if(bodyList.length == 1) {
+          item["body"] = bodyList[0];
+        } else if(bodyList.length > 1) {
+          let tmp = bodyList[0];
+          for(let i=1;i<bodyList.length;i++){
+            tmp = {
+              operator: "cross",
+              parameters: [tmp, bodyList[i]]
+            };
+          }
+          item["body"] = tmp;
+        }
+        // if(Utils.checkValidSpec(item)) {
+        specOptions.push(item);
+        // } 
+        return;
+      }
+      let attr=option[index];
+      rowHeaderList.push(attr);
+      this.dfsSpecOptions(option, rowHeaderList, columnHeaderList, bodyList, specOptions, index+1);
+      rowHeaderList.splice(-1, 1);
+      console.log("assert", rowHeaderList.length);
+      columnHeaderList.push(attr);
+      this.dfsSpecOptions(option, rowHeaderList, columnHeaderList, bodyList, specOptions, index+1);
+      columnHeaderList.splice(-1, 1);
+      bodyList.push(attr);
+      this.dfsSpecOptions(option, rowHeaderList, columnHeaderList, bodyList, specOptions, index+1);
+      bodyList.splice(-1, 1);
+    },
+
+    mapColumnToSpec() {
+      let attrOptions = this.getAttrOptions();
+      let specOptions = [];
+      attrOptions.forEach(option => {
+        console.log(option);
+        this.dfsSpecOptions(option, [], [], [], specOptions, 0);
+      });
+      console.log(specOptions);
+      specOptions.forEach(option => {
+        option["description"] = Utils.stringfySpec(option);
+      })
+      this.storeSuggestion(specOptions);
     },
 
     // 为当前表格计算推荐视图，在每次更新target table后调用
     calSuggestion() {
+      console.log(this.name);
       if (this.name !== "targetTable") return;
       this.matchValueToColumn();
       this.mapColumnToSpec();

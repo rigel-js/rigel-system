@@ -31,7 +31,7 @@
       <div
         class="attrInfo-box"
         v-for="(attr, index) in attrInfo"
-        :key="`${attr.tableName}_${attr.attrName}_${index}`"
+        :key="`${attr.data}_${attr.attribute}_${index}`"
         :data-info="JSON.stringify(attr)"
         :draggable="true"
         @dragstart="attrDragHandler"
@@ -39,7 +39,7 @@
         @dragover="attrAllowDrop"
       >
         <div class="attrInfo-block" :style="{'background-color': attr.color }" >  </div>
-        <div class="attrInfo-text" >{{ attr.attrName }}</div>
+        <div class="attrInfo-text" >{{ attr.attribute }}</div>
       </div>
     </div>
   </div>
@@ -96,12 +96,12 @@ export default {
         valueList.push(item); 
       });
       let strName = {
-        op: "union",
-        params: [op1.strName, op2.strName]
+        operator: "union",
+        parameters: [op1.strName, op2.strName]
       };
       let res = {
         strName: strName,
-        attrName: `union(${op1.attrName}, ${op2.attrName})`,
+        attribute: `union(${op1.attribute}, ${op2.attribute})`,
         color: colorList[0],
         valueList: Utils.unique(valueList)
       };

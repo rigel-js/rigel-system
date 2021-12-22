@@ -87,9 +87,9 @@ export default {
             newItem.push({
               value: item[key],
               source: {
-                op: "attr",
-                tableName: jsonData.name,
-                attrName: key,
+                operator: "attr",
+                data: jsonData.name,
+                attribute: key,
               },
             });
           });
@@ -112,9 +112,9 @@ export default {
             valueList.push(item[key]);
           });
           attrInfo.push({
-            tableName: jsonData.name,
-            attrName: key,
-            strName: { op: "attr", tableName: jsonData.name, attrName: key },
+            data: jsonData.name,
+            attribute: key,
+            strName: { operator: "attr", data: jsonData.name, attribute: key },
             color: colorList[index],
             valueList: Utils.unique(valueList),
           });

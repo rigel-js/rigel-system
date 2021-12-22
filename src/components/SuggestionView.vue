@@ -8,7 +8,7 @@
           :key="`top${i}`"
           :header="suggestion.description"
         >
-          <a-collapse defaultActiveKey="middle0">
+          <!-- <a-collapse defaultActiveKey="middle0">
             <a-collapse-panel
               v-for="(subsuggestion, j) in suggestion.children"
               :key="`middle${j}`"
@@ -25,7 +25,8 @@
                 }}</span>
               </div>
             </a-collapse-panel>
-          </a-collapse>
+          </a-collapse> -->
+          {{ suggestion.description }}
         </a-collapse-panel>
       </a-collapse>
     </div>
