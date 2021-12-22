@@ -231,10 +231,15 @@ export default {
       }
     },
 
+    mapColumnToSpec() {
+
+    },
+
     // 为当前表格计算推荐视图，在每次更新target table后调用
     calSuggestion() {
       if (this.name !== "targetTable") return;
       this.matchValueToColumn();
+      this.mapColumnToSpec();
     },
   },
   components: {
