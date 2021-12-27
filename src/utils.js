@@ -122,9 +122,9 @@ const checkValidSpec = (spec) => {
   if (!("row_header" in spec) && !("column_header" in spec)) {
     return false;
   }
-  if (!("body" in spec)) {
-    return false;
-  }
+  // if (!("body" in spec)) {
+  //   return false;
+  // }
   return true;
 }
 

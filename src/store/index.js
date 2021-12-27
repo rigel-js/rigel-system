@@ -8,13 +8,20 @@ Vue.use(Vuex);
 
 const state = {
   activatedRelationIndex: -1,
+  rawRelations: [],
   relations: [],
   attrInfo: [],
   suggestions: [],
+  suggestedTable: undefined,
   dragSourceIsCell: false
 };
 
 const mutations = {
+  addRawRelation(state, relation) {
+    // relation.name = `Relation ${state.relations.length + 1}`;
+    state.rawRelations.push(relation);
+  },
+
   addRelation(state, relation) {
     // relation.name = `Relation ${state.relations.length + 1}`;
     state.relations.push(relation);
@@ -46,7 +53,11 @@ const mutations = {
 
   changeSuggestion(state, suggestions) {
     state.suggestions = suggestions;
-  }
+  },
+
+  changeSuggestedTable(state, suggestedTable) {
+    state.suggestedTable = suggestedTable;
+  },
 };
 
 const actions = {
@@ -65,6 +76,9 @@ const actions = {
       throw new Error(resp.statusText);
     }
   },
+  storeRawRelation({ commit }, relation) {
+    commit("addRawRelation", relation);
+  },
   storeRelation({ commit }, relation) {
     commit("addRelation", relation);
   },
@@ -76,7 +90,10 @@ const actions = {
   },
   storeSuggestion({ commit }, suggestions) {
     commit("changeSuggestion", suggestions);
-  }
+  },
+  storeSuggestedTable({ commit }, suggestedTable) {
+    commit("changeSuggestedTable", suggestedTable);
+  },
 };
 
 export default new Vuex.Store({

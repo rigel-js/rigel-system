@@ -60,7 +60,7 @@ export default {
     },
     initRowNum: {
       type: Number,
-      default: 15,
+      default: 10,
     },
     initColNum: {
       type: Number,
@@ -85,6 +85,10 @@ export default {
   created() {
     this.initTable();
   },
+  beforeUpdate() {
+    console.log("beforeUpdate");
+    this.prettifyTable();
+  },
   computed: {
     ...mapState(["dragSourceIsCell", "attrInfo"]),
   },
@@ -92,13 +96,45 @@ export default {
     ...mapActions(["storeSuggestion"]),
     initTable() {
       if (this.table) {
-        this.Table = this.table;
+        if (this.name !== "targetTable") {
+          this.Table = this.table;
+        } else {
+          // console.log(this.table);
+          let table = this.table;
+          let rowSize = table.length;
+          let columnSize = 0;
+          for (let i = 0; i < rowSize; i++) {
+            if (columnSize < table[i].length) {
+              columnSize = table[i].length;
+            }
+          }
+          // console.log(rowSize, columnSize);
+          for (let i = 0; i < rowSize; i++) {
+            for (let j = 0; j < this.initColNum - table[i].length; j++) {
+              table[i].push(null);
+            }
+          }
+          if (rowSize < this.initRowNum) {
+            for (let i = 0; i < this.initRowNum - rowSize; i++) {
+              table.push(
+                new Array(
+                  columnSize < this.initColNum ? this.initColNum : columnSize
+                )
+              );
+            }
+          }
+          this.Table = table;
+        }
+        // console.log(this.Table);
       } else {
         this.Table = new Array(this.initRowNum);
         for (let i = 0; i < this.initRowNum; i++) {
           this.Table[i] = new Array(this.initColNum);
         }
       }
+    },
+    prettifyTable() {
+      // console.log(this.Table);
     },
     cellChangeHandler(row, column, value) {
       // this.Table[row][column] = value;
@@ -107,7 +143,7 @@ export default {
         newRow[column] = JSON.parse(value.value);
         console.log("notice", newRow[column]);
       } else {
-        if(value.value == "") {
+        if (value.value == "") {
           newRow[column] = null;
         } else {
           newRow[column] = {
@@ -125,6 +161,9 @@ export default {
       console.log(row, column, value);
       if (column + value.valueList.length <= this.Table[row].length) {
         var newRow = new Array(this.Table[row].length);
+        for (let i = 0; i < newRow.length; i++) {
+          newRow[i] = this.Table[row][i];
+        }
         for (let i = column; i < column + value.valueList.length; i++) {
           newRow[i] = {
             value: value.valueList[i - column],
@@ -231,23 +270,29 @@ export default {
       let table = this.Table;
       for (var i = 0; i < table.length; i++) {
         for (var j = 0; j < table[0].length; j++) {
-          if (!table[i][j] || table[i][j].source || table[i][j].value == "" || !(table[i][j].value)) continue;
+          if (
+            !table[i][j] ||
+            table[i][j].source ||
+            table[i][j].value == "" ||
+            !table[i][j].value
+          )
+            continue;
           table[i][j].suggestedSource = this.searchValue(table[i][j].value);
         }
       }
     },
 
     dfsAttrOptions(okList, candidateList, tmpList, res, index) {
-      if(index == candidateList.length) {
+      if (index == candidateList.length) {
         let tmp = new Array();
-        for(let i in okList) tmp.push(i);
-        for(let i in tmpList) tmp.push(i);
+        for (let i in okList) tmp.push(i);
+        for (let i in tmpList) tmp.push(i);
         res.push(tmp);
         return;
       }
-      for(let attr in candidateList[index]) {
+      for (let attr in candidateList[index]) {
         tmpList.push(attr);
-        this.dfsAttrOptions(okList, candidateList, tmpList, res, index+1);
+        this.dfsAttrOptions(okList, candidateList, tmpList, res, index + 1);
         tmpList.splice(-1, 1);
       }
     },
@@ -261,15 +306,26 @@ export default {
         for (var j = 0; j < table[0].length; j++) {
           if (!table[i][j]) continue;
           if (table[i][j].source) {
-            if(-1 == okList.findIndex(value => {
-              return JSON.stringify(table[i][j].source) == JSON.stringify(value);
-            })) {
+            if (
+              -1 ==
+              okList.findIndex((value) => {
+                return (
+                  JSON.stringify(table[i][j].source) == JSON.stringify(value)
+                );
+              })
+            ) {
               okList.push(table[i][j].source);
             }
           } else {
-            if(-1 == candidateList.findIndex(value => {
-              return JSON.stringify(table[i][j].suggestedSource) == JSON.stringify(value);
-            })) {
+            if (
+              -1 ==
+              candidateList.findIndex((value) => {
+                return (
+                  JSON.stringify(table[i][j].suggestedSource) ==
+                  JSON.stringify(value)
+                );
+              })
+            ) {
               candidateList.push(table[i][j].suggestedSource);
             }
           }
@@ -282,77 +338,105 @@ export default {
       return res;
     },
 
-    dfsSpecOptions(option, rowHeaderList, columnHeaderList, bodyList, specOptions, index) {
-      if(index == option.length) {
+    dfsSpecOptions(
+      option,
+      rowHeaderList,
+      columnHeaderList,
+      bodyList,
+      specOptions,
+      index
+    ) {
+      if (index == option.length) {
         var item = new Object();
         // row_header
-        if(rowHeaderList.length == 1) {
+        if (rowHeaderList.length == 1) {
           item["row_header"] = rowHeaderList[0];
-        } else if(rowHeaderList.length > 1) {
+        } else if (rowHeaderList.length > 1) {
           let tmp = rowHeaderList[0];
-          for(let i=1;i<rowHeaderList.length;i++){
+          for (let i = 1; i < rowHeaderList.length; i++) {
             tmp = {
               operator: "cross",
-              parameters: [tmp, rowHeaderList[i]]
+              parameters: [tmp, rowHeaderList[i]],
             };
           }
           item["row_header"] = tmp;
         }
         // column_header
-        if(columnHeaderList.length == 1) {
+        if (columnHeaderList.length == 1) {
           item["column_header"] = columnHeaderList[0];
-        } else if(columnHeaderList.length > 1) {
+        } else if (columnHeaderList.length > 1) {
           let tmp = columnHeaderList[0];
-          for(let i=1;i<columnHeaderList.length;i++){
+          for (let i = 1; i < columnHeaderList.length; i++) {
             tmp = {
               operator: "cross",
-              parameters: [tmp, columnHeaderList[i]]
+              parameters: [tmp, columnHeaderList[i]],
             };
           }
           item["column_header"] = tmp;
         }
         // body
-        if(bodyList.length == 1) {
+        if (bodyList.length == 1) {
           item["body"] = bodyList[0];
-        } else if(bodyList.length > 1) {
+        } else if (bodyList.length > 1) {
           let tmp = bodyList[0];
-          for(let i=1;i<bodyList.length;i++){
+          for (let i = 1; i < bodyList.length; i++) {
             tmp = {
               operator: "cross",
-              parameters: [tmp, bodyList[i]]
+              parameters: [tmp, bodyList[i]],
             };
           }
           item["body"] = tmp;
         }
-        // if(Utils.checkValidSpec(item)) {
-        specOptions.push(item);
-        // } 
+        if (Utils.checkValidSpec(item)) {
+          specOptions.push(item);
+        }
         return;
       }
-      let attr=option[index];
+      let attr = option[index];
       rowHeaderList.push(attr);
-      this.dfsSpecOptions(option, rowHeaderList, columnHeaderList, bodyList, specOptions, index+1);
+      this.dfsSpecOptions(
+        option,
+        rowHeaderList,
+        columnHeaderList,
+        bodyList,
+        specOptions,
+        index + 1
+      );
       rowHeaderList.splice(-1, 1);
       console.log("assert", rowHeaderList.length);
       columnHeaderList.push(attr);
-      this.dfsSpecOptions(option, rowHeaderList, columnHeaderList, bodyList, specOptions, index+1);
+      this.dfsSpecOptions(
+        option,
+        rowHeaderList,
+        columnHeaderList,
+        bodyList,
+        specOptions,
+        index + 1
+      );
       columnHeaderList.splice(-1, 1);
       bodyList.push(attr);
-      this.dfsSpecOptions(option, rowHeaderList, columnHeaderList, bodyList, specOptions, index+1);
+      this.dfsSpecOptions(
+        option,
+        rowHeaderList,
+        columnHeaderList,
+        bodyList,
+        specOptions,
+        index + 1
+      );
       bodyList.splice(-1, 1);
     },
 
     mapColumnToSpec() {
       let attrOptions = this.getAttrOptions();
       let specOptions = [];
-      attrOptions.forEach(option => {
+      attrOptions.forEach((option) => {
         console.log(option);
         this.dfsSpecOptions(option, [], [], [], specOptions, 0);
       });
       console.log(specOptions);
-      specOptions.forEach(option => {
+      specOptions.forEach((option) => {
         option["description"] = Utils.stringfySpec(option);
-      })
+      });
       this.storeSuggestion(specOptions);
     },
 

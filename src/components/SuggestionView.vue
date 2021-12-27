@@ -26,7 +26,8 @@
               </div>
             </a-collapse-panel>
           </a-collapse> -->
-          {{ suggestion.description }}
+          <!-- {{ suggestion.description }} -->
+          <a-button @click="applySpec(suggestion)">Apply</a-button>
         </a-collapse-panel>
       </a-collapse>
     </div>
@@ -34,15 +35,40 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
+import { transform } from "rigel-tools";
 
 export default {
   name: "SuggestionView",
-  computed: mapState(["suggestions"]),
+  computed: mapState(["relations", "suggestions", "rawRelations"]),
   methods: {
+    ...mapActions(["storeSuggestedTable"]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
       console.log(suggestion);
+    },
+    applySpec(spec) {
+      // console.log(JSON.stringify(spec));
+      // console.log(this.relations);
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      let res = transform(sch)[0];
+      // console.log(res);
+      for (let i = 0; i < res.length; i++) {
+        for (let j = 0; j < res[i].length; j++) {
+          if (res[i][j]) {
+            let tmp = {};
+            tmp.source = spec["row_header"];
+            tmp.value = res[i][j].value;
+            res[i][j] = tmp;
+          }
+        }
+      }
+      // console.log(res);
+      this.storeSuggestedTable(res);
     },
   },
 };

@@ -54,7 +54,7 @@ export default {
     return {};
   },
   methods: {
-    ...mapActions(["storeRelation", "storeAttrInfo"]),
+    ...mapActions(["storeRelation", "storeAttrInfo", "storeRawRelation"]),
     async selectData() {
       return new Promise((resolve, reject) => {
         let input = document.createElement("input");
@@ -121,6 +121,7 @@ export default {
         });
         console.log("attrInfo:", attrInfo);
         this.storeAttrInfo(attrInfo);
+        this.storeRawRelation(jsonData);
       } catch (e) {
         console.log(e);
         this.$message.error("Unsupported File Type");

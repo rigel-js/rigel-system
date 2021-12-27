@@ -7,6 +7,8 @@
         :initRowNum="50"
         :initColNum="8"
         :editable="true"
+        :table="this.suggestedTable"
+        :key="JSON.stringify(this.suggestedTable)"
       ></spreadsheet>
     </div>
   </div>
@@ -14,9 +16,13 @@
 
 <script>
 import Spreadsheet from "./Spreadsheet/Index.vue";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "SpreadsheetView",
+  computed: {
+    ...mapState(["suggestedTable"]),
+  },
   methods: {
     onInput(event) {
       console.log(event);
