@@ -39,7 +39,7 @@
         @dragover="attrAllowDrop"
       >
         <div class="attrInfo-block" :style="{'background-color': attr.color }" >  </div>
-        <div class="attrInfo-text" >{{ attr.attribute }}</div>
+        <div class="attrInfo-text" >{{ `${attr.data}.${attr.attribute}` }}</div>
       </div>
     </div>
   </div>

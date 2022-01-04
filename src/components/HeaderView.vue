@@ -8,23 +8,30 @@
           placeholder="Select Example Data"
           style="width: 100%"
           :allowClear="true"
-          @change="loadExampleData"
+          @change="handleChange"
         >
           <a-select-option
             v-for="data in EXAMPLE_DATA"
             :key="data.id"
-            :value="data.id"
+            :value="JSON.stringify(data)"
           >
-            {{ data.name }}
+            {{ data.id }}
           </a-select-option>
         </a-select>
       </div>
       <a-button
         class="header-button"
         style="width: 62px"
-        @click="importData"
+        @click="importDataset"
         id="chooseFile"
         >Import</a-button
+      >
+      <a-button
+        class="header-button"
+        style="width: 95px"
+        @click="importNewData"
+        id="chooseFile"
+        >Import New</a-button
       >
     </div>
     <div id="undo-redo-toolbar">
@@ -48,13 +55,46 @@
 <script>
 import { mapActions } from "vuex";
 import Utils from "@/utils.js";
+import { EXAMPLE_DATA } from "@/CONSTANT";
 export default {
   name: "HeaderView",
   data() {
-    return {};
+    return {
+      selectedValue: null
+    };
+  },
+  computed: {
+    EXAMPLE_DATA() {
+      return EXAMPLE_DATA;
+    },
   },
   methods: {
     ...mapActions(["storeRelation", "storeAttrInfo", "storeRawRelation"]),
+    handleChange(value) {
+      if(!value || value === ""){
+        Object.assign(this, {
+          selectedValue: null
+        });
+        return;
+      }
+      let res = JSON.parse(value);
+      // console.log(res);
+      Object.assign(this, {
+        selectedValue: res
+      })
+    },
+    async importDataset() {
+      if(!this.selectedValue) {
+        this.$message.error("Please select a dataset");
+      }
+      try{
+        // console.log(this.selectedValue.value);
+        this.importData(JSON.stringify(this.selectedValue.value));
+      } catch(e) {
+        console.log(e);
+        this.$message.error("Unsupported File Type");
+      }
+    },
     async selectData() {
       return new Promise((resolve, reject) => {
         let input = document.createElement("input");
@@ -72,8 +112,12 @@ export default {
         input.click();
       });
     },
-    async importData() {
+    async importNewData() {
       let rawData = await this.selectData();
+      this.importData(rawData);
+    },
+    async importData(rawData) {
+      // let rawData = await this.selectData();
       console.log(rawData);
       try {
         let jsonData = JSON.parse(rawData);
@@ -150,7 +194,7 @@ export default {
 #dataset-toolbar {
   display: inline-block;
   margin-left: 126px;
-  width: 400px;
+  width: 490px;
 }
 
 #dataset-select {
@@ -176,7 +220,7 @@ export default {
 
 #undo-redo-toolbar {
   display: inline-block;
-  margin-left: 200px;
+  margin-left: 150px;
   width: 150px;
 }
 

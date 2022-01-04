@@ -3640,7 +3640,7 @@ espree@^6.1.2, espree@^6.2.1:
     acorn-jsx "^5.2.0"
     eslint-visitor-keys "^1.1.0"
 
-esprima@^4.0.0:
+esprima@^4.0.0, esprima@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/esprima/-/esprima-4.0.1.tgz#13b04cdb3e6c5d19df91ab6987a8695619b0aa71"
   integrity sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==
@@ -7161,6 +7161,13 @@ rgba-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/rgba-regex/-/rgba-regex-1.0.0.tgz#43374e2e2ca0968b0ef1523460b7d730ff22eeb3"
   integrity sha1-QzdOLiyglosO8VI0YLfXMP8i7rM=
+
+rigel-tools@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/rigel-tools/-/rigel-tools-1.0.0.tgz#97f750edabbb40a43e9385a67bf738abfbf057ce"
+  integrity sha512-JFDEuNeMe1vDmKXYYYQuZ0yNfxPGNiOUWZp2cExV+QG2Q3HQdBWD59dusT/Na9zWOohylaQzn2eH2RJh62Dafw==
+  dependencies:
+    esprima "^4.0.1"
 
 rimraf@2.6.3:
   version "2.6.3"

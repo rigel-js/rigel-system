@@ -61,21 +61,21 @@ const mutations = {
 };
 
 const actions = {
-  async extractRelationFromRawData({ commit }, rawData) {
-    const resp = await fetch(EXTRACT_URL, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-      body: `data=${rawData}`,
-    });
-    if (resp.ok) {
-      const relation = await resp.json();
-      commit("addRelation", relation);
-    } else {
-      throw new Error(resp.statusText);
-    }
-  },
+  // async extractRelationFromRawData({ commit }, rawData) {
+  //   const resp = await fetch(EXTRACT_URL, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+  //     },
+  //     body: `data=${rawData}`,
+  //   });
+  //   if (resp.ok) {
+  //     const relation = await resp.json();
+  //     commit("addRelation", relation);
+  //   } else {
+  //     throw new Error(resp.statusText);
+  //   }
+  // },
   storeRawRelation({ commit }, relation) {
     commit("addRawRelation", relation);
   },
