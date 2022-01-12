@@ -27,7 +27,7 @@
         </a-tab-pane>
       </a-tabs>
     </div>
-    <div class="attrInfo-container" v-if="attrInfo && attrInfo.length > 0"> 
+    <div class="attrInfo-container" v-if="attrInfo && attrInfo.length > 0">
       <div
         class="attrInfo-box"
         v-for="(attr, index) in attrInfo"
@@ -38,8 +38,15 @@
         @drop="attrDropHandler"
         @dragover="attrAllowDrop"
       >
-        <div class="attrInfo-block" :style="{'background-color': attr.color }" >  </div>
-        <div class="attrInfo-text" >{{ `${attr.data}.${attr.attribute}` }}</div>
+        <div
+          class="attrInfo-block"
+          :style="{ 'background-color': attr.color }"
+        ></div>
+        <div class="attrInfo-text">
+          {{
+            attr.data ? `${attr.data}.${attr.attribute}` : `${attr.attribute}`
+          }}
+        </div>
       </div>
     </div>
   </div>
@@ -52,11 +59,10 @@ import Utils from "@/utils.js";
 
 export default {
   name: "RelationView",
-  computed: 
-    mapState({
-      relations: state => state.relations,
-      attrInfo: state => state.attrInfo
-    }),
+  computed: mapState({
+    relations: (state) => state.relations,
+    attrInfo: (state) => state.attrInfo,
+  }),
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
     ...mapActions(["storeAttrInfo", "setDragSource"]),
@@ -81,33 +87,35 @@ export default {
 
     attrDropHandler(event) {
       event.preventDefault();
-      if(event.dataTransfer.getData("type") !== "attr"){
+      if (event.dataTransfer.getData("type") !== "attr") {
         return;
       }
-      let op1 = JSON.parse(event.dataTransfer.getData("info"))
+      let op1 = JSON.parse(event.dataTransfer.getData("info"));
       let op2 = JSON.parse(event.target.dataset.info);
       //union
       let colorList = Utils.genRandomColor(1);
       let valueList = [];
-      op1.valueList.forEach(item => {
-        valueList.push(item); 
+      op1.valueList.forEach((item) => {
+        valueList.push(item);
       });
-      op2.valueList.forEach(item => {
-        valueList.push(item); 
+      op2.valueList.forEach((item) => {
+        valueList.push(item);
       });
       let strName = {
         operator: "union",
-        parameters: [op1.strName, op2.strName]
+        parameters: [op1.strName, op2.strName],
       };
+      let name1 = op1.data ? `${op1.data}.${op1.attribute}` : op1.attribute;
+      let name2 = op2.data ? `${op2.data}.${op2.attribute}` : op2.attribute;
       let res = {
         strName: strName,
-        attribute: `union(${op1.attribute}, ${op2.attribute})`,
+        attribute: `union(${name1}, ${name2})`,
         color: colorList[0],
-        valueList: Utils.unique(valueList)
+        valueList: Utils.unique(valueList),
       };
       this.storeAttrInfo(res);
       console.log(res);
-    }
+    },
   },
   components: {
     Spreadsheet,

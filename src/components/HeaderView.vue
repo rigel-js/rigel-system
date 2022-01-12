@@ -47,9 +47,9 @@
         >Intersection(Inner Join)</a-button
       >
     </div>
-    <div id="manipulate-toolbar">
+    <!-- <div id="manipulate-toolbar">
       <a-button class="header-button" style="width: 100px">Manipulate</a-button>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -86,6 +86,7 @@ export default {
     async importDataset() {
       if(!this.selectedValue) {
         this.$message.error("Please select a dataset");
+        return;
       }
       try{
         // console.log(this.selectedValue.value);
