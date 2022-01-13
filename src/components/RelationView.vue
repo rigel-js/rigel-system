@@ -37,6 +37,7 @@
         @dragstart="attrDragHandler"
         @drop="attrDropHandler"
         @dragover="attrAllowDrop"
+        @contextmenu.prevent="openMenu($event, attr)"
       >
         <div
           class="attrInfo-block"
@@ -49,6 +50,25 @@
         </div>
       </div>
     </div>
+    <div
+      v-show="visible"
+      :style="{ left: left + 'px', top: top + 'px' }"
+      class="contextmenu"
+    >
+      <div>Sorting</div>
+      <a-radio-group v-model="value" @change="onChange" default-value="1">
+        <a-radio :style="radioStyle" :value="1"> Ascending </a-radio>
+        <a-radio :style="radioStyle" :value="2"> Descending </a-radio>
+      </a-radio-group>
+      <div
+        style="
+          margin-top: 7px;
+          border-top: 2px dashed #cccccc;
+          height: 1px;
+          overflow: hidden;
+        "
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -59,11 +79,28 @@ import Utils from "@/utils.js";
 
 export default {
   name: "RelationView",
+  data() {
+    return {
+      visible: false,
+      top: 0,
+      left: 0,
+      value: 1
+    };
+  },
   computed: mapState({
     relations: (state) => state.relations,
     attrInfo: (state) => state.attrInfo,
     associationRule: (state) => state.associationRule,
   }),
+  watch: {
+    visible(value) {
+      if (value) {
+        document.body.addEventListener("click", this.closeMenu);
+      } else {
+        document.body.removeEventListener("click", this.closeMenu);
+      }
+    },
+  },
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
     ...mapActions(["storeAttrInfo", "setDragSource"]),
@@ -116,6 +153,31 @@ export default {
       };
       this.storeAttrInfo(res);
       console.log(res);
+    },
+
+    openMenu(e, item) {
+      // this.rightClickItem = item;
+      console.log(item);
+
+      let x = e.clientX;
+      let y = e.clientY;
+
+      this.top = y;
+      this.left = x;
+
+      this.visible = true;
+    },
+    closeMenu(e) {
+      let x = e.clientX;
+      let y = e.clientY;
+      if (
+        x < this.left ||
+        x > this.left + 150 ||
+        y < this.top ||
+        y > this.top + 220
+      ) {
+        this.visible = false;
+      }
     },
   },
   components: {
@@ -176,5 +238,19 @@ export default {
 
 .relations-container::-webkit-scrollbar {
   display: none; /* Chrome Safari */
+}
+
+.contextmenu {
+  margin: 0;
+  background: #fff;
+  z-index: 3000;
+  position: fixed;
+  list-style-type: none;
+  padding: 10px 10px;
+  border: 0.5px solid #dbd8d8;
+  border-radius: 15px;
+  width: 150px;
+  height: 220px;
+  text-align: left;
 }
 </style>
