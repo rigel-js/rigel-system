@@ -13,7 +13,8 @@ const state = {
   attrInfo: [],
   suggestions: [],
   suggestedTable: undefined,
-  dragSourceIsCell: false
+  dragSourceIsCell: false,
+  associationRule: "union",
 };
 
 const mutations = {
@@ -58,6 +59,10 @@ const mutations = {
   changeSuggestedTable(state, suggestedTable) {
     state.suggestedTable = suggestedTable;
   },
+
+  changeAssociationRule(state, newRule) {
+    state.associationRule = newRule;
+  }
 };
 
 const actions = {
@@ -94,6 +99,9 @@ const actions = {
   storeSuggestedTable({ commit }, suggestedTable) {
     commit("changeSuggestedTable", suggestedTable);
   },
+  storeAssociationRule({ commit }, newRule) {
+    commit("changeAssociationRule", newRule);
+  }
 };
 
 export default new Vuex.Store({

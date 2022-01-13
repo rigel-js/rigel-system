@@ -40,12 +40,14 @@
     </div>
     <div id="associate-toolbar">
       <div class="header-title">Associate:</div>
-      <a-button class="header-button" style="width: 125px"
-        >Union(Outer Join)</a-button
-      >
-      <a-button class="header-button" style="width: 160px"
-        >Intersection(Inner Join)</a-button
-      >
+      <a-radio-group v-model="value" @change="onChangeMode" default-value="union" >
+        <a-radio-button class="header-button" style="width: 125px" value="union"
+          >Union(Outer Join)</a-radio-button
+        >
+        <a-radio-button class="header-button" style="width: 160px" value="intersect"
+          >Intersection(Inner Join)</a-radio-button
+        >
+      </a-radio-group>
     </div>
     <!-- <div id="manipulate-toolbar">
       <a-button class="header-button" style="width: 100px">Manipulate</a-button>
@@ -60,7 +62,8 @@ export default {
   name: "HeaderView",
   data() {
     return {
-      selectedValue: null
+      selectedValue: null,
+      value: "union"
     };
   },
   computed: {
@@ -69,7 +72,11 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["storeRelation", "storeAttrInfo", "storeRawRelation"]),
+    ...mapActions(["storeRelation", "storeAttrInfo", "storeRawRelation", "storeAssociationRule"]),
+    onChangeMode(){
+      // console.log(this.value);
+      this.storeAssociationRule(this.value);
+    },
     handleChange(value) {
       if(!value || value === ""){
         Object.assign(this, {

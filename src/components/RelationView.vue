@@ -62,6 +62,7 @@ export default {
   computed: mapState({
     relations: (state) => state.relations,
     attrInfo: (state) => state.attrInfo,
+    associationRule: (state) => state.associationRule,
   }),
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
@@ -102,14 +103,14 @@ export default {
         valueList.push(item);
       });
       let strName = {
-        operator: "union",
+        operator: this.associationRule,
         parameters: [op1.strName, op2.strName],
       };
       let name1 = op1.data ? `${op1.data}.${op1.attribute}` : op1.attribute;
       let name2 = op2.data ? `${op2.data}.${op2.attribute}` : op2.attribute;
       let res = {
         strName: strName,
-        attribute: `union(${name1}, ${name2})`,
+        attribute: `${this.associationRule}(${name1}, ${name2})`,
         color: colorList[0],
         valueList: Utils.unique(valueList),
       };
