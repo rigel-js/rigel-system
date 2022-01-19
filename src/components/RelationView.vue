@@ -527,8 +527,13 @@ export default {
   padding: 10px 10px;
   border: 0.5px solid #dbd8d8;
   border-radius: 15px;
-
+  overflow: scroll;
   text-align: left;
+}
+
+.contextmenu::-webkit-scrollbar {
+  /*隐藏滚轮*/
+  display: none;
 }
 
 .dashline {
