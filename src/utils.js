@@ -131,7 +131,9 @@ const checkValidSpec = (spec) => {
 // 字符串化spec
 const calString = (spec) => {
   if (!spec) return "";
-  if (spec.operator === "attr") {
+  if (spec.value){
+    return String(spec.value);
+  } else if (spec.operator === "attr") {
     return `${spec.data}.${spec.attribute}`;
   } else {
     let res = [];
@@ -152,10 +154,21 @@ const calString = (spec) => {
 }
 
 const stringfySpec = (spec) => {
+  console.log(spec);
   let row = calString(spec["row_header"]);
   let column = calString(spec["column_header"]);
   let body = calString(spec["body"]);
   return `(${row}), (${column}) => (${body})`;
 }
 
-export default { generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec };
+//判断attribute是否为categorical
+const isCategorical = (valueList) => {
+  for (let i = 0; i < valueList.length; i++) {
+    if (typeof (valueList[i]) != "number") {
+      return true;
+    }
+  }
+  return false;
+}
+
+export default { generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical };
