@@ -46,8 +46,8 @@ body {
 #app {
   width: 100%;
   height: 100%;
-  min-width: 1680px;
-  min-height: 1050px;
+  /* min-width: 1680px; */
+  /* min-height: 1050px; */
   display: flex;
   flex-direction: column;
   background: #eee;
@@ -65,6 +65,7 @@ body {
 
 #body-container {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: row;
   background-color: rgba(247, 247, 247, 100);
