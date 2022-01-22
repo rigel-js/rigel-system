@@ -13,7 +13,12 @@
       <div class="specmenu">
         <div class="speccomponent">
           <div class="spectitle">Row header:</div>
-          <div class="specinput" id="rowinput">
+          <div
+            class="specinput"
+            id="rowinput"
+            @dragover="dragoverHandler"
+            @drop="dropHandler"
+          >
             <div
               v-for="(item, index) in this.row_header"
               :key="`row_${index}`"
@@ -22,8 +27,6 @@
               :draggable="true"
               :data-info="`row_${index}`"
               @dragstart="dragstartHandler"
-              @dragover="dragoverHandler"
-              @drop="dropHandler"
             >
               <div class="spectext">{{ item }}</div>
             </div>
@@ -31,7 +34,12 @@
         </div>
         <div class="speccomponent">
           <div class="spectitle">Column header:</div>
-          <div class="specinput" id="columninput">
+          <div
+            class="specinput"
+            id="columninput"
+            @dragover="dragoverHandler"
+            @drop="dropHandler"
+          >
             <div
               v-for="(item, index) in this.column_header"
               :key="`column_${index}`"
@@ -40,8 +48,6 @@
               :draggable="true"
               :data-info="`column_${index}`"
               @dragstart="dragstartHandler"
-              @dragover="dragoverHandler"
-              @drop="dropHandler"
             >
               <div class="spectext">{{ item }}</div>
             </div>
@@ -49,7 +55,12 @@
         </div>
         <div class="speccomponent">
           <div class="spectitle">Body:</div>
-          <div class="specinput" id="bodyinput">
+          <div
+            class="specinput"
+            id="bodyinput"
+            @dragover="dragoverHandler"
+            @drop="dropHandler"
+          >
             <div
               v-for="(item, index) in this.body"
               :key="`body_${index}`"
@@ -58,8 +69,6 @@
               :draggable="true"
               :data-info="`body_${index}`"
               @dragstart="dragstartHandler"
-              @dragover="dragoverHandler"
-              @drop="dropHandler"
             >
               <div class="spectext">{{ item }}</div>
             </div>
@@ -101,9 +110,15 @@ export default {
     dragoverHandler(event) {
       event.preventDefault();
       let pre = sessionStorage.getItem("info");
-      let dragging = document.getElementById(pre), current = event.target;
-      if(dragging!=current){
-        let preId = this._index(dragging), curId = this._index(current);
+      let dragging = document.getElementById(pre),
+        current = event.target;
+      if (dragging != current) {
+        if (current.className == "specinput") {
+          current.appendChild(dragging);
+          return;
+        }
+        let preId = this._index(dragging),
+          curId = this._index(current);
         console.log(preId, curId);
         if (preId < curId) {
           current.parentNode.insertBefore(dragging, current.nextSibling);
@@ -111,7 +126,6 @@ export default {
           current.parentNode.insertBefore(dragging, current);
         }
       }
-      
     },
     dropHandler(event) {
       event.preventDefault();
@@ -120,13 +134,13 @@ export default {
     _index(el) {
       var index = 0;
       if (!el || !el.parentNode) {
-          return -1;
+        return -1;
       }
       while (el && (el = el.previousElementSibling)) {
-          index++;
+        index++;
       }
       return index;
-    }
+    },
   },
   components: {
     Spreadsheet,
