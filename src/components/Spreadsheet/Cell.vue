@@ -55,6 +55,7 @@ export default {
       // event.dataTransfer.setData("dragValue", event.target.innerText);
       event.dataTransfer.setData("info", event.target.dataset.info);
       event.dataTransfer.setData("type", "cell");
+      sessionStorage.setItem("type", "cell");
       this.setDragSource(true);
       this.$emit("drag-start");
     },

@@ -32,6 +32,7 @@
         class="attrInfo-box"
         v-for="(attr, index) in attrInfo"
         :key="`${attr.data}_${attr.attribute}_${index}`"
+        :id="`attr_${JSON.stringify(attr)}`"
         :data-info="JSON.stringify(attr)"
         :draggable="true"
         @dragstart="attrDragHandler"
@@ -50,6 +51,7 @@
         </div>
       </div>
     </div>
+    <!-- contextMenu -->
     <div
       v-show="visible"
       :style="{ left: left + 'px', top: top + 'px' }"
@@ -211,6 +213,8 @@ export default {
     attrDragHandler(event) {
       event.dataTransfer.setData("info", event.target.dataset.info);
       event.dataTransfer.setData("type", "attr");
+      sessionStorage.setItem("info", event.target.dataset.info);
+      sessionStorage.setItem("type", "attr");
       this.setDragSource(false);
     },
 

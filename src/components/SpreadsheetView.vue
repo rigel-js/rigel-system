@@ -22,13 +22,19 @@
             <div
               v-for="(item, index) in this.row_header"
               :key="`row_${index}`"
-              :id="`row_${index}`"
+              :id="`spec_${JSON.stringify(item)}`"
               class="specitem"
               :draggable="true"
-              :data-info="`row_${index}`"
+              :data-info="JSON.stringify(item)"
               @dragstart="dragstartHandler"
             >
-              <div class="spectext">{{ item }}</div>
+              <div class="spectext">
+                {{
+                  item.data
+                    ? `${item.data}.${item.attribute}`
+                    : `${item.attribute}`
+                }}
+              </div>
             </div>
           </div>
         </div>
@@ -43,13 +49,19 @@
             <div
               v-for="(item, index) in this.column_header"
               :key="`column_${index}`"
-              :id="`column_${index}`"
+              :id="`spec_${JSON.stringify(item)}`"
               class="specitem"
               :draggable="true"
-              :data-info="`column_${index}`"
+              :data-info="JSON.stringify(item)"
               @dragstart="dragstartHandler"
             >
-              <div class="spectext">{{ item }}</div>
+              <div class="spectext">
+                {{
+                  item.data
+                    ? `${item.data}.${item.attribute}`
+                    : `${item.attribute}`
+                }}
+              </div>
             </div>
           </div>
         </div>
@@ -64,13 +76,19 @@
             <div
               v-for="(item, index) in this.body"
               :key="`body_${index}`"
-              :id="`body_${index}`"
+              :id="`spec_${JSON.stringify(item)}`"
               class="specitem"
               :draggable="true"
-              :data-info="`body_${index}`"
+              :data-info="JSON.stringify(item)"
               @dragstart="dragstartHandler"
             >
-              <div class="spectext">{{ item }}</div>
+              <div class="spectext">
+                {{
+                  item.data
+                    ? `${item.data}.${item.attribute}`
+                    : `${item.attribute}`
+                }}
+              </div>
             </div>
           </div>
         </div>
@@ -91,9 +109,21 @@ export default {
   name: "SpreadsheetView",
   data() {
     return {
-      row_header: ["crime", "year"],
-      column_header: ["apple", "pear"],
-      body: ["orange", "banana", "set"],
+      row_header: [
+        {
+          attribute: "state",
+          color: "rgb(243,26,244,0.4)",
+          data: "crime",
+          strName: {
+            attribute: "state",
+            data: "crime",
+            operator: "attr",
+          },
+          valueList: ["Alabama", "Alaska"],
+        },
+      ],
+      column_header: [],
+      body: [],
     };
   },
   computed: {
@@ -106,26 +136,115 @@ export default {
     dragstartHandler(event) {
       // event.dataTransfer.setData("info", event.target.dataset.info);
       sessionStorage.setItem("info", event.target.dataset.info);
+      sessionStorage.setItem("type", "spec");
     },
     dragoverHandler(event) {
-      event.preventDefault();
-      let pre = sessionStorage.getItem("info");
-      let dragging = document.getElementById(pre),
-        current = event.target;
-      if (dragging != current) {
-        if (current.className == "specinput") {
-          current.appendChild(dragging);
-          return;
-        }
-        let preId = this._index(dragging),
-          curId = this._index(current);
-        console.log(preId, curId);
-        if (preId < curId) {
-          current.parentNode.insertBefore(dragging, current.nextSibling);
+      let type = sessionStorage.getItem("type");
+      if (type == "spec" || type == "attr") {
+        event.preventDefault();
+      } else {
+        return;
+      }
+      let pre = sessionStorage.getItem("info"), current = event.target;
+      let preItem = JSON.parse(pre);
+      let preNode = document.getElementById(type+"_"+pre);
+      if(!preNode || preNode == current) return; 
+
+      let sourceList, targetList, sourceIndex, targetIndex;
+      console.log(type);
+      if(type == "attr") {
+        sessionStorage.setItem("type", "spec");
+      } else {
+        sourceList = this.checkListType(preNode.parentNode);
+        sourceIndex = this._index(preNode);
+      }
+
+      if(current.className == "specinput"){
+        targetList = this.checkListType(current);
+        targetIndex = this._index(current);
+      } else {
+        targetList = this.checkListType(current.parentNode);
+        targetIndex = this._index(current);
+      }
+      
+
+      if(type == "attr") {
+        if(current.className == "specinput") {
+          targetList.push(preItem);
         } else {
-          current.parentNode.insertBefore(dragging, current);
+          targetList.splice(targetIndex, 0, preItem);
+        }
+      } else {
+        if(current.className == "specinput") {
+          sourceList.splice(sourceIndex, 1);
+          targetList.push(preItem);
+        } else {
+          sourceList.splice(sourceIndex, 1);
+          targetList.splice(targetIndex, 0, preItem);
         }
       }
+
+      this.$forceUpdate();
+      // let pre = sessionStorage.getItem("info");
+      // let dragging = document.getElementById(type + "_" + pre),
+      //   current = event.target;
+      // if (dragging != current) {
+      //   if (type == "attr") {
+      //     console.log("ok");
+      //     let item = JSON.parse(dragging.dataset.info);
+      //     let newItem = this.$createElement(
+      //       "div",
+      //       {
+      //         class: "specitem",
+      //         attrs: {
+      //           id: "spec_" + dragging.dataset.info,
+      //           draggable: true,
+      //           "data-info": dragging.dataset.info,
+      //         },
+      //         on: {
+      //           dragstart: this.dragstartHandler,
+      //         },
+      //       },
+      //       [
+      //         this.$createElement("div", {
+      //           class: "spectext",
+      //           domProps: {
+      //             innerHTML: item.data
+      //               ? `${item.data}.${item.attribute}`
+      //               : `${item.attribute}`,
+      //           },
+      //         }),
+      //       ]
+      //     );
+      //     console.log(newItem);
+      //     console.log(newItem.className);
+      //     sessionStorage.setItem("info", newItem.dataset.info);
+      //     sessionStorage.setItem("type", "spec");
+      //     if (current.className == "specinput") {
+      //       current.appendChild(newItem);
+      //       return;
+      //     } else {
+      //       current.parentNode.insertBefore(current, newItem);
+      //       return;
+      //     }
+
+
+      //   } else {
+      //     //specitem
+      //     if (current.className == "specinput") {
+      //       current.appendChild(dragging);
+      //       return;
+      //     }
+      //     let preId = this._index(dragging),
+      //       curId = this._index(current);
+      //     console.log(preId, curId);
+      //     if (preId < curId) {
+      //       current.parentNode.insertBefore(dragging, current.nextSibling);
+      //     } else {
+      //       current.parentNode.insertBefore(dragging, current);
+      //     }
+      //   }
+      // }
     },
     dropHandler(event) {
       event.preventDefault();
@@ -141,6 +260,16 @@ export default {
       }
       return index;
     },
+    checkListType(el) {
+      let id = el.id;
+      if(id == "rowinput") {
+        return this.row_header;
+      } else if(id == "columninput") {
+        return this.column_header;
+      } else if(id == "bodyinput") {
+        return this.body;
+      }
+    }
   },
   components: {
     Spreadsheet,
