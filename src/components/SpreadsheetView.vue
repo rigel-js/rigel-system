@@ -28,6 +28,7 @@
               :data-info="JSON.stringify(item)"
               @dragstart="dragstartHandler"
             >
+              <div v-if="index != 0" class="specoperator">×</div>
               <div class="spectext">
                 {{
                   item.data
@@ -55,6 +56,7 @@
               :data-info="JSON.stringify(item)"
               @dragstart="dragstartHandler"
             >
+              <div v-if="index != 0" class="specoperator">×</div>
               <div class="spectext">
                 {{
                   item.data
@@ -82,6 +84,7 @@
               :data-info="JSON.stringify(item)"
               @dragstart="dragstartHandler"
             >
+              <div v-if="index != 0" class="specoperator">+</div>
               <div class="spectext">
                 {{
                   item.data
@@ -93,8 +96,10 @@
           </div>
         </div>
         <div class="spectoolbar">
-          <a-button type="primary" class="specbutton">Apply</a-button>
-          <a-button class="specbutton">Reset</a-button>
+          <a-button type="primary" class="specbutton" @click="applyHandler"
+            >Apply</a-button
+          >
+          <a-button class="specbutton" @click="resetHandler">Reset</a-button>
         </div>
       </div>
     </div>
@@ -104,6 +109,7 @@
 <script>
 import Spreadsheet from "./Spreadsheet/Index.vue";
 import { mapActions, mapState } from "vuex";
+import { transform } from "rigel-tools";
 
 export default {
   name: "SpreadsheetView",
@@ -128,9 +134,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(["suggestedTable"]),
+    ...mapState(["suggestedTable", "rawRelations"]),
   },
   methods: {
+    ...mapActions(["storeSuggestedTable"]),
     onInput(event) {
       console.log(event);
     },
@@ -195,7 +202,10 @@ export default {
       }
 
       this.$forceUpdate();
-      let listId = (current.className == "specinput") ? this.listToId(current) : this.listToId(current.parentNode);
+      let listId =
+        current.className == "specinput"
+          ? this.listToId(current)
+          : this.listToId(current.parentNode);
       let newId = `spec_${listId}_${targetIndex}_${pre}`;
       sessionStorage.setItem("id", newId);
       console.log(newId);
@@ -294,6 +304,70 @@ export default {
         return "body";
       }
     },
+    resetHandler() {
+      this.row_header = this.column_header = this.body = [];
+      this.$forceUpdate();
+    },
+    applyHandler() {
+      let spec = {};
+      if(this.row_header.length == 1) {
+        spec['row_header'] = this.row_header[0].strName;
+      } else if(this.row_header.length > 1) {
+        spec['row_header'] = this.row_header[this.row_header.length-1].strName;
+        for(let i=this.row_header.length - 2;i>=0;i--) {
+          spec['row_header'] = {
+            operator: "cross",
+            parameters: [this.row_header[i].strName, spec['row_header']]
+          };
+        }
+      }
+      if(this.column_header.length == 1) {
+        spec['column_header'] = this.column_header[0].strName;
+      } else if(this.column_header.length > 1) {
+        spec['column_header'] = this.column_header[this.column_header.length-1].strName;
+        for(let i=this.column_header.length - 2;i>=0;i--) {
+          spec['column_header'] = {
+            operator: "cross",
+            parameters: [this.column_header[i].strName, spec['column_header']]
+          };
+        }
+      }
+      if(this.body.length == 1) {
+        spec['body'] = this.body[0].strName;
+      } else if(this.body.length > 1) {
+        spec['body'] = this.body[this.body.length-1].strName;
+        for(let i=this.body.length - 2;i>=0;i--) {
+          spec['body'] = {
+            operator: "add",
+            parameters: [this.body[i].strName, spec['body']]
+          };
+        }
+      }
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try{
+        let res = transform(sch)[0];
+        console.log(res);
+        for (let i = 0; i < res.length; i++) {
+        for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = spec["row_header"];
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        console.log(res);
+        this.storeSuggestedTable(res);
+      } catch(err) {
+        this.$message.error("Illegal specification!");
+      }
+      
+    },
   },
   components: {
     Spreadsheet,
@@ -353,18 +427,26 @@ export default {
 }
 
 .specitem {
-  border-radius: 4px;
-  border: 1px solid;
   height: 20px;
-  margin: 2px 3px 2px 3px;
+  margin: 2px auto 2px auto;
   padding-left: 3px;
   padding-right: 3px;
   display: inline-block;
 }
 
+.specoperator {
+  user-select: none;
+  pointer-events: none;
+  display: inline-block;
+  margin: 2px 4px 2px auto;
+}
+
 .spectext {
   user-select: none;
   pointer-events: none;
+  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid;
 }
 
 .specbutton {

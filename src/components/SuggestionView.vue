@@ -62,7 +62,7 @@ export default {
           if (res[i][j]) {
             let tmp = {};
             tmp.source = spec["row_header"];
-            tmp.value = res[i][j].value;
+            tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
             res[i][j] = tmp;
           }
         }
