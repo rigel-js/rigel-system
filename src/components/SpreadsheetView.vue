@@ -22,7 +22,7 @@
             <div
               v-for="(item, index) in this.row_header"
               :key="`row_${index}`"
-              :id="`spec_${JSON.stringify(item)}`"
+              :id="`spec_row_${index}_${JSON.stringify(item)}`"
               class="specitem"
               :draggable="true"
               :data-info="JSON.stringify(item)"
@@ -49,7 +49,7 @@
             <div
               v-for="(item, index) in this.column_header"
               :key="`column_${index}`"
-              :id="`spec_${JSON.stringify(item)}`"
+              :id="`spec_column_${index}_${JSON.stringify(item)}`"
               class="specitem"
               :draggable="true"
               :data-info="JSON.stringify(item)"
@@ -76,7 +76,7 @@
             <div
               v-for="(item, index) in this.body"
               :key="`body_${index}`"
-              :id="`spec_${JSON.stringify(item)}`"
+              :id="`spec_body_${index}_${JSON.stringify(item)}`"
               class="specitem"
               :draggable="true"
               :data-info="JSON.stringify(item)"
@@ -109,19 +109,20 @@ export default {
   name: "SpreadsheetView",
   data() {
     return {
-      row_header: [
-        {
-          attribute: "state",
-          color: "rgb(243,26,244,0.4)",
-          data: "crime",
-          strName: {
-            attribute: "state",
-            data: "crime",
-            operator: "attr",
-          },
-          valueList: ["Alabama", "Alaska"],
-        },
-      ],
+      row_header: [],
+      // row_header: [
+      //   {
+      //     attribute: "state",
+      //     color: "rgb(243,26,244,0.4)",
+      //     data: "crime",
+      //     strName: {
+      //       attribute: "state",
+      //       data: "crime",
+      //       operator: "attr",
+      //     },
+      //     valueList: ["Alabama", "Alaska"],
+      //   },
+      // ],
       column_header: [],
       body: [],
     };
@@ -137,6 +138,7 @@ export default {
       // event.dataTransfer.setData("info", event.target.dataset.info);
       sessionStorage.setItem("info", event.target.dataset.info);
       sessionStorage.setItem("type", "spec");
+      sessionStorage.setItem("id", event.target.id);
     },
     dragoverHandler(event) {
       let type = sessionStorage.getItem("type");
@@ -145,37 +147,45 @@ export default {
       } else {
         return;
       }
-      let pre = sessionStorage.getItem("info"), current = event.target;
+      let pre = sessionStorage.getItem("info"),
+        current = event.target;
       let preItem = JSON.parse(pre);
-      let preNode = document.getElementById(type+"_"+pre);
-      if(!preNode || preNode == current) return; 
+      let preNode = document.getElementById(sessionStorage.getItem("id"));
+      if (!preNode || preNode == current) return;
 
       let sourceList, targetList, sourceIndex, targetIndex;
       console.log(type);
-      if(type == "attr") {
+      if (type == "attr") {
         sessionStorage.setItem("type", "spec");
       } else {
         sourceList = this.checkListType(preNode.parentNode);
         sourceIndex = this._index(preNode);
       }
 
-      if(current.className == "specinput"){
+      if (current.className == "specinput") {
+        if (
+          current.lastChild &&
+          event.clientX <= current.lastChild.getBoundingClientRect().right
+        ) {
+          return;
+        }
         targetList = this.checkListType(current);
-        targetIndex = this._index(current);
+        targetIndex =
+          sourceList == targetList ? targetList.length - 1 : targetList.length;
       } else {
         targetList = this.checkListType(current.parentNode);
         targetIndex = this._index(current);
       }
-      
 
-      if(type == "attr") {
-        if(current.className == "specinput") {
+      console.log(sourceList, targetList);
+      if (type == "attr") {
+        if (current.className == "specinput") {
           targetList.push(preItem);
         } else {
           targetList.splice(targetIndex, 0, preItem);
         }
       } else {
-        if(current.className == "specinput") {
+        if (current.className == "specinput") {
           sourceList.splice(sourceIndex, 1);
           targetList.push(preItem);
         } else {
@@ -185,6 +195,11 @@ export default {
       }
 
       this.$forceUpdate();
+      let listId = (current.className == "specinput") ? this.listToId(current) : this.listToId(current.parentNode);
+      let newId = `spec_${listId}_${targetIndex}_${pre}`;
+      sessionStorage.setItem("id", newId);
+      console.log(newId);
+
       // let pre = sessionStorage.getItem("info");
       // let dragging = document.getElementById(type + "_" + pre),
       //   current = event.target;
@@ -228,7 +243,6 @@ export default {
       //       return;
       //     }
 
-
       //   } else {
       //     //specitem
       //     if (current.className == "specinput") {
@@ -262,14 +276,24 @@ export default {
     },
     checkListType(el) {
       let id = el.id;
-      if(id == "rowinput") {
+      if (id == "rowinput") {
         return this.row_header;
-      } else if(id == "columninput") {
+      } else if (id == "columninput") {
         return this.column_header;
-      } else if(id == "bodyinput") {
+      } else if (id == "bodyinput") {
         return this.body;
       }
-    }
+    },
+    listToId(el) {
+      let id = el.id;
+      if (id == "rowinput") {
+        return "row";
+      } else if (id == "columninput") {
+        return "column";
+      } else if (id == "bodyinput") {
+        return "body";
+      }
+    },
   },
   components: {
     Spreadsheet,

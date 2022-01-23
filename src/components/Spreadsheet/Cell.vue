@@ -61,6 +61,9 @@ export default {
     },
 
     allowDrop(event) {
+      if(sessionStorage.getItem("type") != 'cell' && sessionStorage.getItem("type") != 'attr') {
+        return;
+      }
       if (this.editable) {
         event.preventDefault();
         if (event.offsetY > 5) {
@@ -74,6 +77,9 @@ export default {
     },
 
     dropHandler(event) {
+      if(sessionStorage.getItem("type") != 'cell' && sessionStorage.getItem("type") != 'attr') {
+        return;
+      }
       if (this.editable) {
         event.preventDefault();
         if (event.dataTransfer.getData("type") === "cell") {

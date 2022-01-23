@@ -215,6 +215,7 @@ export default {
       event.dataTransfer.setData("type", "attr");
       sessionStorage.setItem("info", event.target.dataset.info);
       sessionStorage.setItem("type", "attr");
+      sessionStorage.setItem("id", event.target.id);
       this.setDragSource(false);
     },
 
