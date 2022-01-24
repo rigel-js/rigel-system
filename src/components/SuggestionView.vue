@@ -2,6 +2,18 @@
   <div class="view suggestion-view">
     <div class="view-title">Suggestions</div>
     <div class="suggestion-container">
+      <div v-if="this.alterSpecList.length > 0" class="suggestionTitle">
+        Alternatives (Rearrangle current attributes)
+        <a-collapse defaultActiveKey="top0">
+          <a-collapse-panel
+            v-for="(suggestion, i) in this.alterSpecList"
+            :key="`top${i}`"
+            :header="suggestion.description"
+          >
+            <a-button @click="applySpec(suggestion)">Apply</a-button>
+          </a-collapse-panel>
+        </a-collapse>
+      </div>
       <a-collapse defaultActiveKey="top0">
         <a-collapse-panel
           v-for="(suggestion, i) in suggestions"
@@ -40,7 +52,7 @@ import { transform } from "rigel-tools";
 
 export default {
   name: "SuggestionView",
-  computed: mapState(["relations", "suggestions", "rawRelations"]),
+  computed: mapState(["relations", "suggestions", "rawRelations", "alterSpecList"]),
   methods: {
     ...mapActions(["storeSuggestedTable"]),
     onSuggestionClick(suggestion) {
@@ -119,5 +131,9 @@ export default {
 
 .suggestion-container .suggestion .meta-data {
   color: #aaa;
+}
+
+.suggestionTitle {
+  font-size: 15px;
 }
 </style>

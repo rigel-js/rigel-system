@@ -110,6 +110,7 @@
 import Spreadsheet from "./Spreadsheet/Index.vue";
 import { mapActions, mapState } from "vuex";
 import { transform } from "rigel-tools";
+import Utils from "@/utils.js";
 
 export default {
   name: "SpreadsheetView",
@@ -137,7 +138,7 @@ export default {
     ...mapState(["suggestedTable", "rawRelations"]),
   },
   methods: {
-    ...mapActions(["storeSuggestedTable"]),
+    ...mapActions(["storeSuggestedTable", "storeAlterSpecList"]),
     onInput(event) {
       console.log(event);
     },
@@ -162,8 +163,9 @@ export default {
 
       let sourceList, targetList, sourceIndex, targetIndex;
       console.log(type);
+      
       if (type == "attr") {
-        sessionStorage.setItem("type", "spec");
+        // sessionStorage.setItem("type", "spec");
       } else {
         sourceList = this.checkListType(preNode.parentNode);
         sourceIndex = this._index(preNode);
@@ -186,6 +188,7 @@ export default {
 
       console.log(sourceList, targetList);
       if (type == "attr") {
+        sessionStorage.setItem("type", "spec");
         if (current.className == "specinput") {
           targetList.push(preItem);
         } else {
@@ -309,50 +312,17 @@ export default {
       this.$forceUpdate();
     },
     applyHandler() {
-      let spec = {};
-      if(this.row_header.length == 1) {
-        spec['row_header'] = this.row_header[0].strName;
-      } else if(this.row_header.length > 1) {
-        spec['row_header'] = this.row_header[this.row_header.length-1].strName;
-        for(let i=this.row_header.length - 2;i>=0;i--) {
-          spec['row_header'] = {
-            operator: "cross",
-            parameters: [this.row_header[i].strName, spec['row_header']]
-          };
-        }
-      }
-      if(this.column_header.length == 1) {
-        spec['column_header'] = this.column_header[0].strName;
-      } else if(this.column_header.length > 1) {
-        spec['column_header'] = this.column_header[this.column_header.length-1].strName;
-        for(let i=this.column_header.length - 2;i>=0;i--) {
-          spec['column_header'] = {
-            operator: "cross",
-            parameters: [this.column_header[i].strName, spec['column_header']]
-          };
-        }
-      }
-      if(this.body.length == 1) {
-        spec['body'] = this.body[0].strName;
-      } else if(this.body.length > 1) {
-        spec['body'] = this.body[this.body.length-1].strName;
-        for(let i=this.body.length - 2;i>=0;i--) {
-          spec['body'] = {
-            operator: "add",
-            parameters: [this.body[i].strName, spec['body']]
-          };
-        }
-      }
+      let spec = this.genSpec(this.row_header, this.column_header, this.body);
       let sch = {
         data: this.rawRelations,
         target_table: [spec],
       };
       console.log(sch);
-      try{
+      try {
         let res = transform(sch)[0];
         console.log(res);
         for (let i = 0; i < res.length; i++) {
-        for (let j = 0; j < res[i].length; j++) {
+          for (let j = 0; j < res[i].length; j++) {
             if (res[i][j]) {
               let tmp = {};
               tmp.source = spec["row_header"];
@@ -363,10 +333,76 @@ export default {
         }
         console.log(res);
         this.storeSuggestedTable(res);
-      } catch(err) {
+      } catch (err) {
         this.$message.error("Illegal specification!");
       }
-      
+      this.genAlterSpec();
+    },
+    genSpec(row_header, column_header, body) {
+      console.log(row_header, column_header);
+      let spec = {};
+      if (row_header.length == 1) {
+        spec["row_header"] = row_header[0].strName;
+      } else if (row_header.length > 1) {
+        spec["row_header"] = row_header[row_header.length - 1].strName;
+        for (let i = row_header.length - 2; i >= 0; i--) {
+          spec["row_header"] = {
+            operator: "cross",
+            parameters: [row_header[i].strName, spec["row_header"]],
+          };
+        }
+      }
+      if (column_header.length == 1) {
+        spec["column_header"] = column_header[0].strName;
+      } else if (column_header.length > 1) {
+        spec["column_header"] = column_header[column_header.length - 1].strName;
+        for (let i = column_header.length - 2; i >= 0; i--) {
+          spec["column_header"] = {
+            operator: "cross",
+            parameters: [column_header[i].strName, spec["column_header"]],
+          };
+        }
+      }
+      if (body.length == 1) {
+        spec["body"] = body[0].strName;
+      } else if (body.length > 1) {
+        spec["body"] = body[body.length - 1].strName;
+        for (let i = body.length - 2; i >= 0; i--) {
+          spec["body"] = {
+            operator: "add",
+            parameters: [body[i].strName, spec["body"]],
+          };
+        }
+      }
+      return spec;
+    },
+    genAlterSpec() {
+      let specList = [];
+      let rowlen = this.row_header.length, collen = this.column_header.length;
+      let num_attr = rowlen + collen;
+      if(num_attr > 5) {
+        this.$message.error("Too many attributes in header, alternative generation disabled");
+        return;
+      } else {
+        let cur = (1<<num_attr) - (1<<rowlen);
+        let tmprow = [], tmpcol = [];
+        for(let i=0;i<(1<<num_attr);i++) {
+          if(i==cur)continue;
+          tmprow = [], tmpcol = [];
+          for(let j=0;j<num_attr;j++) {
+            let item = (j<rowlen) ? this.row_header[j] : this.column_header[j-rowlen];
+            if((i>>j)&1) {
+              tmpcol.push(item);
+            } else {
+              tmprow.push(item);
+            }
+          } 
+          let spec = this.genSpec(tmprow, tmpcol, this.body);
+          spec["description"] = Utils.stringfySpec(spec);
+          specList.push(spec);
+        }
+      }
+      this.storeAlterSpecList(specList);
     },
   },
   components: {

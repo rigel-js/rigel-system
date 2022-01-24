@@ -15,6 +15,7 @@ const state = {
   suggestedTable: undefined,
   dragSourceIsCell: false,
   associationRule: "union",
+  alterSpecList: [],
 };
 
 const mutations = {
@@ -62,6 +63,10 @@ const mutations = {
 
   changeAssociationRule(state, newRule) {
     state.associationRule = newRule;
+  },
+
+  changeAlterSpecList(state, newList) {
+    state.alterSpecList = newList;
   }
 };
 
@@ -101,6 +106,9 @@ const actions = {
   },
   storeAssociationRule({ commit }, newRule) {
     commit("changeAssociationRule", newRule);
+  },
+  storeAlterSpecList({ commit }, newList) {
+    commit("changeAlterSpecList", newList);
   }
 };
 
