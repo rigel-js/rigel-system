@@ -135,10 +135,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(["suggestedTable", "rawRelations"]),
+    ...mapState(["suggestedTable", "rawRelations", "attrInfo"]),
   },
   methods: {
-    ...mapActions(["storeSuggestedTable", "storeAlterSpecList"]),
+    ...mapActions(["storeSuggestedTable", "storeAlterSpecList", "storeSuggestion"]),
     onInput(event) {
       console.log(event);
     },
@@ -337,6 +337,7 @@ export default {
         this.$message.error("Illegal specification!");
       }
       this.genAlterSpec();
+      this.genExploreSpec();;
     },
     genSpec(row_header, column_header, body) {
       console.log(row_header, column_header);
@@ -404,6 +405,51 @@ export default {
       }
       this.storeAlterSpecList(specList);
     },
+    genExploreSpec() {
+      let specList = [];
+      let unusedSpec = [];
+      this.attrInfo.forEach(item => {
+        unusedSpec.push(item);
+      })
+      this.deleteUsedSpec(unusedSpec, this.row_header);
+      this.deleteUsedSpec(unusedSpec, this.column_header);
+      this.deleteUsedSpec(unusedSpec, this.body);
+      unusedSpec.forEach(item => {
+        let tmprow = [], tmpcol = [], tmpbody = [];
+        this.row_header.forEach(t => {
+          tmprow.push(t);
+        })
+        this.column_header.forEach(t => {
+          tmpcol.push(t);
+        })
+        this.body.forEach(t => {
+          tmpbody.push(t);
+        })
+        tmprow.push(item);
+        let spec = this.genSpec(tmprow, tmpcol, tmpbody);
+        spec["description"] = Utils.stringfySpec(spec);
+        specList.push(spec);
+        tmprow.splice(tmprow.length-1, 1);
+        tmpbody.push(item);
+        let spec2 = this.genSpec(tmprow, tmpcol, tmpbody);
+        spec2["description"] = Utils.stringfySpec(spec2);
+        specList.push(spec2);
+      })
+      this.storeSuggestion(specList);
+    },
+    deleteUsedSpec(unusedSpec, header) {
+      header.forEach(item => {
+        if(item.strName.operator == "attr") {
+          for(let j=0;j<unusedSpec.length;j++){
+            let spec = unusedSpec[j];
+            if(item.strName.data == spec.data && item.strName.attribute == spec.attribute){
+              unusedSpec.splice(j,1);
+              break;
+            }
+          }
+        }
+      })
+    }
   },
   components: {
     Spreadsheet,

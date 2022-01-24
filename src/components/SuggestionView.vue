@@ -2,46 +2,61 @@
   <div class="view suggestion-view">
     <div class="view-title">Suggestions</div>
     <div class="suggestion-container">
-      <div v-if="this.alterSpecList.length > 0" class="suggestionTitle">
-        Alternatives (Rearrangle current attributes)
-        <a-collapse defaultActiveKey="top0">
-          <a-collapse-panel
-            v-for="(suggestion, i) in this.alterSpecList"
-            :key="`top${i}`"
-            :header="suggestion.description"
-          >
-            <a-button @click="applySpec(suggestion)">Apply</a-button>
-          </a-collapse-panel>
-        </a-collapse>
+      <div
+        v-if="this.alterSpecList.length == 0 && this.suggestions.length == 0"
+        class="suggestion-empty"
+      >
+        <a-empty style="padding-top: 10px" />
       </div>
-      <a-collapse defaultActiveKey="top0">
-        <a-collapse-panel
-          v-for="(suggestion, i) in suggestions"
-          :key="`top${i}`"
-          :header="suggestion.description"
-        >
-          <!-- <a-collapse defaultActiveKey="middle0">
+      <div class="suggestion-unit">
+        <div v-if="this.alterSpecList.length > 0">
+          <div class="suggestionTitle">
+            Alternatives (Rearrangle current attributes)
+          </div>
+          <a-collapse defaultActiveKey="top0">
             <a-collapse-panel
-              v-for="(subsuggestion, j) in suggestion.children"
-              :key="`middle${j}`"
-              :header="subsuggestion.description"
+              v-for="(suggestion, i) in this.alterSpecList"
+              :key="`top${i}`"
+              :header="suggestion.description"
             >
-              <div
-                class="suggestion"
-                @click="onSuggestionClick(subsuggestion)"
-                :title="`${subsuggestion.rowNum} rows ${subsuggestion.colNum} columns`"
-              >
-                <span class="spec">{{ subsuggestion.spec }}</span>
-                <span class="meta-data">{{
-                  `${subsuggestion.rowNum} rows ${subsuggestion.colNum} columns`
-                }}</span>
-              </div>
+              <a-button @click="applySpec(suggestion)">Apply</a-button>
             </a-collapse-panel>
-          </a-collapse> -->
-          <!-- {{ suggestion.description }} -->
-          <a-button @click="applySpec(suggestion)">Apply</a-button>
-        </a-collapse-panel>
-      </a-collapse>
+          </a-collapse>
+        </div>
+      </div>
+      <div class="suggestion-unit">
+        <div v-if="this.suggestions.length > 0">
+          <div class="suggestionTitle">Variations (Add more attributes)</div>
+          <a-collapse defaultActiveKey="top0">
+            <a-collapse-panel
+              v-for="(suggestion, i) in suggestions"
+              :key="`top${i}`"
+              :header="suggestion.description"
+            >
+              <!-- <a-collapse defaultActiveKey="middle0">
+                <a-collapse-panel
+                  v-for="(subsuggestion, j) in suggestion.children"
+                  :key="`middle${j}`"
+                  :header="subsuggestion.description"
+                >
+                  <div
+                    class="suggestion"
+                    @click="onSuggestionClick(subsuggestion)"
+                    :title="`${subsuggestion.rowNum} rows ${subsuggestion.colNum} columns`"
+                  >
+                    <span class="spec">{{ subsuggestion.spec }}</span>
+                    <span class="meta-data">{{
+                      `${subsuggestion.rowNum} rows ${subsuggestion.colNum} columns`
+                    }}</span>
+                  </div>
+                </a-collapse-panel>
+              </a-collapse> -->
+              <!-- {{ suggestion.description }} -->
+              <a-button @click="applySpec(suggestion)">Apply</a-button>
+            </a-collapse-panel>
+          </a-collapse>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -52,7 +67,12 @@ import { transform } from "rigel-tools";
 
 export default {
   name: "SuggestionView",
-  computed: mapState(["relations", "suggestions", "rawRelations", "alterSpecList"]),
+  computed: mapState([
+    "relations",
+    "suggestions",
+    "rawRelations",
+    "alterSpecList",
+  ]),
   methods: {
     ...mapActions(["storeSuggestedTable"]),
     onSuggestionClick(suggestion) {
@@ -89,14 +109,17 @@ export default {
 <style scoped>
 .suggestion-view {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 76px);
   overflow: hidden;
 }
 
 .suggestion-container {
-  height: calc(100% - 76px);
+  min-height: 50px;
   overflow: scroll;
-  margin: 20px 0 5px 0;
+  margin: 20px 0 auto 0;
+  border-radius: 4px;
+  border: 1px solid rgba(187, 187, 187, 100);
+  background: white;
 }
 
 .suggestion-container::-webkit-scrollbar {
@@ -133,7 +156,17 @@ export default {
   color: #aaa;
 }
 
+.suggestion-unit {
+  margin: 25px 20px 40px 20px;
+}
+
+.suggestion-empty {
+  margin: 25px 20px 25px 20px;
+}
+
 .suggestionTitle {
   font-size: 15px;
+  margin-bottom: 15px;
+  font-weight: bold;
 }
 </style>
