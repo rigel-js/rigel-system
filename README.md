@@ -9,7 +9,7 @@
 ---
 
 现在要改的（优先级1）
-- [ ] suggestion 更新 template spec，进而 trigger 下一轮 suggestion（比较重要！）
+- ~~[ ] suggestion 更新 template spec，进而 trigger 下一轮 suggestion（比较重要！）~~
 - ~~[ ] bin 的默认 step 改成 5~~
 - ~~[ ] operate 生成的新属性，参数填的不准确，table.attribute~~
 - ~~[ ] template 的 column header 换行问题~~
