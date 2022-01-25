@@ -490,7 +490,7 @@ export default {
   margin-right: 10px;
   /* margin-bottom: 15px; */
   height: 27px;
-  width: 100px;
+  width: 130px;
   text-align: right;
 }
 

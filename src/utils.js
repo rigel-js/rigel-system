@@ -131,7 +131,7 @@ const checkValidSpec = (spec) => {
 // 字符串化spec
 const calString = (spec) => {
   if (!spec) return "";
-  if (spec.value){
+  if (spec.value) {
     return String(spec.value);
   } else if (spec.operator === "attr") {
     return `${spec.data}.${spec.attribute}`;
@@ -140,16 +140,24 @@ const calString = (spec) => {
     spec.parameters.forEach(item => {
       res.push(calString(item));
     })
-    let tmp = spec.operator + "(";
-    for (let i = 0; i < res.length; i++) {
-      if (i == 0) {
-        tmp = tmp + res[i];
-      } else {
-        tmp = tmp + ", " + res[i];
+    if (spec.operator == "cross" || spec.operator == "add") {
+      let tmp = res[0];
+      for (let i = 1; i < res.length; i++) {
+        tmp += ` × ${res[i]}`;
       }
+      return tmp;
+    } else {
+      let tmp = spec.operator + "(";
+      for (let i = 0; i < res.length; i++) {
+        if (i == 0) {
+          tmp = tmp + res[i];
+        } else {
+          tmp = tmp + ", " + res[i];
+        }
+      }
+      tmp = tmp + ")";
+      return tmp;
     }
-    tmp = tmp + ")";
-    return tmp;
   }
 }
 

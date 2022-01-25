@@ -167,7 +167,7 @@ export default {
       menuBinEnable: true,
       menuBinUpperBound: null,
       menuBinLowerBound: null,
-      menuBinStep: 1,
+      menuBinStep: 5,
     };
   },
   computed: mapState({
@@ -270,7 +270,7 @@ export default {
         this.menuBinLowerBound = this.menuFilterLowerBound = Math.min(
           ...item.valueList
         );
-        this.menuBinStep = 1;
+        this.menuBinStep = 5;
       }
 
       // console.log(item);
@@ -315,7 +315,7 @@ export default {
         this.menuBinLowerBound = this.menuFilterLowerBound = Math.min(
           ...this.rightClickItem.valueList
         );
-        this.menuBinStep = 1;
+        this.menuBinStep = 5;
       }
     },
 
@@ -353,9 +353,10 @@ export default {
           operator: associationRule,
           parameters: [op.strName],
         };
+        let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
         let res = {
           strName: strName,
-          attribute: `${associationRule}(${op.attribute})`,
+          attribute: `${associationRule}(${attrName})`,
           color: colorList[0],
           valueList: Utils.unique(valueList),
         };
@@ -388,9 +389,10 @@ export default {
             { value: this.menuBinUpperBound },
           ],
         };
+        let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
         let res = {
           strName: strName,
-          attribute: `${associationRule}(${op.attribute}, ${this.menuBinStep}, ${this.menuBinLowerBound}, ${this.menuBinUpperBound})`,
+          attribute: `${associationRule}(${attrName}, ${this.menuBinStep}, ${this.menuBinLowerBound}, ${this.menuBinUpperBound})`,
           color: colorList[0],
           valueList: valueList,
         };
@@ -415,7 +417,8 @@ export default {
             operator: associationRule,
             parameters,
           };
-          let attributeName = `${associationRule}(${op.attribute}`;
+          let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
+          let attributeName = `${associationRule}(${attrName}`;
           valueList.forEach((item) => {
             attributeName += `, ${item}`;
           });

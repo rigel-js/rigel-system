@@ -1,10 +1,3 @@
-# Rigel-System
-
-- ~~[ ] 拖拽 column，需要从交互的 cell 开始（不然交叉表没法做）~~
-- ~~[ ] 拖拽 column，上边框好像不太敏感（想必左边框）~~ p.s 涉及到调个参，不满意的话后面再调
-- ~~[ ] Relations -> Raw Tables~~
-- [ ] Example Data，Crime 弄进去
-
 # Developer Notes
 当前版本的一些limitations:
 
@@ -17,12 +10,12 @@
 
 现在要改的（优先级1）
 - [ ] suggestion 更新 template spec，进而 trigger 下一轮 suggestion（比较重要！）
-- [ ] bin 的默认 step 改成 5
-- [ ] operate 生成的新属性，参数填的不准确，table.attribute
-- [ ] template 的 column header 换行问题
-- [ ] 页面弄成单个整页，不要有全局滚动，有局部滚动就可以了
+- ~~[ ] bin 的默认 step 改成 5
+- ~~[ ] operate 生成的新属性，参数填的不准确，table.attribute
+- ~~[ ] template 的 column header 换行问题
+- ~~[ ] 页面弄成单个整页，不要有全局滚动，有局部滚动就可以了
 - [ ] template 里，reset 之后，再次拖拽 bug
-- [ ] cross 改成 x
+- ~~[ ] cross 改成 x
 
 ---
 
