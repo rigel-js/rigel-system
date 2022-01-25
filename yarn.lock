@@ -7162,10 +7162,10 @@ rgba-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/rgba-regex/-/rgba-regex-1.0.0.tgz#43374e2e2ca0968b0ef1523460b7d730ff22eeb3"
   integrity sha1-QzdOLiyglosO8VI0YLfXMP8i7rM=
 
-rigel-tools@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/rigel-tools/-/rigel-tools-1.0.0.tgz#97f750edabbb40a43e9385a67bf738abfbf057ce"
-  integrity sha512-JFDEuNeMe1vDmKXYYYQuZ0yNfxPGNiOUWZp2cExV+QG2Q3HQdBWD59dusT/Na9zWOohylaQzn2eH2RJh62Dafw==
+rigel-tools@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.npmmirror.com/rigel-tools/download/rigel-tools-1.0.5.tgz#c0d0a57bd0673e5f20faed105a7aef52d6c7328f"
+  integrity sha512-O0XTnRNyUB15g9IjedjhDLoEJE3jGJnqudWfp/Tk+TXThFC+6qQlWseCHSu8BMhy7+QDQX0lEnqhpzj8bf6C9Q==
   dependencies:
     esprima "^4.0.1"
 
