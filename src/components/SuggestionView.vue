@@ -74,7 +74,7 @@ export default {
     "alterSpecList",
   ]),
   methods: {
-    ...mapActions(["storeSuggestedTable"]),
+    ...mapActions(["storeSuggestedTable", "storeNewSpec"]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
       console.log(suggestion);
@@ -87,20 +87,25 @@ export default {
         target_table: [spec],
       };
       console.log(sch);
-      let res = transform(sch)[0];
-      // console.log(res);
-      for (let i = 0; i < res.length; i++) {
-        for (let j = 0; j < res[i].length; j++) {
-          if (res[i][j]) {
-            let tmp = {};
-            tmp.source = spec["row_header"];
-            tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
-            res[i][j] = tmp;
+      try{
+        let res = transform(sch)[0];
+        // console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = spec["row_header"];
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
           }
         }
+        // console.log(res);
+        this.storeSuggestedTable(res);
+        this.storeNewSpec(spec);
+      } catch(err) {
+        this.$message.error("Illegal specification!");
       }
-      // console.log(res);
-      this.storeSuggestedTable(res);
     },
   },
 };

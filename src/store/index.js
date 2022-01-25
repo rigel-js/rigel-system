@@ -16,6 +16,7 @@ const state = {
   dragSourceIsCell: false,
   associationRule: "union",
   alterSpecList: [],
+  newSpec: null,
 };
 
 const mutations = {
@@ -67,6 +68,10 @@ const mutations = {
 
   changeAlterSpecList(state, newList) {
     state.alterSpecList = newList;
+  },
+  
+  changeNewSpec(state, newSpec) {
+    state.newSpec = newSpec;
   }
 };
 
@@ -109,6 +114,9 @@ const actions = {
   },
   storeAlterSpecList({ commit }, newList) {
     commit("changeAlterSpecList", newList);
+  },
+  storeNewSpec({ commit }, newSpec) {
+    commit("changeNewSpec", newSpec);
   }
 };
 

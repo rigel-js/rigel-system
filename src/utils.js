@@ -179,4 +179,19 @@ const isCategorical = (valueList) => {
   return false;
 }
 
-export default { generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical };
+//将row_header等spec object转为数组形式
+const specObj2List = (specObj) => {
+  if(!specObj) return [];
+  if(specObj.operator == "cross" || specObj.operator == "add") {
+    return specObj2List(specObj.parameters[0]).concat(specObj2List(specObj.parameters[1]));
+  } else {
+    return [specObj];
+  }
+}
+
+//修正strName（临时功能，后面再优化吧）
+const refineStrName = (obj) => {
+  return obj.strName ? obj.strName : obj;
+}
+
+export default { generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName };

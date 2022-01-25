@@ -135,10 +135,31 @@ export default {
     };
   },
   computed: {
-    ...mapState(["suggestedTable", "rawRelations", "attrInfo"]),
+    ...mapState(["suggestedTable", "rawRelations", "attrInfo", "newSpec"]),
+    isSpecUpdated() {
+      return this.newSpec;
+    },
+  },
+  watch: {
+    isSpecUpdated(val, oldval) {
+      console.log(this.newSpec);
+      if(val) {
+        this.row_header = Utils.specObj2List(val["row_header"]);
+        this.column_header = Utils.specObj2List(val["column_header"]);
+        this.body = Utils.specObj2List(val["body"]);
+        this.storeNewSpec(null);
+        this.genAlterSpec();
+        this.genExploreSpec();
+      }
+    }
   },
   methods: {
-    ...mapActions(["storeSuggestedTable", "storeAlterSpecList", "storeSuggestion"]),
+    ...mapActions([
+      "storeSuggestedTable",
+      "storeAlterSpecList",
+      "storeSuggestion",
+      "storeNewSpec"
+    ]),
     onInput(event) {
       console.log(event);
     },
@@ -163,7 +184,7 @@ export default {
 
       let sourceList, targetList, sourceIndex, targetIndex;
       console.log(type);
-      
+
       if (type == "attr") {
         // sessionStorage.setItem("type", "spec");
       } else {
@@ -308,7 +329,9 @@ export default {
       }
     },
     resetHandler() {
-      this.row_header = this.column_header = this.body = [];
+      this.row_header = [];
+      this.column_header = [];
+      this.body = [];
       this.$forceUpdate();
     },
     applyHandler() {
@@ -337,41 +360,41 @@ export default {
         this.$message.error("Illegal specification!");
       }
       this.genAlterSpec();
-      this.genExploreSpec();;
+      this.genExploreSpec();
     },
     genSpec(row_header, column_header, body) {
       console.log(row_header, column_header);
       let spec = {};
       if (row_header.length == 1) {
-        spec["row_header"] = row_header[0].strName;
+        spec["row_header"] = Utils.refineStrName(row_header[0]);
       } else if (row_header.length > 1) {
-        spec["row_header"] = row_header[row_header.length - 1].strName;
+        spec["row_header"] = Utils.refineStrName(row_header[row_header.length - 1]);
         for (let i = row_header.length - 2; i >= 0; i--) {
           spec["row_header"] = {
             operator: "cross",
-            parameters: [row_header[i].strName, spec["row_header"]],
+            parameters: [Utils.refineStrName(row_header[i]), spec["row_header"]],
           };
         }
       }
       if (column_header.length == 1) {
-        spec["column_header"] = column_header[0].strName;
+        spec["column_header"] = Utils.refineStrName(column_header[0]);
       } else if (column_header.length > 1) {
-        spec["column_header"] = column_header[column_header.length - 1].strName;
+        spec["column_header"] = Utils.refineStrName(column_header[column_header.length - 1]);
         for (let i = column_header.length - 2; i >= 0; i--) {
           spec["column_header"] = {
             operator: "cross",
-            parameters: [column_header[i].strName, spec["column_header"]],
+            parameters: [Utils.refineStrName(column_header[i]), spec["column_header"]],
           };
         }
       }
       if (body.length == 1) {
-        spec["body"] = body[0].strName;
+        spec["body"] = Utils.refineStrName(body[0]);
       } else if (body.length > 1) {
-        spec["body"] = body[body.length - 1].strName;
+        spec["body"] = Utils.refineStrName(body[body.length - 1]);
         for (let i = body.length - 2; i >= 0; i--) {
           spec["body"] = {
             operator: "add",
-            parameters: [body[i].strName, spec["body"]],
+            parameters: [Utils.refineStrName(body[i]), spec["body"]],
           };
         }
       }
@@ -379,25 +402,30 @@ export default {
     },
     genAlterSpec() {
       let specList = [];
-      let rowlen = this.row_header.length, collen = this.column_header.length;
+      let rowlen = this.row_header.length,
+        collen = this.column_header.length;
       let num_attr = rowlen + collen;
-      if(num_attr > 5) {
-        this.$message.error("Too many attributes in header, alternative generation disabled");
+      if (num_attr > 5) {
+        this.$message.error(
+          "Too many attributes in header, alternative generation disabled"
+        );
         return;
       } else {
-        let cur = (1<<num_attr) - (1<<rowlen);
-        let tmprow = [], tmpcol = [];
-        for(let i=0;i<(1<<num_attr);i++) {
-          if(i==cur)continue;
-          tmprow = [], tmpcol = [];
-          for(let j=0;j<num_attr;j++) {
-            let item = (j<rowlen) ? this.row_header[j] : this.column_header[j-rowlen];
-            if((i>>j)&1) {
+        let cur = (1 << num_attr) - (1 << rowlen);
+        let tmprow = [],
+          tmpcol = [];
+        for (let i = 0; i < 1 << num_attr; i++) {
+          if (i == cur) continue;
+          (tmprow = []), (tmpcol = []);
+          for (let j = 0; j < num_attr; j++) {
+            let item =
+              j < rowlen ? this.row_header[j] : this.column_header[j - rowlen];
+            if ((i >> j) & 1) {
               tmpcol.push(item);
             } else {
               tmprow.push(item);
             }
-          } 
+          }
           let spec = this.genSpec(tmprow, tmpcol, this.body);
           spec["description"] = Utils.stringfySpec(spec);
           specList.push(spec);
@@ -408,48 +436,53 @@ export default {
     genExploreSpec() {
       let specList = [];
       let unusedSpec = [];
-      this.attrInfo.forEach(item => {
+      this.attrInfo.forEach((item) => {
         unusedSpec.push(item);
-      })
+      });
       this.deleteUsedSpec(unusedSpec, this.row_header);
       this.deleteUsedSpec(unusedSpec, this.column_header);
       this.deleteUsedSpec(unusedSpec, this.body);
-      unusedSpec.forEach(item => {
-        let tmprow = [], tmpcol = [], tmpbody = [];
-        this.row_header.forEach(t => {
+      unusedSpec.forEach((item) => {
+        let tmprow = [],
+          tmpcol = [],
+          tmpbody = [];
+        this.row_header.forEach((t) => {
           tmprow.push(t);
-        })
-        this.column_header.forEach(t => {
+        });
+        this.column_header.forEach((t) => {
           tmpcol.push(t);
-        })
-        this.body.forEach(t => {
+        });
+        this.body.forEach((t) => {
           tmpbody.push(t);
-        })
+        });
         tmprow.push(item);
         let spec = this.genSpec(tmprow, tmpcol, tmpbody);
         spec["description"] = Utils.stringfySpec(spec);
         specList.push(spec);
-        tmprow.splice(tmprow.length-1, 1);
+        tmprow.splice(tmprow.length - 1, 1);
         tmpbody.push(item);
         let spec2 = this.genSpec(tmprow, tmpcol, tmpbody);
         spec2["description"] = Utils.stringfySpec(spec2);
         specList.push(spec2);
-      })
+      });
       this.storeSuggestion(specList);
     },
     deleteUsedSpec(unusedSpec, header) {
-      header.forEach(item => {
-        if(item.strName.operator == "attr") {
-          for(let j=0;j<unusedSpec.length;j++){
+      header.forEach((item) => {
+        if ((Utils.refineStrName(item)).operator == "attr") {
+          for (let j = 0; j < unusedSpec.length; j++) {
             let spec = unusedSpec[j];
-            if(item.strName.data == spec.data && item.strName.attribute == spec.attribute){
-              unusedSpec.splice(j,1);
+            if (
+              Utils.refineStrName(item).data == spec.data &&
+              Utils.refineStrName(item).attribute == spec.attribute
+            ) {
+              unusedSpec.splice(j, 1);
               break;
             }
           }
         }
-      })
-    }
+      });
+    },
   },
   components: {
     Spreadsheet,
