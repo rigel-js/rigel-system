@@ -4,103 +4,103 @@
     <div class="spreadsheet-container">
       <spreadsheet
         name="targetTable"
-        :initRowNum="15"
+        :initRowNum="14"
         :initColNum="8"
         :editable="true"
         :table="this.suggestedTable"
         :key="JSON.stringify(this.suggestedTable)"
       ></spreadsheet>
-      <div class="specmenu">
-        <div class="speccomponent">
-          <div class="spectitle">Row header:</div>
+    </div>
+    <div class="specmenu">
+      <div class="speccomponent">
+        <div class="spectitle">Row header:</div>
+        <div
+          class="specinput"
+          id="rowinput"
+          @dragover="dragoverHandler"
+          @drop="dropHandler"
+        >
           <div
-            class="specinput"
-            id="rowinput"
-            @dragover="dragoverHandler"
-            @drop="dropHandler"
+            v-for="(item, index) in this.row_header"
+            :key="`row_${index}`"
+            :id="`spec_row_${index}_${JSON.stringify(item)}`"
+            class="specitem"
+            :draggable="true"
+            :data-info="JSON.stringify(item)"
+            @dragstart="dragstartHandler"
           >
-            <div
-              v-for="(item, index) in this.row_header"
-              :key="`row_${index}`"
-              :id="`spec_row_${index}_${JSON.stringify(item)}`"
-              class="specitem"
-              :draggable="true"
-              :data-info="JSON.stringify(item)"
-              @dragstart="dragstartHandler"
-            >
-              <div v-if="index != 0" class="specoperator">×</div>
-              <div class="spectext">
-                {{
-                  item.data
-                    ? `${item.data}.${item.attribute}`
-                    : `${item.attribute}`
-                }}
-              </div>
+            <div v-if="index != 0" class="specoperator">×</div>
+            <div class="spectext">
+              {{
+                item.data
+                  ? `${item.data}.${item.attribute}`
+                  : `${item.attribute}`
+              }}
             </div>
           </div>
         </div>
-        <div class="speccomponent">
-          <div class="spectitle">Column header:</div>
+      </div>
+      <div class="speccomponent">
+        <div class="spectitle">Column header:</div>
+        <div
+          class="specinput"
+          id="columninput"
+          @dragover="dragoverHandler"
+          @drop="dropHandler"
+        >
           <div
-            class="specinput"
-            id="columninput"
-            @dragover="dragoverHandler"
-            @drop="dropHandler"
+            v-for="(item, index) in this.column_header"
+            :key="`column_${index}`"
+            :id="`spec_column_${index}_${JSON.stringify(item)}`"
+            class="specitem"
+            :draggable="true"
+            :data-info="JSON.stringify(item)"
+            @dragstart="dragstartHandler"
           >
-            <div
-              v-for="(item, index) in this.column_header"
-              :key="`column_${index}`"
-              :id="`spec_column_${index}_${JSON.stringify(item)}`"
-              class="specitem"
-              :draggable="true"
-              :data-info="JSON.stringify(item)"
-              @dragstart="dragstartHandler"
-            >
-              <div v-if="index != 0" class="specoperator">×</div>
-              <div class="spectext">
-                {{
-                  item.data
-                    ? `${item.data}.${item.attribute}`
-                    : `${item.attribute}`
-                }}
-              </div>
+            <div v-if="index != 0" class="specoperator">×</div>
+            <div class="spectext">
+              {{
+                item.data
+                  ? `${item.data}.${item.attribute}`
+                  : `${item.attribute}`
+              }}
             </div>
           </div>
         </div>
-        <div class="speccomponent">
-          <div class="spectitle">Body:</div>
+      </div>
+      <div class="speccomponent">
+        <div class="spectitle">Body:</div>
+        <div
+          class="specinput"
+          id="bodyinput"
+          @dragover="dragoverHandler"
+          @drop="dropHandler"
+        >
           <div
-            class="specinput"
-            id="bodyinput"
-            @dragover="dragoverHandler"
-            @drop="dropHandler"
+            v-for="(item, index) in this.body"
+            :key="`body_${index}`"
+            :id="`spec_body_${index}_${JSON.stringify(item)}`"
+            class="specitem"
+            :draggable="true"
+            :data-info="JSON.stringify(item)"
+            @dragstart="dragstartHandler"
           >
-            <div
-              v-for="(item, index) in this.body"
-              :key="`body_${index}`"
-              :id="`spec_body_${index}_${JSON.stringify(item)}`"
-              class="specitem"
-              :draggable="true"
-              :data-info="JSON.stringify(item)"
-              @dragstart="dragstartHandler"
-            >
-              <div v-if="index != 0" class="specoperator">+</div>
-              <div class="spectext">
-                {{
-                  item.data
-                    ? `${item.data}.${item.attribute}`
-                    : `${item.attribute}`
-                }}
-              </div>
+            <div v-if="index != 0" class="specoperator">+</div>
+            <div class="spectext">
+              {{
+                item.data
+                  ? `${item.data}.${item.attribute}`
+                  : `${item.attribute}`
+              }}
             </div>
           </div>
         </div>
-        <div class="spectoolbar">
-          <a-button type="primary" class="specbutton" @click="applyHandler"
-            >Apply</a-button
-          >
-          <a-button class="specbutton" @click="resetHandler">Reset</a-button>
-        </div>
+      </div>
+      <div class="spectoolbar">
+        <a-button type="primary" class="specbutton" @click="applyHandler"
+          >Apply</a-button
+        >
+        <a-button class="specbutton" @click="resetHandler">Reset</a-button>
       </div>
     </div>
   </div>
@@ -143,7 +143,7 @@ export default {
   watch: {
     isSpecUpdated(val, oldval) {
       console.log(this.newSpec);
-      if(val) {
+      if (val) {
         this.row_header = Utils.specObj2List(val["row_header"]);
         this.column_header = Utils.specObj2List(val["column_header"]);
         this.body = Utils.specObj2List(val["body"]);
@@ -151,14 +151,14 @@ export default {
         this.genAlterSpec();
         this.genExploreSpec();
       }
-    }
+    },
   },
   methods: {
     ...mapActions([
       "storeSuggestedTable",
       "storeAlterSpecList",
       "storeSuggestion",
-      "storeNewSpec"
+      "storeNewSpec",
     ]),
     onInput(event) {
       console.log(event);
@@ -368,22 +368,32 @@ export default {
       if (row_header.length == 1) {
         spec["row_header"] = Utils.refineStrName(row_header[0]);
       } else if (row_header.length > 1) {
-        spec["row_header"] = Utils.refineStrName(row_header[row_header.length - 1]);
+        spec["row_header"] = Utils.refineStrName(
+          row_header[row_header.length - 1]
+        );
         for (let i = row_header.length - 2; i >= 0; i--) {
           spec["row_header"] = {
             operator: "cross",
-            parameters: [Utils.refineStrName(row_header[i]), spec["row_header"]],
+            parameters: [
+              Utils.refineStrName(row_header[i]),
+              spec["row_header"],
+            ],
           };
         }
       }
       if (column_header.length == 1) {
         spec["column_header"] = Utils.refineStrName(column_header[0]);
       } else if (column_header.length > 1) {
-        spec["column_header"] = Utils.refineStrName(column_header[column_header.length - 1]);
+        spec["column_header"] = Utils.refineStrName(
+          column_header[column_header.length - 1]
+        );
         for (let i = column_header.length - 2; i >= 0; i--) {
           spec["column_header"] = {
             operator: "cross",
-            parameters: [Utils.refineStrName(column_header[i]), spec["column_header"]],
+            parameters: [
+              Utils.refineStrName(column_header[i]),
+              spec["column_header"],
+            ],
           };
         }
       }
@@ -469,7 +479,7 @@ export default {
     },
     deleteUsedSpec(unusedSpec, header) {
       header.forEach((item) => {
-        if ((Utils.refineStrName(item)).operator == "attr") {
+        if (Utils.refineStrName(item).operator == "attr") {
           for (let j = 0; j < unusedSpec.length; j++) {
             let spec = unusedSpec[j];
             if (
@@ -498,7 +508,7 @@ export default {
 }
 
 .spreadsheet-container {
-  height: 100%;
+  height: 60%;
   min-width: 500px;
   overflow: scroll;
   margin: 20px 0 5px 0;
@@ -512,6 +522,12 @@ export default {
   text-align: left;
   margin-top: 50px;
   vertical-align: center;
+  overflow: scroll;
+  height: 40%;
+}
+
+.specmenu::-webkit-scrollbar {
+  display: none;
 }
 
 .speccomponent {
