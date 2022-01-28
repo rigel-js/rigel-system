@@ -20,9 +20,9 @@
 ---
 
 一些新问题（优先级1）
-- [ ] 滚动问题（见上面的第五条），Target Table 里应该有两个局部滚动，分别是电子表格和下面的 spec template，这两个不应该混成一个
+- ~~[ ] 滚动问题（见上面的第五条），Target Table 里应该有两个局部滚动，分别是电子表格和下面的 spec template，这两个不应该混成一个~~
 - [ ] 同样的滚动问题，suggestion 好像还不能滚动
-- [ ] spec template 的 apply 按钮，需要去掉，每次 input 框变化的时候自动 apply
+- ~~[ ] spec template 的 apply 按钮，需要去掉，每次 input 框变化的时候自动 apply~~
 - [ ] 优先级2中的第四条提上来，suggestion 的 UI 向设计稿看齐，hierarchy 进行组织（建议不要用 antd 的这个组件了）
 - [ ] spec template 中的 hint 做一下（输入框右边空间不够可以放到输入框下边）
 

@@ -97,9 +97,9 @@
         </div>
       </div>
       <div class="spectoolbar">
-        <a-button type="primary" class="specbutton" @click="applyHandler"
+        <!-- <a-button type="primary" class="specbutton" @click="applyHandler"
           >Apply</a-button
-        >
+        > -->
         <a-button class="specbutton" @click="resetHandler">Reset</a-button>
       </div>
     </div>
@@ -152,6 +152,15 @@ export default {
         this.genExploreSpec();
       }
     },
+    row_header(val, oldval) {
+      this.applyHandler();
+    },
+    column_header(val, oldval) {
+      this.applyHandler();
+    },
+    body(val, oldval) {
+      this.applyHandler();
+    }
   },
   methods: {
     ...mapActions([
