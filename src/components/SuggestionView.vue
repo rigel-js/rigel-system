@@ -24,7 +24,7 @@
           </a-collapse>
         </div>
       </div>
-      <div class="suggestion-unit">
+      <!-- <div class="suggestion-unit">
         <div v-if="this.suggestions.length > 0">
           <div class="suggestionTitle">Variations (Add more attributes)</div>
           <a-collapse defaultActiveKey="top0">
@@ -33,29 +33,13 @@
               :key="`top${i}`"
               :header="suggestion.description"
             >
-              <!-- <a-collapse defaultActiveKey="middle0">
-                <a-collapse-panel
-                  v-for="(subsuggestion, j) in suggestion.children"
-                  :key="`middle${j}`"
-                  :header="subsuggestion.description"
-                >
-                  <div
-                    class="suggestion"
-                    @click="onSuggestionClick(subsuggestion)"
-                    :title="`${subsuggestion.rowNum} rows ${subsuggestion.colNum} columns`"
-                  >
-                    <span class="spec">{{ subsuggestion.spec }}</span>
-                    <span class="meta-data">{{
-                      `${subsuggestion.rowNum} rows ${subsuggestion.colNum} columns`
-                    }}</span>
-                  </div>
-                </a-collapse-panel>
-              </a-collapse> -->
-              <!-- {{ suggestion.description }} -->
               <a-button @click="applySpec(suggestion)">Apply</a-button>
             </a-collapse-panel>
           </a-collapse>
         </div>
+      </div> -->
+      <div class="suggestion-unit">
+        <Varunit :content="this.testcontent"/>
       </div>
     </div>
   </div>
@@ -64,9 +48,27 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import { transform } from "rigel-tools";
+import Varunit from "./Varunit/Index.vue";
 
 export default {
   name: "SuggestionView",
+  data() {
+    return ({
+      testcontent: [
+        {
+            "add": "union(a,b)",  // string
+            "list": [
+                {   // spec数组
+                    "row_header": null,
+                    "column_header": null,
+                    "body": null,
+                    "description": "(a), (b) => (c)",
+                },
+            ]
+        } 
+      ]
+    });
+  },
   computed: mapState([
     "relations",
     "suggestions",
@@ -108,6 +110,9 @@ export default {
       }
     },
   },
+  components: {
+    Varunit
+  }
 };
 </script>
 
@@ -173,5 +178,10 @@ export default {
   font-size: 15px;
   margin-bottom: 15px;
   font-weight: bold;
+}
+
+.collapse-unit {
+  margin: 5px 9px 5px 9px;
+  width: calc(100% - 18px);
 }
 </style>

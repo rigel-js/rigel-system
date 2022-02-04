@@ -1,0 +1,23 @@
+{
+  "id": "3168273",
+  "name": "rigel",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-rigel",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "27194332",
+      "name": "箭头3",
+      "font_class": "jiantou3",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "26847532",
+      "name": "向下",
+      "font_class": "xiangxia",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    }
+  ]
+}
