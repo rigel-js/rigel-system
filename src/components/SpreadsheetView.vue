@@ -453,7 +453,7 @@ export default {
       this.storeAlterSpecList(specList);
     },
     genExploreSpec() {
-      let specList = [];
+      let specListWithAdd = [];
       let unusedSpec = [];
       this.attrInfo.forEach((item) => {
         unusedSpec.push(item);
@@ -462,6 +462,7 @@ export default {
       this.deleteUsedSpec(unusedSpec, this.column_header);
       this.deleteUsedSpec(unusedSpec, this.body);
       unusedSpec.forEach((item) => {
+        let specList = [];
         let tmprow = [],
           tmpcol = [],
           tmpbody = [];
@@ -483,8 +484,14 @@ export default {
         let spec2 = this.genSpec(tmprow, tmpcol, tmpbody);
         spec2["description"] = Utils.stringfySpec(spec2);
         specList.push(spec2);
+        let item_str = Utils.calString(Utils.refineStrName(item));
+        specListWithAdd.push({
+          "add": item_str,
+          "list": specList
+        });
       });
-      this.storeSuggestion(specList);
+      console.log(specListWithAdd);
+      this.storeSuggestion(specListWithAdd);
     },
     deleteUsedSpec(unusedSpec, header) {
       header.forEach((item) => {

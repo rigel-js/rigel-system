@@ -194,4 +194,4 @@ const refineStrName = (obj) => {
   return obj.strName ? obj.strName : obj;
 }
 
-export default { generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName };
+export default { generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString };

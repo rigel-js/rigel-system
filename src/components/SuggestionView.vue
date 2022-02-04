@@ -8,20 +8,25 @@
       >
         <a-empty style="padding-top: 10px" />
       </div>
-      <div class="suggestion-unit">
-        <div v-if="this.alterSpecList.length > 0">
-          <div class="suggestionTitle">
-            Alternatives (Rearrangle current attributes)
-          </div>
-          <a-collapse defaultActiveKey="top0">
-            <a-collapse-panel
-              v-for="(suggestion, i) in this.alterSpecList"
-              :key="`top${i}`"
-              :header="suggestion.description"
-            >
-              <a-button @click="applySpec(suggestion)">Apply</a-button>
-            </a-collapse-panel>
-          </a-collapse>
+      <div
+        class="suggestion-unit alter-unit"
+        v-if="this.alterSpecList.length > 0"
+      >
+        <div class="suggestionTitle">
+          Alternatives (Rearrangle current attributes)
+        </div>
+        <!-- <a-collapse defaultActiveKey="top0">
+          <a-collapse-panel
+            v-for="(suggestion, i) in this.alterSpecList"
+            :key="`top${i}`"
+            :header="suggestion.description"
+          >
+            <a-button @click="applySpec(suggestion)">Apply</a-button>
+          </a-collapse-panel>
+        </a-collapse> -->
+        <div v-for="(suggestion, i) in this.alterSpecList"
+            :key="`top${i}`" class="alter-panel" @click="applySpec(suggestion)">
+          {{suggestion.description}}
         </div>
       </div>
       <!-- <div class="suggestion-unit">
@@ -38,8 +43,9 @@
           </a-collapse>
         </div>
       </div> -->
-      <div class="suggestion-unit">
-        <Varunit :content="this.testcontent"/>
+      <div class="suggestion-unit variation-unit">
+        <div class="suggestionTitle">Variations (Add more attributes)</div>
+        <Varunit :content="this.suggestions" />
       </div>
     </div>
   </div>
@@ -53,21 +59,23 @@ import Varunit from "./Varunit/Index.vue";
 export default {
   name: "SuggestionView",
   data() {
-    return ({
-      testcontent: [
-        {
-            "add": "union(a,b)",  // string
-            "list": [
-                {   // spec数组
-                    "row_header": null,
-                    "column_header": null,
-                    "body": null,
-                    "description": "(a), (b) => (c)",
-                },
-            ]
-        } 
-      ]
-    });
+    return {
+      // testcontent: [
+      //   {
+      //     add: "union(a,b)", // string
+      //     list: [
+      //       {
+      //         // spec数组
+      //         row_header: null,
+      //         column_header: null,
+      //         body: null,
+      //         description: "(a), (b) => (c)",
+      //       },
+      //     ],
+      //   },
+      // ],
+
+    };
   },
   computed: mapState([
     "relations",
@@ -89,7 +97,7 @@ export default {
         target_table: [spec],
       };
       console.log(sch);
-      try{
+      try {
         let res = transform(sch)[0];
         // console.log(res);
         for (let i = 0; i < res.length; i++) {
@@ -105,14 +113,14 @@ export default {
         // console.log(res);
         this.storeSuggestedTable(res);
         this.storeNewSpec(spec);
-      } catch(err) {
+      } catch (err) {
         this.$message.error("Illegal specification!");
       }
     },
   },
   components: {
-    Varunit
-  }
+    Varunit,
+  },
 };
 </script>
 
@@ -125,15 +133,10 @@ export default {
 
 .suggestion-container {
   min-height: 50px;
-  overflow: scroll;
   margin: 20px 0 auto 0;
   border-radius: 4px;
   border: 1px solid rgba(187, 187, 187, 100);
   background: white;
-}
-
-.suggestion-container::-webkit-scrollbar {
-  display: none; /* Chrome Safari */
 }
 
 .suggestion-container .ant-collapse {
@@ -153,10 +156,6 @@ export default {
   overflow: scroll;
 }
 
-.suggestion-container .suggestion::-webkit-scrollbar {
-  display: none; /* Chrome Safari */
-}
-
 .suggestion-container .suggestion .spec {
   /* font-weight: bold; */
   padding-right: 20px;
@@ -168,6 +167,32 @@ export default {
 
 .suggestion-unit {
   margin: 25px 20px 40px 20px;
+  overflow: scroll;
+}
+
+.suggestion-unit::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
+
+.alter-unit {
+  height: 250px;
+}
+
+.alter-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #eaebee;
+  padding: 5px 0px 5px 7px;
+  margin-bottom: 3px;
+}
+
+.alter-panel:hover {
+  background-color: #d8d5d5;
+}
+
+.variation-unit {
+  height: 350px;
 }
 
 .suggestion-empty {
