@@ -8,44 +8,26 @@
       >
         <a-empty style="padding-top: 10px" />
       </div>
-      <div
-        class="suggestion-unit alter-unit"
-        v-if="this.alterSpecList.length > 0"
-      >
+      <div class="suggestion-unit" v-if="this.alterSpecList.length > 0">
         <div class="suggestionTitle">
           Alternatives (Rearrangle current attributes)
         </div>
-        <!-- <a-collapse defaultActiveKey="top0">
-          <a-collapse-panel
+        <div class="alter-unit">
+          <div
             v-for="(suggestion, i) in this.alterSpecList"
             :key="`top${i}`"
-            :header="suggestion.description"
+            class="alter-panel"
+            @click="applySpec(suggestion)"
           >
-            <a-button @click="applySpec(suggestion)">Apply</a-button>
-          </a-collapse-panel>
-        </a-collapse> -->
-        <div v-for="(suggestion, i) in this.alterSpecList"
-            :key="`top${i}`" class="alter-panel" @click="applySpec(suggestion)">
-          {{suggestion.description}}
+            {{ suggestion.description }}
+          </div>
         </div>
       </div>
-      <!-- <div class="suggestion-unit">
-        <div v-if="this.suggestions.length > 0">
-          <div class="suggestionTitle">Variations (Add more attributes)</div>
-          <a-collapse defaultActiveKey="top0">
-            <a-collapse-panel
-              v-for="(suggestion, i) in suggestions"
-              :key="`top${i}`"
-              :header="suggestion.description"
-            >
-              <a-button @click="applySpec(suggestion)">Apply</a-button>
-            </a-collapse-panel>
-          </a-collapse>
-        </div>
-      </div> -->
-      <div class="suggestion-unit variation-unit">
+      <div class="suggestion-unit" v-if="this.suggestions.length > 0">
         <div class="suggestionTitle">Variations (Add more attributes)</div>
-        <Varunit :content="this.suggestions" />
+        <div class="variation-unit">
+          <Varunit :content="this.suggestions" />
+        </div>
       </div>
     </div>
   </div>
@@ -74,7 +56,6 @@ export default {
       //     ],
       //   },
       // ],
-
     };
   },
   computed: mapState([
@@ -127,7 +108,7 @@ export default {
 <style scoped>
 .suggestion-view {
   width: 100%;
-  height: calc(100% - 76px);
+  height: calc(100% - 20px);
   overflow: hidden;
 }
 
@@ -137,6 +118,7 @@ export default {
   border-radius: 4px;
   border: 1px solid rgba(187, 187, 187, 100);
   background: white;
+  overflow: hidden;
 }
 
 .suggestion-container .ant-collapse {
@@ -145,37 +127,17 @@ export default {
   text-align: left;
 }
 
-.suggestion-container .suggestion {
-  /* 这种写法不太行，322 magic number，勉强用用吧 */
-  /* width: 100%; */
-  width: 322px;
-  height: 24px;
-  cursor: pointer;
-  white-space: nowrap;
-  /* text-overflow: ellipsis; */
-  overflow: scroll;
-}
-
-.suggestion-container .suggestion .spec {
-  /* font-weight: bold; */
-  padding-right: 20px;
-}
-
-.suggestion-container .suggestion .meta-data {
-  color: #aaa;
-}
-
 .suggestion-unit {
   margin: 25px 20px 40px 20px;
-  overflow: scroll;
 }
 
-.suggestion-unit::-webkit-scrollbar {
+.alter-unit::-webkit-scrollbar {
   display: none; /* Chrome Safari */
 }
 
 .alter-unit {
-  height: 250px;
+  height: 220px;
+  overflow: scroll;
 }
 
 .alter-panel {
@@ -192,7 +154,12 @@ export default {
 }
 
 .variation-unit {
-  height: 350px;
+  height: 250px;
+  overflow: scroll;
+}
+
+.variation-unit::-webkit-scrollbar {
+  display: none;
 }
 
 .suggestion-empty {

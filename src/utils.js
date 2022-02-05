@@ -181,8 +181,8 @@ const isCategorical = (valueList) => {
 
 //将row_header等spec object转为数组形式
 const specObj2List = (specObj) => {
-  if(!specObj) return [];
-  if(specObj.operator == "cross" || specObj.operator == "add") {
+  if (!specObj) return [];
+  if (specObj.operator == "cross" || specObj.operator == "add") {
     return specObj2List(specObj.parameters[0]).concat(specObj2List(specObj.parameters[1]));
   } else {
     return [specObj];
@@ -194,4 +194,163 @@ const refineStrName = (obj) => {
   return obj.strName ? obj.strName : obj;
 }
 
-export default { generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString };
+//给定spec，生成alternative suggestion
+const genAlterSpec = (row_header, column_header, body) => {
+  let specList = [];
+  let rowlen = row_header.length,
+    collen = column_header.length;
+  let num_attr = rowlen + collen;
+  if (num_attr > 5) {
+    throw new Error(
+      "Too many attributes in header, alternative generation disabled"
+    );
+  } else {
+    let cur = (1 << num_attr) - (1 << rowlen);
+    let tmprow = [],
+      tmpcol = [];
+    for (let i = 0; i < 1 << num_attr; i++) {
+      if (i == cur) continue;
+      (tmprow = []), (tmpcol = []);
+      for (let j = 0; j < num_attr; j++) {
+        let item =
+          j < rowlen ? row_header[j] : column_header[j - rowlen];
+        if ((i >> j) & 1) {
+          tmpcol.push(item);
+        } else {
+          tmprow.push(item);
+        }
+      }
+      let spec = genSpec(tmprow, tmpcol, body);
+      spec["description"] = stringfySpec(spec);
+      specList.push(spec);
+    }
+  }
+  return specList;
+  // this.storeAlterSpecList(specList);
+}
+
+const genSpec = (row_header, column_header, body) => {
+  console.log(row_header, column_header);
+  let spec = {};
+  if (row_header.length == 1) {
+    spec["row_header"] = refineStrName(row_header[0]);
+  } else if (row_header.length > 1) {
+    spec["row_header"] = refineStrName(
+      row_header[row_header.length - 1]
+    );
+    for (let i = row_header.length - 2; i >= 0; i--) {
+      spec["row_header"] = {
+        operator: "cross",
+        parameters: [
+          refineStrName(row_header[i]),
+          spec["row_header"],
+        ],
+      };
+    }
+  }
+  if (column_header.length == 1) {
+    spec["column_header"] = refineStrName(column_header[0]);
+  } else if (column_header.length > 1) {
+    spec["column_header"] = refineStrName(
+      column_header[column_header.length - 1]
+    );
+    for (let i = column_header.length - 2; i >= 0; i--) {
+      spec["column_header"] = {
+        operator: "cross",
+        parameters: [
+          refineStrName(column_header[i]),
+          spec["column_header"],
+        ],
+      };
+    }
+  }
+  if (body.length == 1) {
+    spec["body"] = refineStrName(body[0]);
+  } else if (body.length > 1) {
+    spec["body"] = refineStrName(body[body.length - 1]);
+    for (let i = body.length - 2; i >= 0; i--) {
+      spec["body"] = {
+        operator: "add",
+        parameters: [refineStrName(body[i]), spec["body"]],
+      };
+    }
+  }
+  return spec;
+}
+
+const genExploreSpec = (row_header, column_header, body, attrInfo) => {
+  let specListWithAdd = [];
+  let unusedSpec = [];
+  if(attrInfo) {
+    attrInfo.forEach((item) => {
+      unusedSpec.push(item);
+    });
+  }
+  deleteUsedSpec(unusedSpec, row_header);
+  deleteUsedSpec(unusedSpec, column_header);
+  deleteUsedSpec(unusedSpec, body);
+  if(!unusedSpec) {
+    return specListWithAdd;
+  }
+  unusedSpec.forEach((item) => {
+    let specList = [];
+    let tmprow = [],
+      tmpcol = [],
+      tmpbody = [];
+    if(row_header) {
+      row_header.forEach((t) => {
+        tmprow.push(t);
+      });
+    }
+    if(column_header) {
+      column_header.forEach((t) => {
+        tmpcol.push(t);
+      });
+    }
+    if(body) {
+      body.forEach((t) => {
+        tmpbody.push(t);
+      });
+    }
+    tmprow.push(item);
+    let spec = genSpec(tmprow, tmpcol, tmpbody);
+    spec["description"] = stringfySpec(spec);
+    specList.push(spec);
+    tmprow.splice(tmprow.length - 1, 1);
+    tmpbody.push(item);
+    let spec2 = genSpec(tmprow, tmpcol, tmpbody);
+    spec2["description"] = stringfySpec(spec2);
+    specList.push(spec2);
+    let item_str = calString(refineStrName(item));
+    specListWithAdd.push({
+      "add": item_str,
+      "list": specList
+    });
+  });
+  // console.log(specListWithAdd);
+  return specListWithAdd;
+  // this.storeSuggestion(specListWithAdd);
+}
+
+const deleteUsedSpec = (unusedSpec, header) => {
+  if(!header) return;
+  header.forEach((item) => {
+    if (refineStrName(item).operator == "attr") {
+      for (let j = 0; j < unusedSpec.length; j++) {
+        let spec = unusedSpec[j];
+        if (
+          refineStrName(item).data == spec.data &&
+          refineStrName(item).attribute == spec.attribute
+        ) {
+          unusedSpec.splice(j, 1);
+          break;
+        }
+      }
+    }
+  });
+}
+
+export default {
+  generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString,
+  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec
+};

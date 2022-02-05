@@ -16,12 +16,17 @@
 
 <script>
 import { RCollapse, RCollapsePanel } from "r-collapse-vue";
+
 // import Varunit from "../Varunit/Index.vue";
 export default {
   name: "Mycollapsepanel",
   props: {
     header: String,
 		spec: {
+			type: Object,
+			default: undefined
+		},
+		applySpec: {
 			type: Object,
 			default: undefined
 		}
@@ -64,7 +69,7 @@ export default {
 			}
 			this.firstClick = true;
 			// e.stopPropagation();
-		}
+		},
   },
   components: {
 		// RCollapse,
