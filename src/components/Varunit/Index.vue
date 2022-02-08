@@ -37,6 +37,7 @@
 import Utils from "@/utils.js";
 import { mapState, mapActions } from "vuex";
 import alterpanel from "../alterpanel/Index.vue";
+import { transform } from "rigel-tools";
 export default {
   name: "Varunit",
   props: {
@@ -56,7 +57,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["attrInfo"]),
+    ...mapState(["attrInfo", "rawRelations"]),
     finalContent() {
       if (this.content) return this.content;
       return this.newContent;
@@ -68,6 +69,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["storeSuggestedTable", "storeNewSpec"]),
     calcExplore(spec) {
       // calculation
       try {
@@ -99,6 +101,33 @@ export default {
       //       ]
       //   }
       // ]);
+    },
+    handleApply(spec) {
+      if (!spec) return;
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        // console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = spec["row_header"];
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        // console.log(res);
+        this.storeSuggestedTable(res);
+        this.storeNewSpec(spec);
+      } catch (err) {
+        this.$message.error("Illegal specification!");
+      }
     },
   },
   components: {
