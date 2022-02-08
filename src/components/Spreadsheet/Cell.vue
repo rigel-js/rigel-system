@@ -13,11 +13,7 @@
     :style="{ 'background-color': cellColor }"
   >
     {{
-      this.cellValue
-        ? this.cellValue.value
-          ? String(this.cellValue.value)
-          : String(this.cellValue)
-        : ""
+      this.realValue
     }}
   </div>
 </template>
@@ -44,10 +40,28 @@ export default {
   data() {
     return {
       cellValue: "",
+      realValue: "",
     };
   },
   created() {
     this.cellValue = this.value;
+    let tmp = this.cellValue;
+    console.log(tmp);
+    if (tmp) {
+      if (tmp.value) {
+        if (!tmp.value.lower) {
+          this.realValue = String(tmp.value);
+        } else if (tmp.value.isRightOpen == true) {
+          this.realValue = `[${tmp.value.lower}, ${tmp.value.upper})`;
+        } else {
+          this.realValue = `[${tmp.value.lower}, ${tmp.value.upper}]`;
+        }
+      } else {
+        this.realValue = String(tmp);
+      }
+    } else {
+      this.realValue = "";
+    }
   },
   methods: {
     ...mapActions(["setDragSource"]),
@@ -61,7 +75,10 @@ export default {
     },
 
     allowDrop(event) {
-      if(sessionStorage.getItem("type") != 'cell' && sessionStorage.getItem("type") != 'attr') {
+      if (
+        sessionStorage.getItem("type") != "cell" &&
+        sessionStorage.getItem("type") != "attr"
+      ) {
         return;
       }
       if (this.editable) {
@@ -77,7 +94,10 @@ export default {
     },
 
     dropHandler(event) {
-      if(sessionStorage.getItem("type") != 'cell' && sessionStorage.getItem("type") != 'attr') {
+      if (
+        sessionStorage.getItem("type") != "cell" &&
+        sessionStorage.getItem("type") != "attr"
+      ) {
         return;
       }
       if (this.editable) {
@@ -85,7 +105,7 @@ export default {
         if (event.dataTransfer.getData("type") === "cell") {
           let info = {
             value: event.dataTransfer.getData("info"),
-            isDrag: true
+            isDrag: true,
           };
           this.$emit("cell-change", info);
           this.$emit("drag-leave");
@@ -108,7 +128,7 @@ export default {
       console.log("input");
       let info = {
         value: event.target.innerText,
-        isDrag: false
+        isDrag: false,
       };
       this.$emit("cell-change", info);
     },

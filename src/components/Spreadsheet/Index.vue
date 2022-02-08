@@ -254,7 +254,7 @@ export default {
       let attrInfo = this.attrInfo;
       for (let relationAttrInfo in attrInfo) {
         for (let attr in relationAttrInfo) {
-          if (value in attr.valueList) {
+          if (this.isinValueList(value, attr.valueList)) {
             res.push({
               operator: "attr",
               data: attr.data,
@@ -264,6 +264,24 @@ export default {
         }
       }
       return res;
+    },
+
+    isinValueList(value, list) {
+      if (value.isRightOpen) {
+        for (let i = 0; i < list.length; i++) {
+          if (
+            list[i].isRightOpen == value.isRightOpen &&
+            list[i].lower == value.lower &&
+            list[i].upper == value.upper
+          )
+            return true;
+        }
+      } else {
+        for (let i = 0; i < list.length; i++) {
+          if (list[i] == value) return true;
+        }
+      }
+      return false;
     },
 
     matchValueToColumn() {
