@@ -24,11 +24,14 @@
 - [ ] 同样的滚动问题，suggestion 好像还不能滚动
 - ~~[ ] spec template 的 apply 按钮，需要去掉，每次 input 框变化的时候自动 apply~~
 - [ ] 优先级2中的第四条提上来，suggestion 的 UI 向设计稿看齐，hierarchy 进行组织（建议不要用 antd 的这个组件了）
-- [ ] spec template 中的 hint 做一下（输入框右边空间不够可以放到输入框下边）
+- [ ] suggestion 的 explore 算法好像对 derived attributes 还有点 bug
+- [ ] suggestion 的 explore 算法，variations 部分好像还不能下拉展开
+- [ ] suggestion 的 disambiguate 算法实现一下
 
 ---
 
 未来迭代的（优先级2）
+- [ ] spec template 中的 hint 做一下（输入框右边空间不够可以放到输入框下边）（优先级先下调）
 - [ ] template 右键 operate 属性
 - [ ] template 里，属性删除
 - [ ] 顶格子的问题
