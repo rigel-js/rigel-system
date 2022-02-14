@@ -63,6 +63,14 @@ export default {
       return this.newContent;
     },
   },
+  watch: {
+    spec(val, oldval) {
+      if(val != oldval) {
+        this.newContent = this.calcExplore(val);
+        this.$forceUpdate();
+      }
+    }
+  },
   mounted() {
     if (!this.content && this.spec) {
       this.newContent = this.calcExplore(this.spec);
