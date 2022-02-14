@@ -50,6 +50,29 @@ export default {
       }
     }
   },
+  watch: {
+    spec(val, oldval) {
+      if(val != oldval) {
+        if (this.spec) {
+          let spec = this.spec;
+          let row_header = Utils.specObj2List(spec.row_header);
+          let column_header = Utils.specObj2List(spec.column_header);
+          let body = Utils.specObj2List(spec.body);
+          try {
+            let alterSuggestion = Utils.genAlterSpec(
+              row_header,
+              column_header,
+              body
+            );
+            this.alterSuggestion = alterSuggestion;
+          } catch (err) {
+            console.log(err.message);
+            this.$message.error(err.message);
+          }
+        }
+      }
+    }
+  },
   methods: {
     ...mapActions(["storeSuggestedTable", "storeNewSpec"]),
     handleApply(spec) {
