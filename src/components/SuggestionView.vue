@@ -2,31 +2,54 @@
   <div class="view suggestion-view">
     <div class="view-title">Suggestions</div>
     <div class="suggestion-container">
-      <div
-        v-if="this.alterSpecList.length == 0 && this.suggestions.length == 0"
-        class="suggestion-empty"
-      >
-        <a-empty style="padding-top: 10px" />
-      </div>
-      <div class="suggestion-unit" v-if="this.alterSpecList.length > 0">
+      <div v-if="this.partialSpecSuggestion" class="suggestion-unit">
         <div class="suggestionTitle">
-          Alternatives (Rearrangle current attributes)
+          Disambiguate user interactions. 
         </div>
-        <div class="alter-unit">
-          <div
-            v-for="(suggestion, i) in this.alterSpecList"
-            :key="`top${i}`"
-            class="alter-panel"
-            @click="applySpec(suggestion)"
+        <Mycollapse>
+          <Mycollapsepanel 
+            v-for="(item, index) in this.partialSpecSuggestion"
+            :key="index"
+            :header="`${item.itemDescription} belongs to ${item.source}`"
           >
-            {{ suggestion.description }}
+            <div
+              v-for="(partialSpec, index2) in item.partialSpecList"
+              :key="index2"
+              class="partialspecpanel"
+              @click="applyPartialSpec(partialSpec)"
+            >
+              {{ partialSpec.description }}
+            </div>
+          </Mycollapsepanel>
+        </Mycollapse>
+      </div>
+      <div v-else>
+        <div
+          v-if="this.alterSpecList.length == 0 && this.suggestions.length == 0"
+          class="suggestion-empty"
+        >
+          <a-empty style="padding-top: 10px" />
+        </div>
+        <div class="suggestion-unit" v-if="this.alterSpecList.length > 0">
+          <div class="suggestionTitle">
+            Alternatives (Rearrangle current attributes)
+          </div>
+          <div class="alter-unit">
+            <div
+              v-for="(suggestion, i) in this.alterSpecList"
+              :key="`top${i}`"
+              class="alter-panel"
+              @click="applySpec(suggestion)"
+            >
+              {{ suggestion.description }}
+            </div>
           </div>
         </div>
-      </div>
-      <div class="suggestion-unit" v-if="this.suggestions.length > 0">
-        <div class="suggestionTitle">Variations (Add more attributes)</div>
-        <div class="variation-unit">
-          <Varunit :content="this.suggestions" />
+        <div class="suggestion-unit" v-if="this.suggestions.length > 0">
+          <div class="suggestionTitle">Variations (Add more attributes)</div>
+          <div class="variation-unit">
+            <Varunit :content="this.suggestions" />
+          </div>
         </div>
       </div>
     </div>
@@ -37,6 +60,7 @@
 import { mapActions, mapState } from "vuex";
 import { transform } from "rigel-tools";
 import Varunit from "./Varunit/Index.vue";
+import Utils from "@/utils.js";
 
 export default {
   name: "SuggestionView",
@@ -63,9 +87,13 @@ export default {
     "suggestions",
     "rawRelations",
     "alterSpecList",
+    "partialSpecSuggestion",
+    "row_header",
+    "column_header",
+    "body",
   ]),
   methods: {
-    ...mapActions(["storeSuggestedTable", "storeNewSpec"]),
+    ...mapActions(["storeSuggestedTable", "storeNewSpec", "storePartialSpecSuggestion"]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
       console.log(suggestion);
@@ -98,6 +126,23 @@ export default {
         this.$message.error("Illegal specification!");
       }
     },
+    applyPartialSpec(partialSpec) {
+      console.log(partialSpec);
+      let row_header = this.row_header, column_header = this.column_header, body = this.body;
+      if(partialSpec.row_header) {
+        row_header.push(partialSpec.row_header);
+      }
+      if(partialSpec.column_header){
+        column_header.push(partialSpec.column_header);
+      }
+      if(partialSpec.body) {
+        body.push(partialSpec.body);
+      }
+      let spec = Utils.genSpec(row_header, column_header, body);
+      console.log(spec);
+      this.applySpec(spec);
+      this.storePartialSpecSuggestion(null);
+    }
   },
   components: {
     Varunit,
@@ -176,4 +221,23 @@ export default {
   margin: 5px 9px 5px 9px;
   width: calc(100% - 18px);
 }
+
+.suggestion-disambiguate {
+  height: 90%;
+  overflow: scroll;
+}
+
+.suggestion-disambiguate::-webkit-scrollbar {
+  display: none;
+}
+
+.partialspecpanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #eaebee;
+  padding: 5px 0px 5px 7px;
+  margin-bottom: 3px;
+}
+
 </style>

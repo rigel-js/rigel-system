@@ -114,39 +114,41 @@ import Utils from "@/utils.js";
 
 export default {
   name: "SpreadsheetView",
-  data() {
-    return {
-      row_header: [],
-      // row_header: [
-      //   {
-      //     attribute: "state",
-      //     color: "rgb(243,26,244,0.4)",
-      //     data: "crime",
-      //     strName: {
-      //       attribute: "state",
-      //       data: "crime",
-      //       operator: "attr",
-      //     },
-      //     valueList: ["Alabama", "Alaska"],
-      //   },
-      // ],
-      column_header: [],
-      body: [],
-    };
-  },
+  // data() {
+  //   return {
+  //     row_header: [],
+  //     // row_header: [
+  //     //   {
+  //     //     attribute: "state",
+  //     //     color: "rgb(243,26,244,0.4)",
+  //     //     data: "crime",
+  //     //     strName: {
+  //     //       attribute: "state",
+  //     //       data: "crime",
+  //     //       operator: "attr",
+  //     //     },
+  //     //     valueList: ["Alabama", "Alaska"],
+  //     //   },
+  //     // ],
+  //     column_header: [],
+  //     body: [],
+  //   };
+  // },
   computed: {
-    ...mapState(["suggestedTable", "rawRelations", "attrInfo", "newSpec"]),
-    isSpecUpdated() {
-      return this.newSpec;
-    },
+    ...mapState(["suggestedTable", "rawRelations", "attrInfo", "newSpec", "row_header", "column_header", "body"]),
   },
   watch: {
-    isSpecUpdated(val, oldval) {
+    newSpec(val, oldval) {
       console.log(this.newSpec);
       if (val) {
-        this.row_header = Utils.specObj2List(val["row_header"]);
-        this.column_header = Utils.specObj2List(val["column_header"]);
-        this.body = Utils.specObj2List(val["body"]);
+        // this.row_header = Utils.specObj2List(val["row_header"]);
+        // this.column_header = Utils.specObj2List(val["column_header"]);
+        // this.body = Utils.specObj2List(val["body"]);
+        this.setSpec({
+          "row_header": Utils.specObj2List(val["row_header"]),
+          "column_header": Utils.specObj2List(val["column_header"]),
+          "body": Utils.specObj2List(val["body"])
+        });
         this.storeNewSpec(null);
         try{
           let alterSpec = Utils.genAlterSpec(this.row_header, this.column_header, this.body);
@@ -175,6 +177,7 @@ export default {
       "storeAlterSpecList",
       "storeSuggestion",
       "storeNewSpec",
+      "setSpec",
     ]),
     onInput(event) {
       console.log(event);
@@ -345,9 +348,14 @@ export default {
       }
     },
     resetHandler() {
-      this.row_header = [];
-      this.column_header = [];
-      this.body = [];
+      // this.row_header = [];
+      // this.column_header = [];
+      // this.body = [];
+      this.setSpec({
+        "row_header": [],
+        "column_header": [],
+        "body": []
+      });
       this.$forceUpdate();
     },
     applyHandler() {

@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import Utils from "@/utils.js";
 import { EXTRACT_URL } from "@/CONSTANT";
+import { W } from "r-collapse-vue";
 
 Vue.use(Vuex);
 
@@ -17,6 +18,10 @@ const state = {
   associationRule: "union",
   alterSpecList: [],
   newSpec: null,
+  partialSpecSuggestion: null,
+  row_header: [],
+  column_header: [],
+  body: []
 };
 
 const mutations = {
@@ -72,6 +77,22 @@ const mutations = {
   
   changeNewSpec(state, newSpec) {
     state.newSpec = newSpec;
+  },
+
+  changePartialSpecSuggestion(state, newSuggestion) {
+    state.partialSpecSuggestion = newSuggestion;
+  },
+
+  changeRowHeader(state, row_header) {
+    state.row_header = row_header;
+  },
+
+  changeColumnHeader(state, column_header) {
+    state.column_header = column_header;
+  },
+
+  changeBody(state, body) {
+    state.body = body;
   }
 };
 
@@ -117,6 +138,23 @@ const actions = {
   },
   storeNewSpec({ commit }, newSpec) {
     commit("changeNewSpec", newSpec);
+  },
+  storePartialSpecSuggestion({ commit }, newSuggestion) {
+    commit("changePartialSpecSuggestion", newSuggestion);
+  },
+  // setRowHeader({ commit }, row_header) {
+  //   commit("changeRowHeader", row_header);
+  // },
+  // setColumnHeader({ commit }, column_header) {
+  //   commit("changeColumnHeader", column_header);
+  // },
+  // setBody({ commit }, body) {
+  //   commit("changeBody", body);
+  // }
+  setSpec({ commit }, spec) {
+    commit("changeRowHeader", spec.row_header);
+    commit("changeColumnHeader", spec.column_header);
+    commit("changeBody", spec.body);
   }
 };
 

@@ -90,10 +90,10 @@ export default {
     this.prettifyTable();
   },
   computed: {
-    ...mapState(["dragSourceIsCell", "attrInfo"]),
+    ...mapState(["dragSourceIsCell", "attrInfo", "row_header", "column_header"]),
   },
   methods: {
-    ...mapActions(["storeSuggestion"]),
+    ...mapActions(["storeSuggestion", "storePartialSpecSuggestion"]),
     initTable() {
       if (this.table) {
         if (this.name !== "targetTable") {
@@ -154,7 +154,15 @@ export default {
       }
       this.$set(this.Table, row, newRow);
       console.log(row, column, value, this.Table);
-      this.calSuggestion();
+      // this.calSuggestion();
+      let partialSpecSuggestion = this.disambiguateCell(
+        newRow[column].value,
+        newRow[column].source
+      );
+      if (partialSpecSuggestion) {
+        this.storePartialSpecSuggestion(partialSpecSuggestion);
+        console.log(partialSpecSuggestion);
+      }
     },
     leftDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
@@ -186,7 +194,7 @@ export default {
         }
         this.$forceUpdate();
       }
-      this.calSuggestion();
+      // this.calSuggestion();
     },
     topDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
@@ -212,7 +220,7 @@ export default {
         }
         this.$forceUpdate();
       }
-      this.calSuggestion();
+      // this.calSuggestion();
     },
     leftHoverHandler(row, column, value) {
       this.topHovered = false;
@@ -252,15 +260,14 @@ export default {
     searchValue(value) {
       let res = [];
       let attrInfo = this.attrInfo;
-      for (let relationAttrInfo in attrInfo) {
-        for (let attr in relationAttrInfo) {
-          if (this.isinValueList(value, attr.valueList)) {
-            res.push({
-              operator: "attr",
-              data: attr.data,
-              attribute: attr.attribute,
-            });
-          }
+      for (let i = 0; i < attrInfo.length; i++) {
+        let attr = attrInfo[i];
+        if (this.isinValueList(value, attr.valueList)) {
+          res.push({
+            operator: "attr",
+            data: attr.data,
+            attribute: attr.attribute,
+          });
         }
       }
       return res;
@@ -455,7 +462,7 @@ export default {
       specOptions.forEach((option) => {
         option["description"] = Utils.stringfySpec(option);
       });
-      this.storeSuggestion(specOptions);
+      // this.storeSuggestion(specOptions);
     },
 
     // 为当前表格计算推荐视图，在每次更新target table后调用
@@ -464,6 +471,70 @@ export default {
       if (this.name !== "targetTable") return;
       this.matchValueToColumn();
       this.mapColumnToSpec();
+    },
+
+    // 对于用户进行的手动输入格子操作，进行排除歧义的操作
+    disambiguateCell(value, dragSource) {
+      let isHeaderExist = this.row_header.length > 0 || this.column_header.length > 0;
+      console.log(value, dragSource);
+      if (dragSource) {
+        let sourceDescription = Utils.calString(dragSource);
+        let partialSpecList = [
+          {
+            row_header: dragSource,
+            description: `(${sourceDescription}), () => ()`,
+          },
+          {
+            column_header: dragSource,
+            description: `(), (${sourceDescription}) => ()`,
+          },
+        ];
+        if(isHeaderExist) {
+          partialSpecList.push({
+            body: dragSource,
+            description: `(), () => (${sourceDescription})`
+          });
+        }
+        return [
+          {
+            itemDescription: '"' + value + '"',
+            source: sourceDescription,
+            partialSpecList
+          },
+        ];
+      }
+      let source = this.searchValue(value);
+      let res = [];
+      if (source.length == 0) {
+        this.$message.error("Failed to find the source of the input");
+        return;
+      }
+      for (let i = 0; i < source.length; i++) {
+        let key = source[i];
+        let tmp = {};
+        let sourceDescription = Utils.calString(key);
+        tmp["itemDescription"] = '"' + value + '"';
+        tmp["source"] = sourceDescription;
+        let partialSpecList = [
+          {
+            row_header: key,
+            description: `(${sourceDescription}), () => ()`,
+          },
+          {
+            column_header: key,
+            description: `(), (${sourceDescription}) => ()`,
+          },
+        ];
+        if(isHeaderExist) {
+          partialSpecList.push({
+            body: key,
+            description: `(), () => (${sourceDescription})`
+          });
+        }
+        tmp["partialSpecList"] = partialSpecList;
+        res.push(tmp);
+      }
+      return res;
     },
   },
   components: {

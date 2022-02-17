@@ -46,7 +46,6 @@ export default {
   created() {
     this.cellValue = this.value;
     let tmp = this.cellValue;
-    console.log(tmp);
     if (tmp) {
       if (tmp.value) {
         if (!tmp.value.lower) {
