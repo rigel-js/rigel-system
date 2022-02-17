@@ -195,6 +195,11 @@ export default {
         this.$forceUpdate();
       }
       // this.calSuggestion();
+      let partialSpecSuggestion = this.disambiguateRow(value.valueList, value.strName, true);
+      if (partialSpecSuggestion) {
+        this.storePartialSpecSuggestion(partialSpecSuggestion);
+        console.log(partialSpecSuggestion);
+      }
     },
     topDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
@@ -221,6 +226,11 @@ export default {
         this.$forceUpdate();
       }
       // this.calSuggestion();
+      let partialSpecSuggestion = this.disambiguateRow(value.valueList, value.strName, false);
+      if (partialSpecSuggestion) {
+        this.storePartialSpecSuggestion(partialSpecSuggestion);
+        console.log(partialSpecSuggestion);
+      }
     },
     leftHoverHandler(row, column, value) {
       this.topHovered = false;
@@ -476,7 +486,7 @@ export default {
     // 对于用户进行的手动输入格子操作，进行排除歧义的操作
     disambiguateCell(value, dragSource) {
       let isHeaderExist = this.row_header.length > 0 || this.column_header.length > 0;
-      console.log(value, dragSource);
+      // console.log(value, dragSource);
       if (dragSource) {
         let sourceDescription = Utils.calString(dragSource);
         let partialSpecList = [
@@ -536,6 +546,36 @@ export default {
       }
       return res;
     },
+    disambiguateRow(value, dragSource, isRow) {
+      // console.log(value, dragSource);
+      if(!value || value.length == 0) return;
+      let isHeaderExist = this.row_header.length > 0 || this.column_header.length > 0;
+      let itemDescription = `The ${isRow?"row":"column"} beginning with "${value[0]}"`;
+      let sourceDescription = Utils.calString(dragSource);
+      let partialSpecList = [];
+      if(isRow) {
+        partialSpecList.push({
+          column_header: dragSource, 
+          description: `(), (${sourceDescription}) => ()`,
+        });
+      } else {
+        partialSpecList.push({
+          row_header: dragSource,
+          description: `(${sourceDescription}), () => ()`,
+        })
+      }
+      if(isHeaderExist) {
+        partialSpecList.push({
+          body: dragSource,
+          description: `(), () => (${sourceDescription})`
+        });
+      }
+      return [{
+        itemDescription,
+        source: sourceDescription,
+        partialSpecList
+      }]
+    } 
   },
   components: {
     Cell,
