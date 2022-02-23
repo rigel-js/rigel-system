@@ -1,7 +1,7 @@
 <template>
   <div
     class="cell"
-    :title="this.cellValue"
+    :title="this.realValue"
     :contenteditable="editable"
     :draggable="draggable"
     :data-info="JSON.stringify(this.cellValue)"
@@ -23,7 +23,7 @@ import { mapActions } from "vuex";
 export default {
   name: "SpreadsheetCell",
   props: {
-    value: Object,
+    value: [String, Object],
     editable: {
       type: Boolean,
       default: false,

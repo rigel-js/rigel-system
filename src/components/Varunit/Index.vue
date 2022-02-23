@@ -77,7 +77,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeSuggestedTable", "storeNewSpec"]),
+    ...mapActions(["storeCurrentTable", "storeNewSpec"]),
     calcExplore(spec) {
       // calculation
       try {
@@ -131,7 +131,7 @@ export default {
           }
         }
         // console.log(res);
-        this.storeSuggestedTable(res);
+        this.storeCurrentTable(res);
         this.storeNewSpec(spec);
       } catch (err) {
         this.$message.error("Illegal specification!");

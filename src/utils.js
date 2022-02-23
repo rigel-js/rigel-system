@@ -162,7 +162,7 @@ const calString = (spec) => {
 }
 
 const stringfySpec = (spec) => {
-  console.log(spec);
+  // console.log(spec);
   let row = calString(spec["row_header"]);
   let column = calString(spec["column_header"]);
   let body = calString(spec["body"]);
@@ -230,7 +230,7 @@ const genAlterSpec = (row_header, column_header, body) => {
 }
 
 const genSpec = (row_header, column_header, body) => {
-  console.log(row_header, column_header);
+  // console.log(row_header, column_header);
   let spec = {};
   if (row_header.length == 1) {
     spec["row_header"] = refineStrName(row_header[0]);

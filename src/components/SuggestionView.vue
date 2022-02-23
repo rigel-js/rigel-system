@@ -93,7 +93,7 @@ export default {
     "body",
   ]),
   methods: {
-    ...mapActions(["storeSuggestedTable", "storeNewSpec", "storePartialSpecSuggestion"]),
+    ...mapActions(["storeCurrentTable", "storeNewSpec", "storePartialSpecSuggestion"]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
       console.log(suggestion);
@@ -120,7 +120,7 @@ export default {
           }
         }
         // console.log(res);
-        this.storeSuggestedTable(res);
+        this.storeCurrentTable(res);
         this.storeNewSpec(spec);
       } catch (err) {
         this.$message.error("Illegal specification!");

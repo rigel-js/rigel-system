@@ -7,8 +7,8 @@
         :initRowNum="14"
         :initColNum="8"
         :editable="true"
-        :table="this.suggestedTable"
-        :key="JSON.stringify(this.suggestedTable)"
+        :table="this.currentTable"
+        :key="JSON.stringify(this.currentTable)"
       ></spreadsheet>
     </div>
     <div class="specmenu">
@@ -135,7 +135,7 @@ export default {
   //   };
   // },
   computed: {
-    ...mapState(["suggestedTable", "rawRelations", "attrInfo", "newSpec", "row_header", "column_header", "body"]),
+    ...mapState(["currentTable", "rawRelations", "attrInfo", "newSpec", "row_header", "column_header", "body"]),
   },
   watch: {
     newSpec(val, oldval) {
@@ -173,7 +173,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      "storeSuggestedTable",
+      "storeCurrentTable",
       "storeAlterSpecList",
       "storeSuggestion",
       "storeNewSpec",
@@ -319,7 +319,7 @@ export default {
           }
         }
         console.log(res);
-        this.storeSuggestedTable(res);
+        this.storeCurrentTable(res);
       } catch (err) {
         this.$message.error("Illegal specification!");
       }

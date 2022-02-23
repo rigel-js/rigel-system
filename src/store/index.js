@@ -13,7 +13,7 @@ const state = {
   relations: [],
   attrInfo: [],
   suggestions: [],
-  suggestedTable: undefined,
+  currentTable: undefined,
   dragSourceIsCell: false,
   associationRule: "union",
   alterSpecList: [],
@@ -63,8 +63,8 @@ const mutations = {
     state.suggestions = suggestions;
   },
 
-  changeSuggestedTable(state, suggestedTable) {
-    state.suggestedTable = suggestedTable;
+  changeCurrentTable(state, currentTable) {
+    state.currentTable = currentTable;
   },
 
   changeAssociationRule(state, newRule) {
@@ -127,8 +127,8 @@ const actions = {
   storeSuggestion({ commit }, suggestions) {
     commit("changeSuggestion", suggestions);
   },
-  storeSuggestedTable({ commit }, suggestedTable) {
-    commit("changeSuggestedTable", suggestedTable);
+  storeCurrentTable({ commit }, currentTable) {
+    commit("changeCurrentTable", currentTable);
   },
   storeAssociationRule({ commit }, newRule) {
     commit("changeAssociationRule", newRule);
