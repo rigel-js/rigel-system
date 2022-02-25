@@ -127,7 +127,7 @@ export default {
           }
         }
         // console.log(res);
-        let table = this.mapTable(res);
+        let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
       } catch (err) {
@@ -284,7 +284,7 @@ export default {
           }
         }
         // console.log(res);
-        let table = this.mapTable(res);
+        let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
@@ -293,51 +293,6 @@ export default {
       }
 
       this.storePartialSpecSuggestion(null);
-    },
-    mapTable(table) {
-      // console.log(this.rowInfo, this.colInfo);
-      // console.log(this.currentActiveGrid.row, this.currentActiveGrid.column);
-      let rowSize = table.length;
-      let columnSize = 0;
-      for (let i = 0; i < rowSize; i++) {
-        if (columnSize < table[i].length) {
-          columnSize = table[i].length;
-        }
-      }
-      let newRowSize = this.rowInfo.row - this.colInfo.len + rowSize;
-      let newColumnSize = this.colInfo.column - this.rowInfo.len + columnSize;
-      let newTable = [];
-      for (let i = 0; i < newRowSize; i++) {
-        let tmp = [];
-        for (let j = 0; j < newColumnSize; j++) {
-          tmp.push(null);
-        }
-        newTable.push(tmp);
-      }
-      // console.log(rowSize, columnSize, newRowSize, newColumnSize);
-      let oldx = this.colInfo.len ? this.colInfo.len : 1, oldy = this.rowInfo.len ? this.rowInfo.len : 1;
-      let dx = this.rowInfo.row - oldx,
-        dy = this.rowInfo.column;
-      for (let i = oldx; i < rowSize; i++) {
-        for (let j = 0; j < oldy; j++) {
-          newTable[i + dx][j + dy] = table[i][j];
-        }
-      }
-      dx = this.colInfo.row;
-      dy = this.colInfo.column - oldy;
-      for (let i = 0; i < oldx; i++) {
-        for (let j = oldy; j < columnSize; j++) {
-          newTable[i + dx][j + dy] = table[i][j];
-        }
-      }
-      dx = this.rowInfo.row - oldx;
-      dy = this.colInfo.column - oldy;
-      for (let i = oldx; i < rowSize; i++) {
-        for (let j = oldy; j < columnSize; j++) {
-          newTable[i + dx][j + dy] = table[i][j];
-        }
-      }
-      return newTable;
     },
   },
   components: {

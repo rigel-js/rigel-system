@@ -350,7 +350,53 @@ const deleteUsedSpec = (unusedSpec, header) => {
   });
 }
 
+const mapTable = (table, rowInfo, colInfo) => {
+  // console.log(rowInfo, colInfo);
+  // console.log(this.currentActiveGrid.row, this.currentActiveGrid.column);
+  let rowSize = table.length;
+  let columnSize = 0;
+  for (let i = 0; i < rowSize; i++) {
+    if (columnSize < table[i].length) {
+      columnSize = table[i].length;
+    }
+  }
+  let newRowSize = rowInfo.row - colInfo.len + rowSize;
+  let newColumnSize = colInfo.column - rowInfo.len + columnSize;
+  let newTable = [];
+  for (let i = 0; i < newRowSize; i++) {
+    let tmp = [];
+    for (let j = 0; j < newColumnSize; j++) {
+      tmp.push(null);
+    }
+    newTable.push(tmp);
+  }
+  // console.log(rowSize, columnSize, newRowSize, newColumnSize);
+  let oldx = colInfo.len ? colInfo.len : 1, oldy = rowInfo.len ? rowInfo.len : 1;
+  let dx = rowInfo.row - oldx,
+    dy = rowInfo.column;
+  for (let i = oldx; i < rowSize; i++) {
+    for (let j = 0; j < oldy; j++) {
+      newTable[i + dx][j + dy] = table[i][j];
+    }
+  }
+  dx = colInfo.row;
+  dy = colInfo.column - oldy;
+  for (let i = 0; i < oldx; i++) {
+    for (let j = oldy; j < columnSize; j++) {
+      newTable[i + dx][j + dy] = table[i][j];
+    }
+  }
+  dx = rowInfo.row - oldx;
+  dy = colInfo.column - oldy;
+  for (let i = oldx; i < rowSize; i++) {
+    for (let j = oldy; j < columnSize; j++) {
+      newTable[i + dx][j + dy] = table[i][j];
+    }
+  }
+  return newTable;
+}
+
 export default {
   generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString,
-  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec
+  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable
 };
