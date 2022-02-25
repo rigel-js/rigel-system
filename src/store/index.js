@@ -21,7 +21,10 @@ const state = {
   partialSpecSuggestion: null,
   row_header: [],
   column_header: [],
-  body: []
+  body: [],
+  currentActiveGrid: {},
+  rowInfo: {},
+  colInfo: {}
 };
 
 const mutations = {
@@ -74,7 +77,7 @@ const mutations = {
   changeAlterSpecList(state, newList) {
     state.alterSpecList = newList;
   },
-  
+
   changeNewSpec(state, newSpec) {
     state.newSpec = newSpec;
   },
@@ -93,6 +96,18 @@ const mutations = {
 
   changeBody(state, body) {
     state.body = body;
+  },
+
+  changeCurrentActiveGrid(state, currentActiveGrid) {
+    state.currentActiveGrid = currentActiveGrid;
+  },
+
+  changeRowInfo(state, rowInfo) {
+    state.rowInfo = rowInfo;
+  },
+
+  changeColInfo(state, colInfo) {
+    state.colInfo = colInfo;
   }
 };
 
@@ -155,6 +170,15 @@ const actions = {
     commit("changeRowHeader", spec.row_header);
     commit("changeColumnHeader", spec.column_header);
     commit("changeBody", spec.body);
+  },
+  storeCurrentActiveGrid({ commit }, currentActiveGrid) {
+    commit("changeCurrentActiveGrid", currentActiveGrid);
+  },
+  storeRowInfo({ commit }, rowInfo) {
+    commit("changeRowInfo", rowInfo);
+  },
+  storeColInfo({ commit }, colInfo) {
+    commit("changeColInfo", colInfo);
   }
 };
 

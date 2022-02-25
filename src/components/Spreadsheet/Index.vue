@@ -92,10 +92,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(["dragSourceIsCell", "attrInfo", "row_header", "column_header"]),
+    ...mapState(["dragSourceIsCell", "attrInfo", "row_header", "column_header", "currentActiveGrid"]),
   },
   methods: {
-    ...mapActions(["storeSuggestion", "storePartialSpecSuggestion", "storeCurrentTable"]),
+    ...mapActions(["storeSuggestion", "storePartialSpecSuggestion", "storeCurrentTable", "storeCurrentActiveGrid"]),
     initTable() {
       if (this.table) {
         if (this.name !== "targetTable") {
@@ -154,6 +154,11 @@ export default {
       this.$set(this.Table, row, newRow);
       console.log(row, column, value, this.Table);
       // this.calSuggestion();
+
+      this.storeCurrentActiveGrid({
+        row,
+        column
+      });
       let partialSpecSuggestion = this.disambiguateCell(
         newRow[column].value,
         newRow[column].source
@@ -194,6 +199,10 @@ export default {
         this.$forceUpdate();
       }
       // this.calSuggestion();
+      this.currentActiveGrid = {
+        row,
+        column
+      };
       let partialSpecSuggestion = this.disambiguateRow(value.valueList, value.strName, true);
       if (partialSpecSuggestion) {
         this.storePartialSpecSuggestion(partialSpecSuggestion);
@@ -225,6 +234,10 @@ export default {
         this.$forceUpdate();
       }
       // this.calSuggestion();
+      this.currentActiveGrid = {
+        row,
+        column
+      };
       let partialSpecSuggestion = this.disambiguateRow(value.valueList, value.strName, false);
       if (partialSpecSuggestion) {
         this.storePartialSpecSuggestion(partialSpecSuggestion);

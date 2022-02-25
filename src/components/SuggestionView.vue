@@ -3,11 +3,9 @@
     <div class="view-title">Suggestions</div>
     <div class="suggestion-container">
       <div v-if="this.partialSpecSuggestion" class="suggestion-unit">
-        <div class="suggestionTitle">
-          Disambiguate user interactions. 
-        </div>
+        <div class="suggestionTitle">Disambiguate user interactions.</div>
         <Mycollapse>
-          <Mycollapsepanel 
+          <Mycollapsepanel
             v-for="(item, index) in this.partialSpecSuggestion"
             :key="index"
             :header="`${item.itemDescription} belongs to ${item.source}`"
@@ -91,9 +89,18 @@ export default {
     "row_header",
     "column_header",
     "body",
+    "currentActiveGrid",
+    "rowInfo",
+    "colInfo",
   ]),
   methods: {
-    ...mapActions(["storeCurrentTable", "storeNewSpec", "storePartialSpecSuggestion"]),
+    ...mapActions([
+      "storeCurrentTable",
+      "storeNewSpec",
+      "storePartialSpecSuggestion",
+      "storeRowInfo",
+      "storeColInfo",
+    ]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
       console.log(suggestion);
@@ -120,29 +127,218 @@ export default {
           }
         }
         // console.log(res);
-        this.storeCurrentTable(res);
+        let table = this.mapTable(res);
         this.storeNewSpec(spec);
+        this.storeCurrentTable(table);
       } catch (err) {
         this.$message.error("Illegal specification!");
       }
     },
     applyPartialSpec(partialSpec) {
-      console.log(partialSpec);
-      let row_header = this.row_header, column_header = this.column_header, body = this.body;
-      if(partialSpec.row_header) {
-        row_header.push(partialSpec.row_header);
+      // console.log(partialSpec);
+
+      if (partialSpec.row_header) {
+        if (!this.rowInfo.len) {
+          if (!this.colInfo.len) {
+            this.storeRowInfo({
+              row: this.currentActiveGrid.row ? this.currentActiveGrid.row : 1,
+              column: this.currentActiveGrid.column,
+              len: 1,
+            });
+            this.storeColInfo({
+              row: this.currentActiveGrid.row
+                ? this.currentActiveGrid.row - 1
+                : 0,
+              column: this.currentActiveGrid.column + 1,
+              len: 0,
+            });
+          } else {
+            // 下面两行是冲突的时候取舍的策略 先这么写 如果后面觉得不合适再改
+            let row =
+              this.currentActiveGrid.row < this.colInfo.row + this.colInfo.len
+                ? this.colInfo + this.colInfo.len
+                : this.currentActiveGrid.row;
+            let column =
+              this.currentActiveGrid.column < this.colInfo.column
+                ? this.currentActiveGrid.column
+                : this.colInfo.column - 1;
+            this.storeRowInfo({
+              row,
+              column,
+              len: 1,
+            });
+          }
+          this.row_header.push(partialSpec.row_header);
+        } else {
+          if (this.currentActiveGrid.column < this.rowInfo.column) {
+            this.storeRowInfo({
+              row: this.rowInfo.row,
+              column: this.rowInfo.column - 1,
+              len: this.rowInfo.len + 1,
+            });
+            this.row_header.splice(0, 0, partialSpec.row_header);
+          } else {
+            this.storeRowInfo({
+              row: this.rowInfo.row,
+              column: this.rowInfo.column,
+              len: this.rowInfo.len + 1,
+            });
+            this.row_header.push(partialSpec.row_header);
+            if (
+              this.colInfo.column &&
+              this.rowInfo.column + this.rowInfo.len > this.colInfo.column
+            ) {
+              this.storeColInfo({
+                row: this.colInfo.row,
+                column: this.colInfo.column,
+                len: this.colInfo.len + 1,
+              });
+            }
+          }
+        }
       }
-      if(partialSpec.column_header){
-        column_header.push(partialSpec.column_header);
+
+      if (partialSpec.column_header) {
+        if (!this.colInfo.len) {
+          if (!this.rowInfo.len) {
+            this.storeColInfo({
+              row: this.currentActiveGrid.row,
+              column: this.currentActiveGrid.column
+                ? this.currentActiveGrid.column
+                : 1,
+              len: 1,
+            });
+            this.storeRowInfo({
+              row: this.currentActiveGrid.row + 1,
+              column: this.currentActiveGrid.column
+                ? this.currentActiveGrid - 1
+                : 0,
+              len: 0,
+            });
+          } else {
+            // 下面两行是冲突的时候取舍的策略 先这么写 如果后面觉得不合适再改
+            let column =
+              this.currentActiveGrid.column <
+              this.rowInfo.column + this.rowInfo.len
+                ? this.rowInfo.column + this.rowInfo.len
+                : this.currentActiveGrid.column;
+            let row =
+              this.currentActiveGrid.row < this.rowInfo.row
+                ? this.currentActiveGrid.row
+                : this.rowInfo.row - 1;
+            this.storeColInfo({
+              row,
+              column,
+              len: 1,
+            });
+          }
+          this.column_header.push(partialSpec.column_header);
+        } else {
+          if (this.currentActiveGrid.row < this.colInfo.row) {
+            this.storeColInfo({
+              row: this.colInfo.row - 1,
+              column: this.colInfo.column,
+              len: this.colInfo.len + 1,
+            });
+            this.column_header.splice(0, 0, partialSpec.column_header);
+          } else {
+            this.storeColInfo({
+              row: this.colInfo.row,
+              column: this.colInfo.column,
+              len: this.colInfo.len + 1,
+            });
+            this.column_header.push(partialSpec.column_header);
+            if (this.colInfo.row + this.colInfo.len > this.rowInfo.row) {
+              this.storeRowInfo({
+                row: this.rowInfo.row,
+                column: this.rowInfo.column,
+                len: this.rowInfo.len + 1,
+              });
+            }
+          }
+        }
       }
-      if(partialSpec.body) {
-        body.push(partialSpec.body);
+
+      if (partialSpec.body) {
+        this.body.push(partialSpec.body);
       }
-      let spec = Utils.genSpec(row_header, column_header, body);
+
+      let spec = Utils.genSpec(this.row_header, this.column_header, this.body);
       console.log(spec);
-      this.applySpec(spec);
+
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = spec["row_header"];
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        // console.log(res);
+        let table = this.mapTable(res);
+        console.log(table);
+        this.storeNewSpec(spec);
+        this.storeCurrentTable(table);
+      } catch (err) {
+        this.$message.error("Illegal specification!");
+      }
+
       this.storePartialSpecSuggestion(null);
-    }
+    },
+    mapTable(table) {
+      // console.log(this.rowInfo, this.colInfo);
+      // console.log(this.currentActiveGrid.row, this.currentActiveGrid.column);
+      let rowSize = table.length;
+      let columnSize = 0;
+      for (let i = 0; i < rowSize; i++) {
+        if (columnSize < table[i].length) {
+          columnSize = table[i].length;
+        }
+      }
+      let newRowSize = this.rowInfo.row - this.colInfo.len + rowSize;
+      let newColumnSize = this.colInfo.column - this.rowInfo.len + columnSize;
+      let newTable = [];
+      for (let i = 0; i < newRowSize; i++) {
+        let tmp = [];
+        for (let j = 0; j < newColumnSize; j++) {
+          tmp.push(null);
+        }
+        newTable.push(tmp);
+      }
+      // console.log(rowSize, columnSize, newRowSize, newColumnSize);
+      let oldx = this.colInfo.len ? this.colInfo.len : 1, oldy = this.rowInfo.len ? this.rowInfo.len : 1;
+      let dx = this.rowInfo.row - oldx,
+        dy = this.rowInfo.column;
+      for (let i = oldx; i < rowSize; i++) {
+        for (let j = 0; j < oldy; j++) {
+          newTable[i + dx][j + dy] = table[i][j];
+        }
+      }
+      dx = this.colInfo.row;
+      dy = this.colInfo.column - oldy;
+      for (let i = 0; i < oldx; i++) {
+        for (let j = oldy; j < columnSize; j++) {
+          newTable[i + dx][j + dy] = table[i][j];
+        }
+      }
+      dx = this.rowInfo.row - oldx;
+      dy = this.colInfo.column - oldy;
+      for (let i = oldx; i < rowSize; i++) {
+        for (let j = oldy; j < columnSize; j++) {
+          newTable[i + dx][j + dy] = table[i][j];
+        }
+      }
+      return newTable;
+    },
   },
   components: {
     Varunit,
@@ -239,5 +435,4 @@ export default {
   padding: 5px 0px 5px 7px;
   margin-bottom: 3px;
 }
-
 </style>

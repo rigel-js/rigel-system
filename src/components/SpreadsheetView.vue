@@ -256,6 +256,30 @@ export default {
     dropHandler(event) {
       event.preventDefault();
       console.log("drop");
+      let spec = Utils.genSpec(this.row_header, this.column_header, this.body);
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = spec["row_header"];
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        console.log(res);
+        this.storeCurrentTable(res);
+      } catch (err) {
+        this.$message.error("Illegal specification!");
+      }
     },
     _index(el) {
       var index = 0;
@@ -299,30 +323,6 @@ export default {
       this.$forceUpdate();
     },
     applyHandler() {
-      let spec = Utils.genSpec(this.row_header, this.column_header, this.body);
-      let sch = {
-        data: this.rawRelations,
-        target_table: [spec],
-      };
-      console.log(sch);
-      try {
-        let res = transform(sch)[0];
-        console.log(res);
-        for (let i = 0; i < res.length; i++) {
-          for (let j = 0; j < res[i].length; j++) {
-            if (res[i][j]) {
-              let tmp = {};
-              tmp.source = spec["row_header"];
-              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
-              res[i][j] = tmp;
-            }
-          }
-        }
-        console.log(res);
-        this.storeCurrentTable(res);
-      } catch (err) {
-        this.$message.error("Illegal specification!");
-      }
       try{
         let alterSpec = Utils.genAlterSpec(this.row_header, this.column_header, this.body);
         this.storeAlterSpecList(alterSpec);
