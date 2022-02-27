@@ -142,7 +142,7 @@ export default {
         newRow[column] = JSON.parse(value.value);
         console.log("notice", newRow[column]);
       } else {
-        if (value.value == "") {
+        if (!value.value || value.value == "") {
           newRow[column] = null;
         } else {
           newRow[column] = {
