@@ -1,9 +1,9 @@
 <template>
   <r-collapse
-    v-model="activeKeys"
+    v-model="activekeys"
     class="collapse-demo"
     activeClass="collapse-demo-active"
-    @change="handleChange"
+    @change="handlechange"
   >
     <slot/>
   </r-collapse>
@@ -18,11 +18,11 @@ export default {
   },
   data() {
     return {
-      activeKeys: [],
+      activekeys: [],
     };
   },
   methods: {
-    handleChange(newActiveKeys, oldActiveKeys) {
+    handlechange(newActiveKeys, oldActiveKeys) {
       console.log("newActiveKeys", newActiveKeys);
       console.log("oldActiveKeys", oldActiveKeys);
     },

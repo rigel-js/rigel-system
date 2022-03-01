@@ -353,6 +353,7 @@ const deleteUsedSpec = (unusedSpec, header) => {
 const mapTable = (table, rowInfo, colInfo) => {
   // console.log(rowInfo, colInfo);
   // console.log(this.currentActiveGrid.row, this.currentActiveGrid.column);
+  if(!rowInfo.len && !colInfo.len) return table;
   let rowSize = table.length;
   let columnSize = 0;
   for (let i = 0; i < rowSize; i++) {

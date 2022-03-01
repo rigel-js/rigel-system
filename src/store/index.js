@@ -19,6 +19,7 @@ const state = {
   alterSpecList: [],
   newSpec: null,
   partialSpecSuggestion: null,
+  deleteSpecSuggestion: null,
   row_header: [],
   column_header: [],
   body: [],
@@ -84,6 +85,10 @@ const mutations = {
 
   changePartialSpecSuggestion(state, newSuggestion) {
     state.partialSpecSuggestion = newSuggestion;
+  },
+
+  changeDeleteSpecSuggestion(state, newSuggestion) {
+    state.deleteSpecSuggestion = newSuggestion;
   },
 
   changeRowHeader(state, row_header) {
@@ -156,6 +161,9 @@ const actions = {
   },
   storePartialSpecSuggestion({ commit }, newSuggestion) {
     commit("changePartialSpecSuggestion", newSuggestion);
+  },
+  storeDeleteSpecSuggestion({ commit }, newSuggestion) {
+    commit("changeDeleteSpecSuggestion", newSuggestion);
   },
   // setRowHeader({ commit }, row_header) {
   //   commit("changeRowHeader", row_header);

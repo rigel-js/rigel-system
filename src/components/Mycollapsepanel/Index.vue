@@ -1,8 +1,8 @@
 <template>
   <r-collapse-panel class="collapse-demo-panel">
-    <template slot="fixed">
-      <div class="collapse-fixed" @click="this.handleClick">
-        <div style="pointer-events: none">{{ this.header }}</div>
+    <template v-slot:fixed>
+      <div class="collapse-fixed" @click="handleClick">
+        <div style="pointer-events: none">{{ header }}</div>
         <i class="icon iconfont" style="transition: all 0.3s">&#xe65b;</i>
       </div>
     </template>
@@ -33,7 +33,6 @@ export default {
   },
   data() {
     return {
-      activeKeys: [],
       firstClick: false,
     };
   },

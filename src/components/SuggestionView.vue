@@ -21,6 +21,19 @@
           </Mycollapsepanel>
         </Mycollapse>
       </div>
+      <div v-else-if="this.deleteSpecSuggestion" class="suggestion-unit">
+        <div class="suggestionTitle">
+          Choose recommendations based on your interactions.
+        </div>
+        <div
+          v-for="(item, index) in this.deleteSpecSuggestion"
+          :key="index"
+          class="partialspecpanel"
+          @click="deletePartialSpec(item)"
+        >
+          {{ item.description }}
+        </div>
+      </div>
       <div v-else>
         <div
           v-if="this.alterSpecList.length == 0 && this.suggestions.length == 0"
@@ -50,6 +63,13 @@
           </div>
         </div>
       </div>
+      <!-- <div class="suggestion-unit">
+        <test>
+          <template v-slot:abc="message">
+            <div @click="message.test()"> test </div>
+          </template>
+        </test>
+      </div> -->
     </div>
   </div>
 </template>
@@ -59,6 +79,7 @@ import { mapActions, mapState } from "vuex";
 import { transform } from "rigel-tools";
 import Varunit from "./Varunit/Index.vue";
 import Utils from "@/utils.js";
+// import test from "./test/Index.vue";
 
 export default {
   name: "SuggestionView",
@@ -78,6 +99,7 @@ export default {
       //     ],
       //   },
       // ],
+      activeKeys: [],
     };
   },
   computed: mapState([
@@ -86,6 +108,7 @@ export default {
     "rawRelations",
     "alterSpecList",
     "partialSpecSuggestion",
+    "deleteSpecSuggestion",
     "row_header",
     "column_header",
     "body",
@@ -98,6 +121,7 @@ export default {
       "storeCurrentTable",
       "storeNewSpec",
       "storePartialSpecSuggestion",
+      "storeDeleteSpecSuggestion",
       "storeRowInfo",
       "storeColInfo",
     ]),
@@ -120,7 +144,7 @@ export default {
           for (let j = 0; j < res[i].length; j++) {
             if (res[i][j]) {
               let tmp = {};
-              tmp.source = spec["row_header"];
+              tmp.source = res[i][j].source;
               tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
               res[i][j] = tmp;
             }
@@ -277,7 +301,7 @@ export default {
           for (let j = 0; j < res[i].length; j++) {
             if (res[i][j]) {
               let tmp = {};
-              tmp.source = spec["row_header"];
+              tmp.source = res[i][j].source;
               tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
               res[i][j] = tmp;
             }
@@ -294,9 +318,77 @@ export default {
 
       this.storePartialSpecSuggestion(null);
     },
+    deletePartialSpec(partialSpec) {
+      let deleteRow = this.currentActiveGrid.row,
+        deleteColumn = this.currentActiveGrid.column;
+      if (partialSpec.row_header) {
+        this.row_header.splice(deleteColumn - this.rowInfo.column, 1);
+        if (this.rowInfo.len > 1) {
+          this.storeRowInfo({
+            row: this.rowInfo.row,
+            column: this.rowInfo.column,
+            len: this.rowInfo.len - 1,
+          });
+        } else {
+          this.storeRowInfo({});
+        }
+      } else if (partialSpec.column_header) {
+        this.column_header.splice(deleteRow - this.colInfo.row, 1);
+        if (this.colInfo.len > 1) {
+          this.storeColInfo({
+            row: this.colInfo.row,
+            column: this.colInfo.column,
+            len: this.colInfo.len - 1,
+          });
+        } else {
+          this.storeColInfo({});
+        }
+      } else {
+        for (let i = 0; i < this.body.length; i++) {
+          if (
+            this.body[i].data == partialSpec.body.data &&
+            this.body[i].attribute == partialSpec.body.attribute
+          ) {
+            this.body.splice(i, 1);
+            break;
+          }
+        }
+      }
+      
+      let spec = Utils.genSpec(this.row_header, this.column_header, this.body);
+      console.log(spec);
+
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = res[i][j].source;
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        // console.log(res);
+        let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
+        console.log(table);
+        this.storeNewSpec(spec);
+        this.storeCurrentTable(table);
+      } catch (err) {
+        this.$message.error("Illegal specification!");
+      }
+      this.storeDeleteSpecSuggestion(null);
+    },
   },
   components: {
     Varunit,
+    // test
   },
 };
 </script>

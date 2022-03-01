@@ -86,16 +86,31 @@ export default {
   },
   watch: {
     Table(val) {
-      if(this.name == "targetTable") {
+      if (this.name == "targetTable") {
         this.storeCurrentTable(val);
       }
-    }
+    },
   },
   computed: {
-    ...mapState(["dragSourceIsCell", "attrInfo", "row_header", "column_header", "currentActiveGrid"]),
+    ...mapState([
+      "dragSourceIsCell",
+      "attrInfo",
+      "row_header",
+      "column_header",
+      "body",
+      "currentActiveGrid",
+      "rowInfo",
+      "colInfo",
+    ]),
   },
   methods: {
-    ...mapActions(["storeSuggestion", "storePartialSpecSuggestion", "storeCurrentTable", "storeCurrentActiveGrid"]),
+    ...mapActions([
+      "storeSuggestion",
+      "storePartialSpecSuggestion",
+      "storeDeleteSpecSuggestion",
+      "storeCurrentTable",
+      "storeCurrentActiveGrid",
+    ]),
     initTable() {
       if (this.table) {
         if (this.name !== "targetTable") {
@@ -138,34 +153,99 @@ export default {
     cellChangeHandler(row, column, value) {
       // this.Table[row][column] = value;
       const newRow = this.Table[row].slice(0);
-      if (value.isDrag) {
-        newRow[column] = JSON.parse(value.value);
-        console.log("notice", newRow[column]);
-      } else {
-        if (!value.value || value.value == "") {
-          newRow[column] = null;
+      let oldValue = newRow[column];
+      let isOldValueValid = oldValue && oldValue.value != "";
+      let isNewValueValid = value.value && value.value != "";
+      if (!isOldValueValid && !isNewValueValid) {
+        return; //相当于啥也没输，无事发生
+      } else if (isOldValueValid && isNewValueValid) {
+        if (oldValue.value == value.value) {
+          return;
         } else {
-          newRow[column] = {
-            value: value.value,
-            source: undefined,
-          }; // 这里需要推荐匹配的attr
+          this.$message.error("Cannot alter existing cell partially"); //不可以修改部分的cell
+          return;
         }
-      }
-      this.$set(this.Table, row, newRow);
-      console.log(row, column, value, this.Table);
-      // this.calSuggestion();
+      } else if (!isOldValueValid && isNewValueValid) {
+        // 相当于值添加
+        if (value.isDrag) {
+          newRow[column] = JSON.parse(value.value);
+          console.log("notice", newRow[column]);
+        } else {
+          if (!value.value || value.value == "") {
+            newRow[column] = null;
+          } else {
+            newRow[column] = {
+              value: value.value,
+              source: undefined,
+            }; // 这里需要推荐匹配的attr
+          }
+        }
+        this.$set(this.Table, row, newRow);
+        console.log(row, column, value, this.Table);
+        // this.calSuggestion();
+        this.storeCurrentActiveGrid({
+          row,
+          column,
+        });
+        let partialSpecSuggestion = this.disambiguateCell(
+          newRow[column].value,
+          newRow[column].source
+        );
+        if (partialSpecSuggestion) {
+          this.storePartialSpecSuggestion(partialSpecSuggestion);
+          console.log(partialSpecSuggestion);
+        }
+      } else {
+        // 删除单个cell中的所有内容
+        console.log("delte");
+        console.log(row, column, this.rowInfo, this.colInfo);
+        newRow[column] = null;
+        this.$set(this.Table, row, newRow);
+        this.storeCurrentActiveGrid({
+          row,
+          column,
+        });
 
-      this.storeCurrentActiveGrid({
-        row,
-        column
-      });
-      let partialSpecSuggestion = this.disambiguateCell(
-        newRow[column].value,
-        newRow[column].source
-      );
-      if (partialSpecSuggestion) {
-        this.storePartialSpecSuggestion(partialSpecSuggestion);
-        console.log(partialSpecSuggestion);
+        let originAttr,
+          partialSpec = {};
+        if (row >= this.rowInfo.row && column >= this.colInfo.column) {
+          //body
+          originAttr = oldValue.source;
+          partialSpec["body"] = originAttr;
+          let sourceDescription = Utils.calString(originAttr);
+          partialSpec["description"] = `(), () => (${sourceDescription})`;
+        } else if (row < this.rowInfo.row && column >= this.colInfo.column) {
+          //column
+          if (
+            this.body.length > 0 &&
+            this.row_header.length == 0 &&
+            this.column_header.length == 1
+          ) {
+            return; // header会被清空，这种情况不推荐
+          }
+          originAttr = this.column_header[row - this.colInfo.row];
+          partialSpec["column_header"] = originAttr;
+          let sourceDescription = Utils.calString(originAttr);
+          partialSpec["description"] = `(), (${sourceDescription}) => ()`;
+        } else if (column < this.colInfo.column && row >= this.rowInfo.row) {
+          //row
+          if (
+            this.body.length > 0 &&
+            this.column_header.length == 0 &&
+            this.row_header.length == 1
+          ) {
+            return; // header会被清空，这种情况不推荐
+          }
+          originAttr = this.row_header[column - this.rowInfo.column];
+          partialSpec["row_header"] = originAttr;
+          let sourceDescription = Utils.calString(originAttr);
+          partialSpec["description"] = `(${sourceDescription}), () => ()`;
+        } else {
+          return;
+        }
+
+        let deleteSpecSuggestion = [partialSpec];
+        this.storeDeleteSpecSuggestion(deleteSpecSuggestion);
       }
     },
     leftDropHandler(row, column, value) {
@@ -201,9 +281,13 @@ export default {
       // this.calSuggestion();
       this.currentActiveGrid = {
         row,
-        column
+        column,
       };
-      let partialSpecSuggestion = this.disambiguateRow(value.valueList, value.strName, true);
+      let partialSpecSuggestion = this.disambiguateRow(
+        value.valueList,
+        value.strName,
+        true
+      );
       if (partialSpecSuggestion) {
         this.storePartialSpecSuggestion(partialSpecSuggestion);
         console.log(partialSpecSuggestion);
@@ -236,9 +320,13 @@ export default {
       // this.calSuggestion();
       this.currentActiveGrid = {
         row,
-        column
+        column,
       };
-      let partialSpecSuggestion = this.disambiguateRow(value.valueList, value.strName, false);
+      let partialSpecSuggestion = this.disambiguateRow(
+        value.valueList,
+        value.strName,
+        false
+      );
       if (partialSpecSuggestion) {
         this.storePartialSpecSuggestion(partialSpecSuggestion);
         console.log(partialSpecSuggestion);
@@ -497,7 +585,8 @@ export default {
 
     // 对于用户进行的手动输入格子操作，进行排除歧义的操作
     disambiguateCell(value, dragSource) {
-      let isHeaderExist = this.row_header.length > 0 || this.column_header.length > 0;
+      let isHeaderExist =
+        this.row_header.length > 0 || this.column_header.length > 0;
       // console.log(value, dragSource);
       if (dragSource) {
         let sourceDescription = Utils.calString(dragSource);
@@ -511,17 +600,17 @@ export default {
             description: `(), (${sourceDescription}) => ()`,
           },
         ];
-        if(isHeaderExist) {
+        if (isHeaderExist) {
           partialSpecList.push({
             body: dragSource,
-            description: `(), () => (${sourceDescription})`
+            description: `(), () => (${sourceDescription})`,
           });
         }
         return [
           {
             itemDescription: '"' + value + '"',
             source: sourceDescription,
-            partialSpecList
+            partialSpecList,
           },
         ];
       }
@@ -547,10 +636,10 @@ export default {
             description: `(), (${sourceDescription}) => ()`,
           },
         ];
-        if(isHeaderExist) {
+        if (isHeaderExist) {
           partialSpecList.push({
             body: key,
-            description: `(), () => (${sourceDescription})`
+            description: `(), () => (${sourceDescription})`,
           });
         }
         tmp["partialSpecList"] = partialSpecList;
@@ -560,34 +649,39 @@ export default {
     },
     disambiguateRow(value, dragSource, isRow) {
       // console.log(value, dragSource);
-      if(!value || value.length == 0) return;
-      let isHeaderExist = this.row_header.length > 0 || this.column_header.length > 0;
-      let itemDescription = `The ${isRow?"row":"column"} beginning with "${value[0]}"`;
+      if (!value || value.length == 0) return;
+      let isHeaderExist =
+        this.row_header.length > 0 || this.column_header.length > 0;
+      let itemDescription = `The ${isRow ? "row" : "column"} beginning with "${
+        value[0]
+      }"`;
       let sourceDescription = Utils.calString(dragSource);
       let partialSpecList = [];
-      if(isRow) {
+      if (isRow) {
         partialSpecList.push({
-          column_header: dragSource, 
+          column_header: dragSource,
           description: `(), (${sourceDescription}) => ()`,
         });
       } else {
         partialSpecList.push({
           row_header: dragSource,
           description: `(${sourceDescription}), () => ()`,
-        })
-      }
-      if(isHeaderExist) {
-        partialSpecList.push({
-          body: dragSource,
-          description: `(), () => (${sourceDescription})`
         });
       }
-      return [{
-        itemDescription,
-        source: sourceDescription,
-        partialSpecList
-      }]
-    } 
+      if (isHeaderExist) {
+        partialSpecList.push({
+          body: dragSource,
+          description: `(), () => (${sourceDescription})`,
+        });
+      }
+      return [
+        {
+          itemDescription,
+          source: sourceDescription,
+          partialSpecList,
+        },
+      ];
+    },
   },
   components: {
     Cell,
