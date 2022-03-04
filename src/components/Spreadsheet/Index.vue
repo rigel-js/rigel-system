@@ -715,7 +715,6 @@ export default {
 
 .cell-container {
   flex: 1 1;
-  padding: 0 5px;
   border: 1px solid #bbb;
   font: 100 16px/20px Times;
   overflow-x: hidden;
@@ -724,11 +723,9 @@ export default {
 }
 
 .cell-container .cell {
-  width: calc(100% - 10px);
-  min-height: 20px;
-  position: absolute;
-  top: 50%;
-  transform: translate(0, -50%);
+  width: 100%;
+  height: 100%;
+  padding: 5px 5px 5px 5px;
 }
 
 .leftHightlightedCell {

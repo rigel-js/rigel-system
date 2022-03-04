@@ -16,7 +16,10 @@
               class="partialspecpanel"
               @click="applyPartialSpec(partialSpec)"
             >
-              {{ partialSpec.description }}
+              <div class="partialspecpanelcontent">
+                <a-icon type="bulb" class="icon suggestion-icon"/>
+                <span class="suggestion-text"> {{ partialSpec.description }} </span>
+              </div>
             </div>
           </Mycollapsepanel>
         </Mycollapse>
@@ -393,7 +396,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .suggestion-view {
   width: 100%;
   height: calc(100% - 20px);
@@ -456,8 +459,10 @@ export default {
 
 .suggestionTitle {
   font-size: 15px;
+  margin-left: 3px;
   margin-bottom: 15px;
   font-weight: bold;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
 
 .collapse-unit {
@@ -475,11 +480,21 @@ export default {
 }
 
 .partialspecpanel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #eaebee;
-  padding: 5px 0px 5px 7px;
+  background-color: #fff;
   margin-bottom: 3px;
+}
+
+.partialspecpanel :hover{
+  background-color: #eaebee !important;
+}
+
+.partialspecpanelcontent {
+  padding: 5px 7px 5px 0px;
+  width: 100%;
+  height: 100%;
+}
+
+.suggestion-text {
+  display: inline-block;
 }
 </style>

@@ -1,6 +1,11 @@
 <template>
   <div class="header-view">
     <div id="rigel-title">Rigel</div>
+    <div id="undo-redo-toolbar">
+      <i class="icon iconfont">&#xebbd;</i>
+      <i class="icon iconfont">&#xeb83;</i>
+    </div>
+    <a-divider type="vertical" style="background-color: rgba(245, 245, 245, 100)"/>
     <div id="dataset-toolbar">
       <div class="header-title">Datasets:</div>
       <div id="dataset-select">
@@ -34,10 +39,7 @@
         >Import New</a-button
       >
     </div>
-    <div id="undo-redo-toolbar">
-      <a-button class="header-button" style="width: 62px">Undo</a-button>
-      <a-button class="header-button" style="width: 62px">Redo</a-button>
-    </div>
+    <a-divider type="vertical" style="background-color: rgba(245, 245, 245, 100)"/>
     <div id="associate-toolbar">
       <div class="header-title">Associate:</div>
       <a-radio-group v-model="value" @change="onChangeMode" default-value="union" >
@@ -193,16 +195,19 @@ export default {
 #rigel-title {
   display: inline-block;
   margin-left: 42px;
-  width: 37px;
+  width: 57px;
   color: rgba(16, 16, 16, 100);
-  font-size: 16px;
-  font-family: SourceHanSansSC-regular;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+  letter-spacing: 0;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
 
 #dataset-toolbar {
   display: inline-block;
-  margin-left: 126px;
-  width: 490px;
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 #dataset-select {
@@ -218,29 +223,34 @@ export default {
   padding: 0;
 }
 
+.icon {
+  font-size: 16px !important;
+  width: 15px;
+  height: 18px;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
 .header-title {
   display: inline-block;
   color: rgba(16, 16, 16, 100);
   font-size: 16px;
   text-align: left;
-  font-family: SourceHanSansSC-regular;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
 
 #undo-redo-toolbar {
   display: inline-block;
-  margin-left: 150px;
-  width: 150px;
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 #associate-toolbar {
   display: inline-block;
-  margin-left: 180px;
-  width: 400px;
+  margin-left: 30px;
 }
 
 #manipulate-toolbar {
   display: inline-block;
-  float: right;
-  margin-right: 30px;
 }
 </style>

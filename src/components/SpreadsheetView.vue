@@ -418,6 +418,7 @@ export default {
   display: inline-block;
   border-radius: 4px;
   border: 1px solid;
+  padding: 0 2px 0 2px;
 }
 
 .specbutton {
