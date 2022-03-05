@@ -16,6 +16,8 @@
             <div
               class="applypanel"
               @click="handleApply(spec)"
+              @mouseenter="previewSpec(spec)"
+              @mouseleave="restorePreview"
             >
               <div class="applypanelcontent">
                 <a-icon type="bulb" class="icon applypanelicon"/>
@@ -65,7 +67,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["attrInfo", "rawRelations"]),
+    ...mapState(["attrInfo", "rawRelations", "canSuggest"]),
     finalContent() {
       if (this.content) return this.content;
       return this.newContent;
@@ -85,7 +87,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeCurrentTable", "storeNewSpec"]),
+    ...mapActions(["storeCurrentTable", "storeNewSpec", "restoreCurrentState", "storeCurrentState", "storeCanSuggest"]),
     calcExplore(spec) {
       // calculation
       try {
@@ -118,8 +120,14 @@ export default {
       //   }
       // ]);
     },
-    handleApply(spec) {
+    handleApply(spec, isPreview) {
       if (!spec) return;
+      if(!isPreview) {
+        if(!this.canSuggest) {
+          this.restoreCurrentState();
+        }
+        this.storeCanSuggest(true);
+      }
       let sch = {
         data: this.rawRelations,
         target_table: [spec],
@@ -145,6 +153,16 @@ export default {
         this.$message.error("Illegal specification!");
       }
     },
+    previewSpec(spec) {
+      this.storeCurrentState();
+      this.storeCanSuggest(false);
+      this.handleApply(spec, true);
+    },
+    restorePreview() {
+      if(!this.canSuggest) {
+        this.restoreCurrentState();
+      }
+    }
   },
   components: {
     alterpanel

@@ -135,11 +135,12 @@ export default {
   //   };
   // },
   computed: {
-    ...mapState(["currentTable", "rawRelations", "attrInfo", "newSpec", "row_header", "column_header", "body"]),
+    ...mapState(["currentTable", "rawRelations", "attrInfo", "newSpec", "row_header", "column_header", "body", "canSuggest"]),
   },
   watch: {
     newSpec(val, oldval) {
-      console.log(this.newSpec);
+      console.log(val); 
+      console.log(this.canSuggest);
       if (val) {
         // this.row_header = Utils.specObj2List(val["row_header"]);
         // this.column_header = Utils.specObj2List(val["column_header"]);
@@ -150,6 +151,8 @@ export default {
           "body": Utils.specObj2List(val["body"])
         });
         this.storeNewSpec(null);
+        if(!this.canSuggest) return;
+        console.log("genalter");
         try{
           let alterSpec = Utils.genAlterSpec(this.row_header, this.column_header, this.body);
           this.storeAlterSpecList(alterSpec);
@@ -162,13 +165,19 @@ export default {
       }
     },
     row_header(val, oldval) {
-      this.applyHandler();
+      if(this.canSuggest) {
+        this.applyHandler();
+      }
     },
     column_header(val, oldval) {
-      this.applyHandler();
+      if(this.canSuggest) {
+        this.applyHandler();
+      }
     },
     body(val, oldval) {
-      this.applyHandler();
+      if(this.canSuggest) {
+        this.applyHandler();
+      }
     }
   },
   methods: {

@@ -25,8 +25,11 @@ const state = {
   body: [],
   currentActiveGrid: {},
   rowInfo: {},
-  colInfo: {}
+  colInfo: {},
+  canSuggest: true,
 };
+
+let currentState = {};
 
 const mutations = {
   addRawRelation(state, relation) {
@@ -92,6 +95,7 @@ const mutations = {
   },
 
   changeRowHeader(state, row_header) {
+    // console.log(state.row_header, row_header);
     state.row_header = row_header;
   },
 
@@ -113,6 +117,41 @@ const mutations = {
 
   changeColInfo(state, colInfo) {
     state.colInfo = colInfo;
+  },
+
+  changeCurrentState(state) {
+    // currentState = Object.assign({}, state);
+    // currentState.row_header = Object.assign({}, state.row_header);
+    currentState = Utils.deepClone(state);
+    console.log(currentState.row_header);
+  },
+
+  restoreState(state) {
+    state.activatedRelationIndex = currentState.activatedRelationIndex;
+    state.rawRelations = currentState.rawRelations;
+    state.relations = currentState.relations;
+    state.attrInfo = currentState.attrInfo;
+    state.suggestions = currentState.suggestions;
+    state.currentTable = currentState.currentTable;
+    state.dragSourceIsCell = currentState.dragSourceIsCell;
+    state.associationRule = currentState.associationRule;
+    state.alterSpecList = currentState.alterSpecList;
+    state.newSpec = currentState.newSpec;
+    state.partialSpecSuggestion = currentState.partialSpecSuggestion;
+    state.deleteSpecSuggestion = currentState.deleteSpecSuggestion;
+    state.row_header = currentState.row_header;
+    state.column_header = currentState.column_header;
+    state.body = currentState.body;
+    state.currentActiveGrid = currentState.currentActiveGrid;
+    state.rowInfo = currentState.rowInfo;
+    state.colInfo = currentState.colInfo;
+    state.canSuggest = currentState.canSuggest;
+    // console.log(currentState.row_header);
+    // console.log(state.row_header);;
+  },
+
+  changeCanSuggest(state, canSuggest) {
+    state.canSuggest = canSuggest;
   }
 };
 
@@ -187,6 +226,15 @@ const actions = {
   },
   storeColInfo({ commit }, colInfo) {
     commit("changeColInfo", colInfo);
+  },
+  storeCurrentState({ commit }) {
+    commit("changeCurrentState");
+  },
+  restoreCurrentState({ commit }) {
+    commit("restoreState");
+  },
+  storeCanSuggest({ commit }, canSuggest) {
+    commit("changeCanSuggest", canSuggest);
   }
 };
 

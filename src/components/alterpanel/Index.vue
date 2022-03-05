@@ -5,6 +5,8 @@
       :key="index3"
       class="applypanel"
       @click="handleApply(suggestion)"
+      @mouseenter="previewSpec(suggestion)"
+      @mouseleave="restorePreview"
     >
       <div class="applypanelcontent">
         <a-icon type="bulb" class="icon applypanelicon"/>
@@ -32,7 +34,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["rawRelations"]),
+    ...mapState(["rawRelations", "canSuggest"]),
   },
   mounted() {
     if (this.spec) {
@@ -77,8 +79,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeCurrentTable", "storeNewSpec"]),
-    handleApply(spec) {
+    ...mapActions(["storeCurrentTable", "storeNewSpec", "storeCanSuggest", "storeCurrentState", "restoreCurrentState"]),
+    handleApply(spec, isPreview) {
+      if (!spec) return;
+      if(!isPreview) {
+        if(!this.canSuggest) {
+          this.restoreCurrentState();
+        }
+        this.storeCanSuggest(true);
+      }
       if (!spec) return;
       let sch = {
         data: this.rawRelations,
@@ -105,6 +114,16 @@ export default {
         this.$message.error("Illegal specification!");
       }
     },
+    previewSpec(spec) {
+      this.storeCurrentState();
+      this.storeCanSuggest(false);
+      this.handleApply(spec, true);
+    },
+    restorePreview() {
+      if(!this.canSuggest) {
+        this.restoreCurrentState();
+      }
+    }
   },
 };
 </script>

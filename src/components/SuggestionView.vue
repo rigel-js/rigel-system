@@ -15,6 +15,8 @@
               :key="index2"
               class="applypanel"
               @click="applyPartialSpec(partialSpec)"
+              @mouseenter="previewPartialSpec(partialSpec)"
+              @mouseleave="restorePreview"
             >
               <div class="applypanelcontent">
                 <a-icon type="bulb" class="icon applypanelicon"/>
@@ -54,6 +56,8 @@
               :key="`top${i}`"
               class="applypanel"
               @click="applySpec(suggestion)"
+              @mouseenter="previewSpec(suggestion)"
+              @mouseleave="restorePreview"
             >
               <div class="applypanelcontent">
                 <a-icon type="bulb" class="icon applypanelicon"/>
@@ -132,6 +136,8 @@ export default {
     "currentActiveGrid",
     "rowInfo",
     "colInfo",
+    "canSuggest",
+    "newSpec"
   ]),
   methods: {
     ...mapActions([
@@ -141,12 +147,22 @@ export default {
       "storeDeleteSpecSuggestion",
       "storeRowInfo",
       "storeColInfo",
+      "storeCurrentState",
+      "restoreCurrentState",
+      "storeCanSuggest"
     ]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
       console.log(suggestion);
     },
-    applySpec(spec) {
+    applySpec(spec, isPreview) {
+      if(!isPreview) {
+        if(!this.canSuggest) {
+          this.restoreCurrentState();
+        }
+        this.storeCanSuggest(true);
+      }
+
       // console.log(JSON.stringify(spec));
       // console.log(this.relations);
       let sch = {
@@ -175,9 +191,17 @@ export default {
         this.$message.error("Illegal specification!");
       }
     },
-    applyPartialSpec(partialSpec) {
+    applyPartialSpec(partialSpec, isPreview) {
       // console.log(partialSpec);
-
+      if(!isPreview) {
+        if(!this.canSuggest) {
+          console.log("beforeRestore");
+          this.restoreCurrentState();
+          console.log(this.newSpec);
+          console.log("afterRestore");
+        }
+        this.storeCanSuggest(true);
+      }
       if (partialSpec.row_header) {
         if (!this.rowInfo.len) {
           if (!this.colInfo.len) {
@@ -332,8 +356,10 @@ export default {
       } catch (err) {
         this.$message.error("Illegal specification!");
       }
-
-      this.storePartialSpecSuggestion(null);
+      
+      if(!isPreview) {
+        this.storePartialSpecSuggestion(null);
+      }
     },
     deletePartialSpec(partialSpec) {
       let deleteRow = this.currentActiveGrid.row,
@@ -402,6 +428,21 @@ export default {
       }
       this.storeDeleteSpecSuggestion(null);
     },
+    previewPartialSpec(partialSpec) {
+      this.storeCurrentState();
+      this.storeCanSuggest(false);
+      this.applyPartialSpec(partialSpec, true);
+    },
+    previewSpec(spec) {
+      this.storeCurrentState();
+      this.storeCanSuggest(false);
+      this.applySpec(spec, true);
+    },
+    restorePreview() {
+      if(!this.canSuggest) {
+        this.restoreCurrentState();
+      }
+    }
   },
   components: {
     Varunit,
