@@ -1,35 +1,43 @@
 <template>
   <div v-if="this.finalContent">
-    <Mycollapse>
-      <Mycollapsepanel
+    <Newcollapse>
+      <Newcollapsepanel
         v-for="(item, index) in this.finalContent"
         :key="index"
         :header="`Add ${item.add}`"
       >
-        <Mycollapse>
-          <Mycollapsepanel
+        <Newcollapse>
+          <Newcollapsepanel
             v-for="(spec, index2) in item.list"
             :key="index2"
             :header="spec.description"
             :applySpec="spec"
           >
-            <div class="applypanel" @click="handleApply(spec)">Apply</div>
-            <Mycollapse>
-              <Mycollapsepanel
+            <div
+              class="applypanel"
+              @click="handleApply(spec)"
+            >
+              <div class="applypanelcontent">
+                <a-icon type="bulb" class="icon applypanelicon"/>
+                <span class="applypaneltext"> Apply </span>
+              </div>
+            </div>
+            <Newcollapse>
+              <Newcollapsepanel
                 header="Alternatives (Rearrange current attributes)"
               >
                 <alterpanel :spec="spec"/>
-              </Mycollapsepanel>
-              <Mycollapsepanel
+              </Newcollapsepanel>
+              <Newcollapsepanel
                 header="Variations (Add more attributes)"
-                :spec="spec"
               >
-              </Mycollapsepanel>
-            </Mycollapse>
-          </Mycollapsepanel>
-        </Mycollapse>
-      </Mycollapsepanel>
-    </Mycollapse>
+                <Varunit :spec="spec" />
+              </Newcollapsepanel>
+            </Newcollapse>
+          </Newcollapsepanel>
+        </Newcollapse>
+      </Newcollapsepanel>
+    </Newcollapse>
   </div>
 </template>
 
@@ -143,17 +151,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.applypanel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #eaebee;
-  padding: 5px 0px 5px 7px;
-  margin-bottom: 3px;
-}
-.applypanel:hover {
-  background-color: #d8d5d5;
-}
-</style>

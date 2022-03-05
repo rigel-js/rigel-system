@@ -6,7 +6,10 @@
       class="applypanel"
       @click="handleApply(suggestion)"
     >
-      {{ suggestion.description }}
+      <div class="applypanelcontent">
+        <a-icon type="bulb" class="icon applypanelicon"/>
+        <span class="applypaneltext"> {{ suggestion.description }} </span>
+      </div>
     </div>
   </div>
 </template>
@@ -105,17 +108,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.applypanel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #eaebee;
-  padding: 5px 0px 5px 7px;
-  margin-bottom: 3px;
-}
-.applypanel:hover {
-  background-color: #d8d5d5;
-}
-</style>

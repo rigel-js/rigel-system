@@ -4,8 +4,8 @@
     <div class="suggestion-container">
       <div v-if="this.partialSpecSuggestion" class="suggestion-unit">
         <div class="suggestionTitle">Disambiguate user interactions.</div>
-        <Mycollapse>
-          <Mycollapsepanel
+        <Newcollapse>
+          <Newcollapsepanel
             v-for="(item, index) in this.partialSpecSuggestion"
             :key="index"
             :header="`${item.itemDescription} belongs to ${item.source}`"
@@ -13,16 +13,16 @@
             <div
               v-for="(partialSpec, index2) in item.partialSpecList"
               :key="index2"
-              class="partialspecpanel"
+              class="applypanel"
               @click="applyPartialSpec(partialSpec)"
             >
-              <div class="partialspecpanelcontent">
-                <a-icon type="bulb" class="icon suggestion-icon"/>
-                <span class="suggestion-text"> {{ partialSpec.description }} </span>
+              <div class="applypanelcontent">
+                <a-icon type="bulb" class="icon applypanelicon"/>
+                <span class="applypaneltext"> {{ partialSpec.description }} </span>
               </div>
             </div>
-          </Mycollapsepanel>
-        </Mycollapse>
+          </Newcollapsepanel>
+        </Newcollapse>
       </div>
       <div v-else-if="this.deleteSpecSuggestion" class="suggestion-unit">
         <div class="suggestionTitle">
@@ -52,10 +52,13 @@
             <div
               v-for="(suggestion, i) in this.alterSpecList"
               :key="`top${i}`"
-              class="alter-panel"
+              class="applypanel"
               @click="applySpec(suggestion)"
             >
-              {{ suggestion.description }}
+              <div class="applypanelcontent">
+                <a-icon type="bulb" class="icon applypanelicon"/>
+                <span class="applypaneltext"> {{ suggestion.description }} </span>
+              </div>
             </div>
           </div>
         </div>
@@ -72,6 +75,17 @@
             <div @click="message.test()"> test </div>
           </template>
         </test>
+      </div> -->
+      <!-- <div class="suggestion-unit">
+        <Newcollapse
+          v-model="activeKeys"
+          class="collapse-demo"
+          activeClass="collapse-demo-active"
+        >
+          <Newcollapsepanel name="one" class="collapse-demo-panel" header="test">
+            <div class="collapse-content">这是Panel 1的内容</div>
+          </Newcollapsepanel>
+        </Newcollapse>
       </div> -->
     </div>
   </div>
@@ -431,15 +445,6 @@ export default {
   overflow: scroll;
 }
 
-.alter-panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #eaebee;
-  padding: 5px 0px 5px 7px;
-  margin-bottom: 3px;
-}
-
 .alter-panel:hover {
   background-color: #d8d5d5;
 }
@@ -477,24 +482,5 @@ export default {
 
 .suggestion-disambiguate::-webkit-scrollbar {
   display: none;
-}
-
-.partialspecpanel {
-  background-color: #fff;
-  margin-bottom: 3px;
-}
-
-.partialspecpanel :hover{
-  background-color: #eaebee !important;
-}
-
-.partialspecpanelcontent {
-  padding: 5px 7px 5px 0px;
-  width: 100%;
-  height: 100%;
-}
-
-.suggestion-text {
-  display: inline-block;
 }
 </style>

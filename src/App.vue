@@ -111,7 +111,26 @@ body {
   text-align: left;
 }
 
-.suggestion-icon {
+.applypanel {
+  background-color: #fff;
+  margin-bottom: 3px;
+}
+
+.applypanel :hover{
+  background-color: #eaebee !important;
+}
+
+.applypanelcontent {
+  padding: 5px 0px 5px 0px;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-2px);
+}
+
+.applypaneltext {
+  display: inline-block;
+}
+.applypanelicon {
   display: inline-block;
   margin-right: 5px;
 }

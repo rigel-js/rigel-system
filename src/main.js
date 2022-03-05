@@ -8,6 +8,8 @@ import './assets/icons/iconfont/iconfont.css';
 import Mycollapse from "./components/Mycollapse/Index.vue";
 import Mycollapsepanel from "./components/Mycollapsepanel/Index.vue";
 import Varunit from "./components/Varunit/Index.vue";
+import Newcollapse from "./components/Newcollapse/Index.vue";
+import Newcollapsepanel from "./components/Newcollapsepanel/Index.vue";
 
 Vue.config.productionTip = false;
 
@@ -26,6 +28,8 @@ Vue.use(Divider);
 Vue.component(Mycollapse.name, Mycollapse);
 Vue.component(Mycollapsepanel.name, Mycollapsepanel);
 Vue.component(Varunit.name, Varunit);
+Vue.component(Newcollapse.name, Newcollapse);
+Vue.component(Newcollapsepanel.name, Newcollapsepanel);
 Vue.prototype.$message = message;
 
 new Vue({
