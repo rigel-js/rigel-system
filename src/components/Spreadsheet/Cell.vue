@@ -2,7 +2,7 @@
   <div
     class="cell"
     :title="this.realValue"
-    :contenteditable="editable"
+    :contenteditable="editable && this.canedit"
     :draggable="draggable"
     :data-info="JSON.stringify(this.cellValue)"
     @dragstart="dragHandler"
@@ -10,6 +10,7 @@
     @dragover="allowDrop"
     @dragleave="dragLeaveHandler"
     @blur="inputHandler"
+    @click="clickHandler"
     :style="{ 'background-color': cellColor }"
   >
     {{
@@ -41,6 +42,7 @@ export default {
     return {
       cellValue: "",
       realValue: "",
+      canedit: false,
     };
   },
   created() {
@@ -124,6 +126,7 @@ export default {
     },
 
     inputHandler(event) {
+      this.canedit = false;
       console.log("input");
       let info = {
         value: event.target.innerText,
@@ -135,6 +138,10 @@ export default {
     dragLeaveHandler(event) {
       this.$emit("drag-leave");
     },
+
+    clickHandler(event) {
+      this.canedit = true;
+    }
 
     // setClass(leftHightlighted, topHightlighted) {
     //   let cl = {cell: true};
