@@ -5,7 +5,7 @@
       <spreadsheet
         name="targetTable"
         :initRowNum="14"
-        :initColNum="8"
+        :initColNum="5"
         :editable="true"
         :table="this.currentTable"
         :key="JSON.stringify(this.currentTable)"

@@ -383,23 +383,23 @@ export default {
       return res;
     },
 
-    // isinValueList(value, list) {
-    //   if (value.isRightOpen) {
-    //     for (let i = 0; i < list.length; i++) {
-    //       if (
-    //         list[i].isRightOpen == value.isRightOpen &&
-    //         list[i].lower == value.lower &&
-    //         list[i].upper == value.upper
-    //       )
-    //         return true;
-    //     }
-    //   } else {
-    //     for (let i = 0; i < list.length; i++) {
-    //       if (list[i] == value) return true;
-    //     }
-    //   }
-    //   return false;
-    // },
+    isinValueList(value, list) {
+      if (value.isRightOpen) {
+        for (let i = 0; i < list.length; i++) {
+          if (
+            list[i].isRightOpen == value.isRightOpen &&
+            list[i].lower == value.lower &&
+            list[i].upper == value.upper
+          )
+            return true;
+        }
+      } else {
+        for (let i = 0; i < list.length; i++) {
+          if (list[i] == value) return true;
+        }
+      }
+      return false;
+    },
 
     // matchValueToColumn() {
     //   let table = this.Table;
