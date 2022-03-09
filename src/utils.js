@@ -397,6 +397,52 @@ const mapTable = (table, rowInfo, colInfo) => {
   return newTable;
 }
 
+const rearrangeTable = (table, rowInfo, colInfo) => {
+  if(!rowInfo || !colInfo) return table;
+  if(!rowInfo.len && !colInfo.len) return table;
+  let rowSize = table.length;
+  let columnSize = 0;
+  for (let i = 0; i < rowSize; i++) {
+    if (columnSize < table[i].length) {
+      columnSize = table[i].length;
+    }
+  }
+  let newRowSize = rowSize - colInfo.row;
+  let newColumnSize = columnSize - rowInfo.column;
+  let newTable = [];
+  for (let i = 0; i < newRowSize; i++) {
+    let tmp = [];
+    for (let j = 0; j < newColumnSize; j++) {
+      tmp.push(null);
+    }
+    newTable.push(tmp);
+  }
+  // console.log(rowSize, columnSize, newRowSize, newColumnSize);
+  let oldx = colInfo.len ? colInfo.len : 1, oldy = rowInfo.len ? rowInfo.len : 1;
+  let dx = rowInfo.row - oldx,
+    dy = rowInfo.column;
+  for (let i = oldx; i < newRowSize; i++) {
+    for (let j = 0; j < oldy; j++) {
+      newTable[i][j] = table[i + dx][j + dy];
+    }
+  }
+  dx = colInfo.row;
+  dy = colInfo.column - oldy;
+  for (let i = 0; i < oldx; i++) {
+    for (let j = oldy; j < newColumnSize; j++) {
+      newTable[i][j] = table[i + dx][j + dy];
+    }
+  }
+  dx = rowInfo.row - oldx;
+  dy = colInfo.column - oldy;
+  for (let i = oldx; i < newRowSize; i++) {
+    for (let j = oldy; j < newColumnSize; j++) {
+      newTable[i][j] = table[i + dx][j + dy];
+    }
+  }
+  return newTable;
+}
+
 // 定义一个深拷贝函数  接收目标target参数
 function deepClone(target) {
   // 定义一个变量
@@ -433,5 +479,5 @@ function deepClone(target) {
 
 export default {
   generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString,
-  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone
+  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable
 };

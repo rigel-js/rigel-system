@@ -1,6 +1,9 @@
 <template>
   <div class="view spreadsheet-view">
-    <div class="view-title">Target Table</div>
+    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+      <div class="view-title">Target Table</div>
+      <a-button class="rearrange-button" @click="rearrangeHandler"> Rearrange </a-button>
+    </div>
     <div class="spreadsheet-container">
       <spreadsheet
         name="targetTable"
@@ -135,7 +138,7 @@ export default {
   //   };
   // },
   computed: {
-    ...mapState(["currentTable", "rawRelations", "attrInfo", "newSpec", "row_header", "column_header", "body", "canSuggest"]),
+    ...mapState(["currentTable", "rawRelations", "attrInfo", "newSpec", "row_header", "column_header", "body", "canSuggest", "rowInfo", "colInfo"]),
   },
   watch: {
     newSpec(val, oldval) {
@@ -187,6 +190,8 @@ export default {
       "storeSuggestion",
       "storeNewSpec",
       "setSpec",
+      "storeRowInfo",
+      "storeColInfo",
     ]),
     onInput(event) {
       console.log(event);
@@ -342,6 +347,22 @@ export default {
         this.$message.error(err.message);
       }
     },
+    rearrangeHandler() {
+      console.log(this.rowInfo, this.colInfo);
+      if(!this.rowInfo || !this.colInfo) return;
+      let newTable = Utils.rearrangeTable(this.currentTable, this.rowInfo, this.colInfo);
+      this.storeCurrentTable(newTable);
+      this.storeRowInfo({
+        row: this.colInfo.len,
+        column: 0,
+        len: this.rowInfo.len
+      });
+      this.storeColInfo({
+        row: 0,
+        column: this.rowInfo.len,
+        len: this.colInfo.len
+      });
+    }
   },
   components: {
     Spreadsheet,
@@ -443,5 +464,12 @@ export default {
   vertical-align: center;
   text-align: center;
   margin: 7px auto 50px;
+}
+
+.rearrange-button {
+  padding: 0;
+  text-align: center;
+  width: 80px;
+  /* margin: 10px 0; */
 }
 </style>
