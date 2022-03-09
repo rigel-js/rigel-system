@@ -149,7 +149,8 @@ export default {
       "storeColInfo",
       "storeCurrentState",
       "restoreCurrentState",
-      "storeCanSuggest"
+      "storeCanSuggest",
+      "storeAttrInfo"
     ]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
@@ -202,6 +203,9 @@ export default {
         }
         this.storeCanSuggest(true);
       }
+
+      let derivedAttr = null, type = "";
+
       if (partialSpec.row_header) {
         if (!this.rowInfo.len) {
           if (!this.colInfo.len) {
@@ -242,7 +246,7 @@ export default {
               len: this.rowInfo.len + 1,
             });
             this.row_header.splice(0, 0, partialSpec.row_header);
-          } else {
+          } else if(this.currentActiveGrid.column >= this.rowInfo.column + this.rowInfo.len){
             this.storeRowInfo({
               row: this.rowInfo.row,
               column: this.rowInfo.column,
@@ -259,6 +263,18 @@ export default {
                 len: this.colInfo.len + 1,
               });
             }
+          } else { // 推荐union
+            let attr1 = this.row_header[this.currentActiveGrid.column - this.rowInfo.column];
+            let attr2 = partialSpec.row_header;
+            // console.log(attr1, attr2);
+            let newAttr = {
+              operator: "union",
+              parameters: [attr1, attr2],
+            };
+            this.row_header[this.currentActiveGrid.column - this.rowInfo.column] = newAttr;
+
+            derivedAttr = newAttr;
+            type = "row_header";
           }
         }
       }
@@ -306,7 +322,7 @@ export default {
               len: this.colInfo.len + 1,
             });
             this.column_header.splice(0, 0, partialSpec.column_header);
-          } else {
+          } else if(this.currentActiveGrid.row >= this.colInfo.row + this.colInfo.len) {
             this.storeColInfo({
               row: this.colInfo.row,
               column: this.colInfo.column,
@@ -320,6 +336,18 @@ export default {
                 len: this.rowInfo.len + 1,
               });
             }
+          } else {
+            let attr1 = this.column_header[this.currentActiveGrid.row - this.colInfo.row];
+            let attr2 = partialSpec.column_header;
+            // console.log(attr1, attr2);
+            let newAttr = {
+              operator: "union",
+              parameters: [attr1, attr2],
+            };
+            this.column_header[this.currentActiveGrid.row - this.colInfo.row] = newAttr;
+
+            derivedAttr = newAttr;
+            type = "column_header";
           }
         }
       }
@@ -353,7 +381,37 @@ export default {
         console.log(table);
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
+
+        if(!isPreview) {
+          if(derivedAttr) {
+            let colorList = Utils.genRandomColor(1);
+            let valueList = [];
+            if(type == "row_header") {
+              for(let i = 0; i < table.length; i++) {
+                if(table[i][this.currentActiveGrid.column - this.rowInfo.column]) {
+                  let tmp = table[i][this.currentActiveGrid.column - this.rowInfo.column];
+                  valueList.push(tmp.value ? tmp.value : tmp);
+                }
+              }
+            } else {
+              for(let i = 0; i<table[this.currentActiveGrid.row - this.colInfo.row].length; i++) {
+                if(table[this.currentActiveGrid.row - this.colInfo.row][i]) {
+                  let tmp = table[this.currentActiveGrid.row - this.colInfo.row][i];
+                  valueList.push(tmp.value ? tmp.value : tmp);
+                }
+              }
+            }
+            let relationAttr = {
+              strName: derivedAttr,
+              attribute: Utils.calString(derivedAttr),
+              color: colorList[0],
+              valueList: Utils.unique(valueList),
+            };
+            this.storeAttrInfo(relationAttr);
+          }
+        }
       } catch (err) {
+        console.log(err);
         this.$message.error("Illegal specification!");
       }
       

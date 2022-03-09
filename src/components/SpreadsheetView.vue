@@ -1,8 +1,12 @@
 <template>
   <div class="view spreadsheet-view">
-    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+    <div
+      style="display: flex; flex-direction: row; justify-content: space-between"
+    >
       <div class="view-title">Target Table</div>
-      <a-button class="rearrange-button" @click="rearrangeHandler"> Rearrange </a-button>
+      <a-button class="rearrange-button" @click="rearrangeHandler">
+        Rearrange
+      </a-button>
     </div>
     <div class="spreadsheet-container">
       <spreadsheet
@@ -35,7 +39,9 @@
             <div v-if="index != 0" class="specoperator">×</div>
             <div class="spectext">
               {{
-                item.data
+                item.description
+                  ? item.description
+                  : item.data
                   ? `${item.data}.${item.attribute}`
                   : `${item.attribute}`
               }}
@@ -63,7 +69,9 @@
             <div v-if="index != 0" class="specoperator">×</div>
             <div class="spectext">
               {{
-                item.data
+                item.description
+                  ? item.description
+                  : item.data
                   ? `${item.data}.${item.attribute}`
                   : `${item.attribute}`
               }}
@@ -91,7 +99,9 @@
             <div v-if="index != 0" class="specoperator">+</div>
             <div class="spectext">
               {{
-                item.data
+                item.description
+                  ? item.description
+                  : item.data
                   ? `${item.data}.${item.attribute}`
                   : `${item.attribute}`
               }}
@@ -138,50 +148,79 @@ export default {
   //   };
   // },
   computed: {
-    ...mapState(["currentTable", "rawRelations", "attrInfo", "newSpec", "row_header", "column_header", "body", "canSuggest", "rowInfo", "colInfo"]),
+    ...mapState([
+      "currentTable",
+      "rawRelations",
+      "attrInfo",
+      "newSpec",
+      "row_header",
+      "column_header",
+      "body",
+      "canSuggest",
+      "rowInfo",
+      "colInfo",
+    ]),
   },
   watch: {
     newSpec(val, oldval) {
-      console.log(val); 
+      console.log(val);
       console.log(this.canSuggest);
       if (val) {
         // this.row_header = Utils.specObj2List(val["row_header"]);
         // this.column_header = Utils.specObj2List(val["column_header"]);
         // this.body = Utils.specObj2List(val["body"]);
         this.setSpec({
-          "row_header": Utils.specObj2List(val["row_header"]),
-          "column_header": Utils.specObj2List(val["column_header"]),
-          "body": Utils.specObj2List(val["body"])
+          row_header: Utils.specObj2List(val["row_header"]),
+          column_header: Utils.specObj2List(val["column_header"]),
+          body: Utils.specObj2List(val["body"]),
         });
         this.storeNewSpec(null);
-        if(!this.canSuggest) return;
+        if (!this.canSuggest) return;
         console.log("genalter");
-        try{
-          let alterSpec = Utils.genAlterSpec(this.row_header, this.column_header, this.body);
+        try {
+          let alterSpec = Utils.genAlterSpec(
+            this.row_header,
+            this.column_header,
+            this.body
+          );
           this.storeAlterSpecList(alterSpec);
-          let exploreSpec = Utils.genExploreSpec(this.row_header, this.column_header, this.body, this.attrInfo);
+          let exploreSpec = Utils.genExploreSpec(
+            this.row_header,
+            this.column_header,
+            this.body,
+            this.attrInfo
+          );
           this.storeSuggestion(exploreSpec);
-        } catch(err) {
+        } catch (err) {
           console.log(err.message);
           this.$message.error(err.message);
         }
       }
     },
     row_header(val, oldval) {
-      if(this.canSuggest) {
+      this.refineHeader(this.row_header);
+      this.refineHeader(this.column_header);
+      this.refineHeader(this.body);
+      if (this.canSuggest) {
         this.applyHandler();
       }
     },
     column_header(val, oldval) {
-      if(this.canSuggest) {
+      this.refineHeader(this.row_header);
+      this.refineHeader(this.column_header);
+      this.refineHeader(this.body);
+      if (this.canSuggest) {
         this.applyHandler();
       }
     },
     body(val, oldval) {
-      if(this.canSuggest) {
+      this.refineHeader(this.row_header);
+      this.refineHeader(this.column_header);
+      this.refineHeader(this.body);
+      if (this.canSuggest) {
         this.applyHandler();
       }
-    }
+    },
   },
   methods: {
     ...mapActions([
@@ -330,39 +369,61 @@ export default {
       // this.column_header = [];
       // this.body = [];
       this.setSpec({
-        "row_header": [],
-        "column_header": [],
-        "body": []
+        row_header: [],
+        column_header: [],
+        body: [],
       });
       this.$forceUpdate();
     },
     applyHandler() {
-      try{
-        let alterSpec = Utils.genAlterSpec(this.row_header, this.column_header, this.body);
+      try {
+        let alterSpec = Utils.genAlterSpec(
+          this.row_header,
+          this.column_header,
+          this.body
+        );
         this.storeAlterSpecList(alterSpec);
-        let exploreSpec = Utils.genExploreSpec(this.row_header, this.column_header, this.body, this.attrInfo);
+        let exploreSpec = Utils.genExploreSpec(
+          this.row_header,
+          this.column_header,
+          this.body,
+          this.attrInfo
+        );
         this.storeSuggestion(exploreSpec);
-      } catch(err) {
+      } catch (err) {
         console.log(err.message);
         this.$message.error(err.message);
       }
     },
     rearrangeHandler() {
       console.log(this.rowInfo, this.colInfo);
-      if(!this.rowInfo || !this.colInfo) return;
-      let newTable = Utils.rearrangeTable(this.currentTable, this.rowInfo, this.colInfo);
+      if (!this.rowInfo || !this.colInfo) return;
+      let newTable = Utils.rearrangeTable(
+        this.currentTable,
+        this.rowInfo,
+        this.colInfo
+      );
       this.storeCurrentTable(newTable);
       this.storeRowInfo({
         row: this.colInfo.len,
         column: 0,
-        len: this.rowInfo.len
+        len: this.rowInfo.len,
       });
       this.storeColInfo({
         row: 0,
         column: this.rowInfo.len,
-        len: this.colInfo.len
+        len: this.colInfo.len,
       });
-    }
+    },
+    refineHeader(header) {
+      if (!header) return;
+      for (let i = 0; i < header.length; i++) {
+        let attr = header[i];
+        if (!attr.strName) {
+          header[i]["description"] = Utils.calString(header[i]);
+        }
+      }
+    },
   },
   components: {
     Spreadsheet,
