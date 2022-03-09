@@ -22,7 +22,7 @@
       :contenteditable="false"
     >
       <div v-for="(value, index) in this.alterValue" :key="index" class="recommend-item" @click="applyHandler($event, value)">
-        {{value}}
+        {{`${value.value} (${value.description})`}}
       </div>
     </div>
   </div>
@@ -30,6 +30,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import Utils from '@/utils.js';
 export default {
   name: "SpreadsheetCell",
   props: {
@@ -163,7 +164,13 @@ export default {
       this.top = tmp.top + tmp.height + 5;
       this.left = tmp.left;
       console.log(event.target.innerText);
-      this.recommendValue(event.target.innerText);
+      let index = 0;
+      for(; index < event.target.innerText.length; index++) {
+        if(event.target.innerText[index] === "\n") {
+          break;
+        }
+      }
+      this.recommendValue(event.target.innerText.substr(0, index));
     },
 
     dragLeaveHandler(event) {
@@ -175,6 +182,7 @@ export default {
     },
 
     recommendValue(value) {
+      console.log("recom", value);
       if (
         value.length == 0 ||
         !(
@@ -199,7 +207,11 @@ export default {
               }
             }
             if (isPrefix) {
-              res.push(valueList[j]);
+              res.push({
+                value: valueList[j],
+                source: this.attrInfo[i].strName,
+                description: Utils.calString(this.attrInfo[i].strName),
+              });
               continue;
             }
             isPrefix = true;
@@ -214,7 +226,11 @@ export default {
               }
             }
             if (isPrefix) {
-              res_no_capital.push(valueList[j]);
+              res_no_capital.push({
+                value: valueList[j],
+                source: this.attrInfo[i].strName,
+                description: Utils.calString(this.attrInfo[i].strName),
+              });
             }
           }
         }
@@ -228,8 +244,9 @@ export default {
       this.alterValue = [];
       console.log("apply", value);
       let info = {
-        value: value,
+        value: value.value,
         isDrag: false,
+        source: value.source,
       };
       this.$emit("cell-change", info);
     }

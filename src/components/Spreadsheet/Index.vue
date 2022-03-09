@@ -176,7 +176,7 @@ export default {
           } else {
             newRow[column] = {
               value: value.value,
-              source: undefined,
+              source: value.source,
             }; // 这里需要推荐匹配的attr
           }
         }
