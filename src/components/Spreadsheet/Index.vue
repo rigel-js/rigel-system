@@ -251,16 +251,26 @@ export default {
     leftDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
+      let hasCellConflict = false;
       if (column + value.valueList.length <= this.Table[row].length) {
         var newRow = new Array(this.Table[row].length);
         for (let i = 0; i < newRow.length; i++) {
           newRow[i] = this.Table[row][i];
         }
         for (let i = column; i < column + value.valueList.length; i++) {
-          newRow[i] = {
-            value: value.valueList[i - column],
-            source: value.strName,
-          };
+          if(this.Table[row][i]) {
+            let originalValue = this.Table[row][i].value ? this.Table[row][i].value : this.Table[row][i];
+            newRow[i] = {
+              value: `${originalValue}/${value.valueList[i - column]}`,
+              source: value.strName,
+            };
+            hasCellConflict = true;
+          } else {
+            newRow[i] = {
+              value: value.valueList[i - column],
+              source: value.strName,
+            };
+          }
         }
         this.$set(this.Table, row, newRow);
       } else {
@@ -271,18 +281,28 @@ export default {
           }
         }
         for (let i = column; i < column + value.valueList.length; i++) {
-          this.Table[row][i] = {
-            value: value.valueList[i - column],
-            source: value.strName,
-          };
+          if(this.Table[row][i]) {
+            let originalValue = this.Table[row][i].value ? this.Table[row][i].value : this.Table[row][i];
+            this.Table[row][i] = {
+              value: `${originalValue}/${value.valueList[i - column]}`,
+              source: value.strName,
+            };
+            hasCellConflict = true;
+          } else {
+            this.Table[row][i] = {
+              value: value.valueList[i - column],
+              source: value.strName,
+            };
+          }
         }
+        this.$set(this.Table, row, this.Table[row]);
         this.$forceUpdate();
       }
       // this.calSuggestion();
-      this.currentActiveGrid = {
+      this.storeCurrentActiveGrid({
         row,
         column,
-      };
+      });
       let partialSpecSuggestion = this.disambiguateRow(
         value.valueList,
         value.strName,
@@ -292,36 +312,59 @@ export default {
         this.storePartialSpecSuggestion(partialSpecSuggestion);
         console.log(partialSpecSuggestion);
       }
+      if(hasCellConflict) {
+        this.$message.info("Value conflict exists");
+      }
     },
     topDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
       if (row + value.valueList.length <= this.Table.length) {
         for (let i = row; i < row + value.valueList.length; i++) {
-          this.Table[i][column] = {
-            value: value.valueList[i - row],
-            source: value.strName,
-          };
+          if(this.Table[i][column]) {
+            let originalValue = this.Table[i][column].value ? this.Table[i][column].value : this.Table[i][column];
+            this.Table[i][column] = {
+              value: `${originalValue}/${value.valueList[i - row]}`,
+              source: value.strName,
+            };
+          } else {
+            this.Table[i][column] = {
+              value: value.valueList[i - row],
+              source: value.strName,
+            };
+          }
+          this.$set(this.Table, i, this.Table[i]);
         }
-        this.$forceUpdate();
+        console.log(this.Table);
+        // this.$forceUpdate();
       } else {
         let delta = row + value.valueList.length - this.Table.length;
         for (let i = 0; i < delta; i++) {
           this.Table.push(new Array(this.Table[0].length));
         }
         for (let i = row; i < row + value.valueList.length; i++) {
-          this.Table[i][column] = {
-            value: value.valueList[i - row],
-            source: value.strName,
-          };
+          if(this.Table[i][column]) {
+            let originalValue = this.Table[i][column].value ? this.Table[i][column].value : this.Table[i][column];
+            this.Table[i][column] = {
+              value: `${originalValue}/${value.valueList[i - row]}`,
+              source: value.strName,
+            };
+          } else {
+            this.Table[i][column] = {
+              value: value.valueList[i - row],
+              source: value.strName,
+            };
+          }
+          this.$set(this.Table, i, this.Table[i]);
         }
-        this.$forceUpdate();
+        console.log(this.Table);
+        // this.$forceUpdate();
       }
       // this.calSuggestion();
-      this.currentActiveGrid = {
+      this.storeCurrentActiveGrid({
         row,
         column,
-      };
+      });
       let partialSpecSuggestion = this.disambiguateRow(
         value.valueList,
         value.strName,
