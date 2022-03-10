@@ -137,9 +137,11 @@ const calString = (spec) => {
     return `${spec.data}.${spec.attribute}`;
   } else {
     let res = [];
-    spec.parameters.forEach(item => {
-      res.push(calString(item));
-    })
+    if(spec.parameters && spec.parameters.length > 0) {
+      spec.parameters.forEach(item => {
+        res.push(calString(item));
+      })
+    }
     if (spec.operator == "cross" || spec.operator == "add") {
       let tmp = res[0];
       for (let i = 1; i < res.length; i++) {
@@ -281,7 +283,7 @@ const genSpec = (row_header, column_header, body) => {
 const genExploreSpec = (row_header, column_header, body, attrInfo) => {
   let specListWithAdd = [];
   let unusedSpec = [];
-  if(attrInfo) {
+  if (attrInfo) {
     attrInfo.forEach((item) => {
       unusedSpec.push(item);
     });
@@ -289,7 +291,7 @@ const genExploreSpec = (row_header, column_header, body, attrInfo) => {
   deleteUsedSpec(unusedSpec, row_header);
   deleteUsedSpec(unusedSpec, column_header);
   deleteUsedSpec(unusedSpec, body);
-  if(!unusedSpec) {
+  if (!unusedSpec) {
     return specListWithAdd;
   }
   unusedSpec.forEach((item) => {
@@ -297,17 +299,17 @@ const genExploreSpec = (row_header, column_header, body, attrInfo) => {
     let tmprow = [],
       tmpcol = [],
       tmpbody = [];
-    if(row_header) {
+    if (row_header) {
       row_header.forEach((t) => {
         tmprow.push(t);
       });
     }
-    if(column_header) {
+    if (column_header) {
       column_header.forEach((t) => {
         tmpcol.push(t);
       });
     }
-    if(body) {
+    if (body) {
       body.forEach((t) => {
         tmpbody.push(t);
       });
@@ -333,7 +335,7 @@ const genExploreSpec = (row_header, column_header, body, attrInfo) => {
 }
 
 const deleteUsedSpec = (unusedSpec, header) => {
-  if(!header) return;
+  if (!header) return;
   header.forEach((item) => {
     if (refineStrName(item).operator == "attr") {
       for (let j = 0; j < unusedSpec.length; j++) {
@@ -353,7 +355,7 @@ const deleteUsedSpec = (unusedSpec, header) => {
 const mapTable = (table, rowInfo, colInfo) => {
   // console.log(rowInfo, colInfo);
   // console.log(this.currentActiveGrid.row, this.currentActiveGrid.column);
-  if(!rowInfo.len && !colInfo.len) return table;
+  if (!rowInfo.len && !colInfo.len) return table;
   let rowSize = table.length;
   let columnSize = 0;
   for (let i = 0; i < rowSize; i++) {
@@ -398,8 +400,8 @@ const mapTable = (table, rowInfo, colInfo) => {
 }
 
 const rearrangeTable = (table, rowInfo, colInfo) => {
-  if(!rowInfo || !colInfo) return table;
-  if(!rowInfo.len && !colInfo.len) return table;
+  if (!rowInfo || !colInfo) return table;
+  if (!rowInfo.len && !colInfo.len) return table;
   let rowSize = table.length;
   let columnSize = 0;
   for (let i = 0; i < rowSize; i++) {
@@ -449,35 +451,64 @@ function deepClone(target) {
   let result;
   // 如果当前需要深拷贝的是一个对象的话
   if (typeof target === 'object') {
-  // 如果是一个数组的话
-      if (Array.isArray(target)) {
-          result = []; // 将result赋值为一个数组，并且执行遍历
-          for (let i in target) {
-              // 递归克隆数组中的每一项
-              result.push(deepClone(target[i]))
-          }
-       // 判断如果当前的值是null的话；直接赋值为null
-      } else if(target===null) {
-          result = null;
-       // 判断如果当前的值是一个RegExp对象的话，直接赋值    
-      } else if(target.constructor===RegExp){
-          result = target;
-      }else {
-       // 否则是普通对象，直接for in循环，递归赋值对象的所有值
-          result = {};
-          for (let i in target) {
-              result[i] = deepClone(target[i]);
-          }
+    // 如果是一个数组的话
+    if (Array.isArray(target)) {
+      result = []; // 将result赋值为一个数组，并且执行遍历
+      for (let i in target) {
+        // 递归克隆数组中的每一项
+        result.push(deepClone(target[i]))
       }
-   // 如果不是对象的话，就是基本数据类型，那么直接赋值
-  } else {
+      // 判断如果当前的值是null的话；直接赋值为null
+    } else if (target === null) {
+      result = null;
+      // 判断如果当前的值是一个RegExp对象的话，直接赋值    
+    } else if (target.constructor === RegExp) {
       result = target;
+    } else {
+      // 否则是普通对象，直接for in循环，递归赋值对象的所有值
+      result = {};
+      for (let i in target) {
+        result[i] = deepClone(target[i]);
+      }
+    }
+    // 如果不是对象的话，就是基本数据类型，那么直接赋值
+  } else {
+    result = target;
   }
-   // 返回最终结果
+  // 返回最终结果
   return result;
 }
 
+const findValueList = (item, attrInfo) => {
+  if (!attrInfo) return [];
+  for (let i = 0; i < attrInfo.length; i++) {
+    if (compareObj(attrInfo[i].strName, item)) {
+      return attrInfo[i].valueList;
+    }
+  }
+}
+
+const compareObj = (obj1, obj2) => {
+  if (obj1.operator == "attr" || obj1.data) {
+    return obj1.data == obj2.data && obj1.attribute == obj2.attribute;
+  } else {
+    if (obj1.operator != obj2.operator || (!obj1.parameters && obj2.parameters) || (obj1.parameters && !obj2.parameters) || obj1.parameters.length != obj2.parameters.length) {
+      return false;
+    }
+    if (obj1.parameters) {
+      for (let i = 0; i < obj1.parameters.length; i++) {
+        if (!compareObj(obj1.parameters[i], obj2.parameters[i])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+}
+
+
+
 export default {
   generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString,
-  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable
+  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable, findValueList
 };

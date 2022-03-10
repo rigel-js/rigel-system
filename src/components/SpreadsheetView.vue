@@ -35,6 +35,7 @@
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
+            @contextmenu.prevent="openMenu($event, item)"
           >
             <div v-if="index != 0" class="specoperator">×</div>
             <div class="spectext">
@@ -65,6 +66,7 @@
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
+            @contextmenu.prevent="openMenu($event, item)"
           >
             <div v-if="index != 0" class="specoperator">×</div>
             <div class="spectext">
@@ -95,6 +97,7 @@
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
+            @contextmenu.prevent="openMenu($event, item)"
           >
             <div v-if="index != 0" class="specoperator">+</div>
             <div class="spectext">
@@ -115,6 +118,106 @@
         > -->
         <a-button class="specbutton" @click="resetHandler">Reset</a-button>
       </div>
+
+      <!-- context menu -->
+      <div
+        v-show="visible"
+        :style="{ left: left + 'px', top: top + 'px' }"
+        class="contextmenu"
+        id="menu_spreadsheetview"
+      >
+        <div>
+          <div class="menutext">Sorting</div>
+          <a-switch class="menuswitch" size="small" v-model="menuSortEnable" />
+        </div>
+        <div v-if="menuSortEnable">
+          <a-radio-group v-model="menuSort">
+            <a-radio :value="1"> Ascending </a-radio>
+            <br />
+            <a-radio :value="2"> Descending </a-radio>
+          </a-radio-group>
+        </div>
+        <div class="dashline"></div>
+
+        <div>
+          <div class="menutext">Filtering</div>
+          <a-switch
+            class="menuswitch"
+            size="small"
+            v-model="menuFilterEnable"
+          />
+        </div>
+        <!-- Categorical -->
+        <div
+          v-if="
+            menuFilterEnable &&
+            this.rightClickItem &&
+            this.rightClickItemValueList.length > 0 &&
+            this.rightClickItemIsCategorical
+          "
+        >
+          <a-checkbox-group
+            v-model="menuFilterValue"
+            name="checkboxgroup"
+            :options="this.rightClickItemValueList"
+          />
+        </div>
+        <!-- Quantitative -->
+        <div
+          v-if="
+            menuFilterEnable &&
+            this.rightClickItem &&
+            this.rightClickItemValueList.length > 0 &&
+            !this.rightClickItemIsCategorical
+          "
+        >
+          <a-input-number
+            class="menuInputNumber"
+            v-model="menuFilterLowerBound"
+          />
+          <div class="menuInputNumberLine" />
+          <a-input-number
+            class="menuInputNumber"
+            v-model="menuFilterUpperBound"
+          />
+        </div>
+
+        <div class="dashline"></div>
+        <!-- Quantitative Only -->
+        <div v-if="this.rightClickItem && !this.rightClickItemIsCategorical">
+          <div>
+            <div class="menutext">Binning</div>
+            <a-switch class="menuswitch" size="small" v-model="menuBinEnable" />
+          </div>
+          <div v-if="menuBinEnable">
+            <a-input-number
+              class="menuInputNumber"
+              v-model="menuBinLowerBound"
+            />
+            <div class="menuInputNumberLine" />
+            <a-input-number
+              class="menuInputNumber"
+              v-model="menuBinUpperBound"
+            />
+            <div>
+              <div class="menutext">Step:</div>
+              <a-input-number
+                class="menuInputNumber"
+                :min="1"
+                v-model="menuBinStep"
+              />
+            </div>
+          </div>
+          <div class="dashline"></div>
+        </div>
+
+        <div class="menuButtonContainer">
+          <a-button type="primary" class="menubutton" @click="onMenuApply">
+            Apply
+          </a-button>
+          <a-button class="menubutton" @click="onMenuReset"> Reset </a-button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -127,26 +230,27 @@ import Utils from "@/utils.js";
 
 export default {
   name: "SpreadsheetView",
-  // data() {
-  //   return {
-  //     row_header: [],
-  //     // row_header: [
-  //     //   {
-  //     //     attribute: "state",
-  //     //     color: "rgb(243,26,244,0.4)",
-  //     //     data: "crime",
-  //     //     strName: {
-  //     //       attribute: "state",
-  //     //       data: "crime",
-  //     //       operator: "attr",
-  //     //     },
-  //     //     valueList: ["Alabama", "Alaska"],
-  //     //   },
-  //     // ],
-  //     column_header: [],
-  //     body: [],
-  //   };
-  // },
+  data() {
+    return {
+      rightClickItem: {},
+      rightClickItemValueList: [],
+      rightClickItemIsCategorical: true,
+      visible: false,
+      left: 0,
+      top: 0,
+      menuSortEnable: true,
+      menuSort: 1,
+      menuFilterEnable: true,
+      menuFilterValue: [],
+      menuFilterUpperBound: null,
+      menuFilterLowerBound: null,
+      menuBinEnable: true,
+      menuBinUpperBound: null,
+      menuBinLowerBound: null,
+      menuBinStep: 5,
+      justreset: false,
+    };
+  },
   computed: {
     ...mapState([
       "currentTable",
@@ -221,6 +325,28 @@ export default {
         this.applyHandler();
       }
     },
+    visible(value) {
+      if (value) {
+        document.body.addEventListener("click", this.closeMenu);
+      } else {
+        document.body.removeEventListener("click", this.closeMenu);
+      }
+    },
+    menuSortEnable(value) {
+      if (value) {
+        this.menuFilterEnable = this.menuBinEnable = false;
+      }
+    },
+    menuFilterEnable(value) {
+      if (value) {
+        this.menuSortEnable = this.menuBinEnable = false;
+      }
+    },
+    menuBinEnable(value) {
+      if (value) {
+        this.menuSortEnable = this.menuFilterEnable = false;
+      }
+    },
   },
   methods: {
     ...mapActions([
@@ -231,6 +357,7 @@ export default {
       "setSpec",
       "storeRowInfo",
       "storeColInfo",
+      "storeAttrInfo"
     ]),
     onInput(event) {
       console.log(event);
@@ -422,6 +549,232 @@ export default {
         if (!attr.strName) {
           header[i]["description"] = Utils.calString(header[i]);
         }
+      }
+    },
+    openMenu(e, item) {
+      console.log(item);
+      let valueList = [];
+      if (item.valueList) {
+        valueList = item.valueList;
+      } else {
+        valueList = Utils.findValueList(item, this.attrInfo);
+      }
+      console.log(valueList);
+      this.rightClickItem = item;
+      this.rightClickItemValueList = valueList;
+      this.rightClickItemIsCategorical = Utils.isCategorical(valueList);
+      this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
+      this.menuSort = 1;
+      if (this.rightClickItemIsCategorical) {
+        this.menuFilterValue = valueList;
+      } else {
+        this.menuBinUpperBound = this.menuFilterUpperBound = Math.max(
+          ...valueList
+        );
+        this.menuBinLowerBound = this.menuFilterLowerBound = Math.min(
+          ...valueList
+        );
+        this.menuBinStep = 5;
+      }
+
+      let x = e.clientX;
+      let y = e.clientY;
+
+      this.top = y - 120;
+      this.left = x;
+
+      this.visible = true;
+    },
+    closeMenu(e) {
+      if(this.justreset) return;
+      let x = e.clientX;
+      let y = e.clientY;
+      let menu = document.getElementById("menu_spreadsheetview");
+      if (
+        x < this.left ||
+        x > this.left + menu.clientWidth ||
+        y < this.top ||
+        y > this.top + menu.clientHeight
+      ) {
+        this.visible = false;
+      }
+    },
+    onMenuApply() {
+      if (
+        !this.menuSortEnable &&
+        !this.menuBinEnable &&
+        !this.menuFilterEnable
+      ) {
+        this.$message.error("Please select an action");
+        return;
+      }
+      let op = this.rightClickItem;
+      let associationRule;
+      let colorList = Utils.genRandomColor(1);
+
+      if (this.menuSortEnable) {
+        if (this.menuSort == 1) {
+          associationRule = "ascsort";
+        } else if (this.menuSort == 2) {
+          associationRule = "descsort";
+        } else {
+          this.$message.error("Sort Type Undefined");
+        }
+        let valueList = [];
+        for (let i = 0; i < this.rightClickItemValueList.length; i++) {
+          valueList.push(this.rightClickItemValueList[i]);
+        }
+        if (associationRule == "ascsort") {
+          valueList.sort();
+        } else {
+          valueList.sort().reverse();
+        }
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName ? op.strName : op],
+        };
+        // let attrName = op.strName ? (op.data ? `${op.data}.${op.attribute}` : op.attribute) : Utils.calString(op);
+        let attrName = Utils.calString(strName);
+        let res = {
+          strName: strName,
+          // attribute: `${associationRule}(${attrName})`,
+          attribute: attrName,
+          color: colorList[0],
+          valueList: Utils.unique(valueList),
+        };
+        this.storeAttrInfo(res);
+        console.log(res);
+      } else if (this.menuBinEnable) {
+        associationRule = "bin";
+        if (this.menuBinLowerBound > this.menuBinUpperBound) {
+          this.$message.error("Illegal bound for binning");
+          return;
+        }
+        let interval =
+          (this.menuBinUpperBound - this.menuBinLowerBound) / this.menuBinStep;
+        let valueList = [];
+        for (let i = 0; i < this.menuBinStep; i++) {
+          let low = this.menuBinLowerBound + i * interval,
+            high = low + interval;
+          low = Math.round(low * 100) / 100;
+          high = Math.round(high * 100) / 100;
+          valueList.push(
+            `[${low}, ${high}` + (i < this.menuBinStep - 1 ? ")" : "]")
+          );
+        }
+        let strName = {
+          operator: associationRule,
+          parameters: [
+            op.strName ? op.strName : op,
+            { value: this.menuBinStep },
+            { value: this.menuBinLowerBound },
+            { value: this.menuBinUpperBound },
+          ],
+        };
+        // let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
+        let attrName = Utils.calString(strName);
+        let res = {
+          strName: strName,
+          // attribute: `${associationRule}(${attrName}, ${this.menuBinStep}, ${this.menuBinLowerBound}, ${this.menuBinUpperBound})`,
+          attribute: attrName,
+          color: colorList[0],
+          valueList: valueList,
+        };
+        this.storeAttrInfo(res);
+        console.log(res);
+      } else if (this.menuFilterEnable) {
+        if (this.rightClickItemIsCategorical) {
+          associationRule = "filterByValue";
+          let valueList = [];
+          for (let i = 0; i < this.menuFilterValue.length; i++) {
+            valueList.push(this.menuFilterValue[i]);
+          }
+          if (valueList.length == 0) {
+            this.$message.error("No satisfied item");
+            return;
+          }
+          let parameters = [op.strName ? op.strName : op];
+          // valueList.forEach((item) => {
+          //   parameters.push({ value: item });
+          // });
+          for (let i = 0; i < valueList.length; i++) {
+            parameters.push({
+              value: valueList[i],
+            });
+          }
+          let strName = {
+            operator: associationRule,
+            parameters,
+          };
+          // let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
+          let attrName = Utils.calString(strName);
+          // let attributeName = `${associationRule}(${attrName}`;
+          // valueList.forEach((item) => {
+          //   attributeName += `, ${item}`;
+          // });
+          // attributeName += ")";
+          let res = {
+            strName: strName,
+            // attribute: attributeName,
+            attribute: attrName,
+            color: colorList[0],
+            valueList: Utils.unique(valueList),
+          };
+          this.storeAttrInfo(res);
+          console.log(res);
+        } else {
+          associationRule = "filterByBound";
+          let valueList = [];
+          for(let i=0;i<this.rightClickItemValueList.length;i++) {
+            let item = this.rightClickItemValueList[i];
+            if (
+              item >= this.menuFilterLowerBound &&
+              item <= this.menuFilterUpperBound
+            ) {
+              valueList.push(item);
+            }
+          };
+          if (valueList.length == 0) {
+            this.$message.error("No satisfied item");
+            return;
+          }
+          let strName = {
+            operator: associationRule,
+            parameters: [
+              op.strName ? op.strName : op,
+              { value: this.menuFilterLowerBound },
+              { value: this.menuFilterUpperBound },
+            ],
+          };
+          let res = {
+            strName: strName,
+            // attribute: `${associationRule}(${op.attribute}, ${this.menuFilterLowerBound}, ${this.menuFilterUpperBound})`,
+            attribute: Utils.calString(strName),
+            color: colorList[0],
+            valueList: Utils.unique(valueList),
+          };
+          this.storeAttrInfo(res);
+          console.log(res);
+        }
+      }
+    },
+    onMenuReset() {
+      this.justreset = true;
+      setTimeout(() => {
+        this.justreset = false;
+      }, 200);
+      this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
+      this.menuSort = 1;
+      if (this.rightClickItemIsCategorical) {
+        this.menuFilterValue = this.rightClickItemValueList;
+      } else {
+        this.menuBinUpperBound = this.menuFilterUpperBound = Math.max(
+          ...this.rightClickItemValueList
+        );
+        this.menuBinLowerBound = this.menuFilterLowerBound = Math.min(
+          ...this.rightClickItemValueList
+        );
+        this.menuBinStep = 5;
       }
     },
   },

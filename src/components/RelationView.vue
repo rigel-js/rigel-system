@@ -81,6 +81,8 @@
         v-if="
           menuFilterEnable &&
           this.rightClickItem &&
+          this.rightClickItem.valueList &&
+          this.rightClickItem.valueList.length > 0 &&
           this.rightClickItemIsCategorical
         "
       >
@@ -96,6 +98,8 @@
         v-if="
           menuFilterEnable &&
           this.rightClickItem &&
+          this.rightClickItem.valueList &&
+          this.rightClickItem.valueList.length > 0 &&
           !this.rightClickItemIsCategorical
         "
       >
@@ -168,6 +172,7 @@ export default {
       menuBinUpperBound: null,
       menuBinLowerBound: null,
       menuBinStep: 5,
+      justreset: false,
     };
   },
   computed: mapState({
@@ -286,6 +291,7 @@ export default {
       this.visible = true;
     },
     closeMenu(e) {
+      if(this.justreset) return;
       let x = e.clientX;
       let y = e.clientY;
       let menu = document.getElementById("menu");
@@ -304,6 +310,10 @@ export default {
     },
 
     onMenuReset() {
+      this.justreset = true;
+      setTimeout(() => {
+        this.justreset = false;
+      }, 200);
       this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
@@ -472,7 +482,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .relation-view {
   width: 100%;
   height: 100%;
@@ -553,8 +563,8 @@ export default {
 
 .menubutton {
   width: 52px;
-  height: 26px;
-  padding: 0px 2px 0px 2px;
+  height: 26px !important;
+  padding: 0px 2px 0px 2px !important; 
   margin: auto 7px auto 7px;
   text-align: center;
   display: inline-block;
