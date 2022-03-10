@@ -183,13 +183,7 @@ export default {
 
     recommendValue(value) {
       console.log("recom", value);
-      if (
-        value.length == 0 ||
-        !(
-          (value[0] >= "a" && value[0] <= "z") ||
-          (value[0] >= "A" && value[0] <= "Z")
-        )
-      ) {
+      if (value.length == 0) {
         return [];  // 非字母开头的字符串不推荐
       }
       let res = [],
