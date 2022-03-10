@@ -173,7 +173,7 @@ export default {
       console.log(sch);
       try {
         let res = transform(sch)[0];
-        // console.log(res);
+        console.log(res);
         for (let i = 0; i < res.length; i++) {
           for (let j = 0; j < res[i].length; j++) {
             if (res[i][j]) {
@@ -184,8 +184,10 @@ export default {
             }
           }
         }
-        // console.log(res);
+        console.log(res);
+        console.log(this.rowInfo, this.colInfo);
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
+        console.log(table);
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
       } catch (err) {
@@ -205,7 +207,7 @@ export default {
       }
 
       let derivedAttr = null, type = "";
-
+      console.log(this.currentActiveGrid, this.rowInfo, this.colInfo);
       if (partialSpec.row_header) {
         if (!this.rowInfo.len) {
           if (!this.colInfo.len) {
@@ -292,7 +294,7 @@ export default {
             this.storeRowInfo({
               row: this.currentActiveGrid.row + 1,
               column: this.currentActiveGrid.column
-                ? this.currentActiveGrid - 1
+                ? this.currentActiveGrid.column - 1
                 : 0,
               len: 0,
             });
