@@ -3,7 +3,7 @@ import Vuex from "vuex";
 
 import Utils from "@/utils.js";
 import { EXTRACT_URL } from "@/CONSTANT";
-import { W } from "r-collapse-vue";
+import { P, W } from "r-collapse-vue";
 
 Vue.use(Vuex);
 
@@ -27,6 +27,8 @@ const state = {
   rowInfo: {},
   colInfo: {},
   canSuggest: true,
+  previewTable: undefined,
+  reapplyPartialSpec: undefined,
 };
 
 let currentState = {};
@@ -137,7 +139,7 @@ const mutations = {
     state.associationRule = currentState.associationRule;
     state.alterSpecList = currentState.alterSpecList;
     state.newSpec = currentState.newSpec;
-    state.partialSpecSuggestion = currentState.partialSpecSuggestion;
+    // state.partialSpecSuggestion = currentState.partialSpecSuggestion;
     state.deleteSpecSuggestion = currentState.deleteSpecSuggestion;
     state.row_header = currentState.row_header;
     state.column_header = currentState.column_header;
@@ -152,7 +154,15 @@ const mutations = {
 
   changeCanSuggest(state, canSuggest) {
     state.canSuggest = canSuggest;
-  }
+  },
+
+  changePreviewTable(state, previewTable) {
+    state.previewTable = previewTable;
+  },
+
+  changeReapplyPartialSpec(state, reapplyPartialSpec) {
+    state.reapplyPartialSpec = reapplyPartialSpec;
+  },
 };
 
 const actions = {
@@ -235,7 +245,13 @@ const actions = {
   },
   storeCanSuggest({ commit }, canSuggest) {
     commit("changeCanSuggest", canSuggest);
-  }
+  },
+  storePreviewTable({ commit }, previewTable) {
+    commit("changePreviewTable", previewTable);
+  },
+  storeReapplyPartialSpec({ commit }, reapplyPartialSpec) {
+    commit("changeReapplyPartialSpec", reapplyPartialSpec);
+  },
 };
 
 export default new Vuex.Store({

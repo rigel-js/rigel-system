@@ -15,7 +15,7 @@
               :key="index2"
               class="applypanel"
               @click="applyPartialSpec(partialSpec)"
-              @mouseenter="previewPartialSpec(partialSpec)"
+              @mouseenter="previewPartialSpec(partialSpec, false)"
               @mouseleave="restorePreview"
             >
               <div class="applypanelcontent">
@@ -137,8 +137,23 @@ export default {
     "rowInfo",
     "colInfo",
     "canSuggest",
-    "newSpec"
+    "newSpec",
+    "reapplyPartialSpec",
   ]),
+  watch: {
+    partialSpecSuggestion(val, oldval) {
+      console.log(val);
+      if(val && val.length > 0) {
+          let partialSpec = val[0].partialSpecList[0];
+          this.previewPartialSpec(partialSpec, true);
+      }
+    },
+    reapplyPartialSpec(val, oldval) {
+      if(val) {
+        this.applyPartialSpec(this.partialSpecSuggestion[0].partialSpecList[0]);
+      }
+    }
+  },
   methods: {
     ...mapActions([
       "storeCurrentTable",
@@ -150,7 +165,8 @@ export default {
       "storeCurrentState",
       "restoreCurrentState",
       "storeCanSuggest",
-      "storeAttrInfo"
+      "storeAttrInfo",
+      "storePreviewTable",
     ]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
@@ -173,7 +189,7 @@ export default {
       console.log(sch);
       try {
         let res = transform(sch)[0];
-        console.log(res);
+        // console.log(res);
         for (let i = 0; i < res.length; i++) {
           for (let j = 0; j < res[i].length; j++) {
             if (res[i][j]) {
@@ -184,17 +200,17 @@ export default {
             }
           }
         }
-        console.log(res);
+        // console.log(res);
         console.log(this.rowInfo, this.colInfo);
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
-        console.log(table);
+        // console.log(table);
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
       } catch (err) {
         this.$message.error("Illegal specification!");
       }
     },
-    applyPartialSpec(partialSpec, isPreview) {
+    applyPartialSpec(partialSpec, isPreview, isPreviewWindow) {
       // console.log(partialSpec);
       if(!isPreview) {
         if(!this.canSuggest) {
@@ -207,7 +223,7 @@ export default {
       }
 
       let derivedAttr = null, type = "";
-      console.log(this.currentActiveGrid, this.rowInfo, this.colInfo);
+
       if (partialSpec.row_header) {
         if (!this.rowInfo.len) {
           if (!this.colInfo.len) {
@@ -381,6 +397,15 @@ export default {
         // console.log(res);
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
+        
+        if(isPreviewWindow) {
+          console.log(this.canSuggest);
+          this.storePreviewTable(table);
+          this.restoreCurrentState();
+          console.log("ok", table);
+          return;
+        }
+
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
 
@@ -419,6 +444,7 @@ export default {
       
       if(!isPreview) {
         this.storePartialSpecSuggestion(null);
+        this.storePreviewTable(undefined);
       }
     },
     deletePartialSpec(partialSpec) {
@@ -488,10 +514,10 @@ export default {
       }
       this.storeDeleteSpecSuggestion(null);
     },
-    previewPartialSpec(partialSpec) {
+    previewPartialSpec(partialSpec, iswindow) {
       this.storeCurrentState();
       this.storeCanSuggest(false);
-      this.applyPartialSpec(partialSpec, true);
+      this.applyPartialSpec(partialSpec, true, iswindow);
     },
     previewSpec(spec) {
       this.storeCurrentState();

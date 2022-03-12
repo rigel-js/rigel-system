@@ -145,12 +145,31 @@
         <a-button class="menubutton" @click="onMenuReset"> Reset </a-button>
       </div>
     </div>
+
+    <!-- preview -->
+    <div class="previewwindow" v-if="previewTable">
+      <!-- <div class="row" v-for="(row, i) in this.previewTable" :key="`row_${i}`">
+        <div
+          class="cell-container"
+          v-for="(cellValue, j) in row"
+          :key="`cell_${i}_${j}`"
+        >
+          <cell
+            :value="cellValue"
+            :editable="false"
+          />
+        </div>
+      </div> -->
+      <spreadsheet name="preview" :table="previewTable" :editable="false" :contentDraggable="false">
+      </spreadsheet>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 import Spreadsheet from "./Spreadsheet/Index.vue";
+import Cell from "./Spreadsheet/Cell.vue";
 import Utils from "@/utils.js";
 
 export default {
@@ -179,6 +198,7 @@ export default {
     relations: (state) => state.relations,
     attrInfo: (state) => state.attrInfo,
     associationRule: (state) => state.associationRule,
+    previewTable: (state) => state.previewTable,
   }),
   watch: {
     visible(value) {
@@ -478,6 +498,7 @@ export default {
   },
   components: {
     Spreadsheet,
+    // Cell,
   },
 };
 </script>
@@ -598,5 +619,15 @@ export default {
   border-top: 2px dashed;
   width: 10px;
   margin: 3px 5px 6px 5px;
+}
+
+.previewwindow {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: white;
+  z-index: 4000;
+  -webkit-box-shadow: 0 2px 6px 0px rgb(0 0 0 / 32%);
+  min-width: 400px;
 }
 </style>

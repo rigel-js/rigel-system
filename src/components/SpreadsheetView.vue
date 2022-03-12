@@ -503,6 +503,7 @@ export default {
       this.$forceUpdate();
     },
     applyHandler() {
+      console.log("applyhandler");
       try {
         let alterSpec = Utils.genAlterSpec(
           this.row_header,

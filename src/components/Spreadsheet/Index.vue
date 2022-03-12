@@ -29,6 +29,7 @@
         <cell
           :value="cellValue"
           :editable="editable"
+          :draggable="contentDraggable"
           @cell-change="cellChangeHandler(i, j, $event)"
           @left-drop="leftDropHandler(i, j, $event)"
           @top-drop="topDropHandler(i, j, $event)"
@@ -69,6 +70,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    contentDraggable: {
+      type: Boolean,
+      default: true,
+    }
   },
   data() {
     return {
@@ -101,6 +106,7 @@ export default {
       "currentActiveGrid",
       "rowInfo",
       "colInfo",
+      "previewTable",
     ]),
   },
   methods: {
@@ -110,6 +116,9 @@ export default {
       "storeDeleteSpecSuggestion",
       "storeCurrentTable",
       "storeCurrentActiveGrid",
+      "storeNewSpec",
+      "storePreviewTable",
+      "storeReapplyPartialSpec",
     ]),
     initTable() {
       if (this.table) {
@@ -152,6 +161,11 @@ export default {
     },
     cellChangeHandler(row, column, value) {
       // this.Table[row][column] = value;
+      if(this.previewTable) {
+        this.$message.info("Default specification applied");
+        this.storeReapplyPartialSpec(true);
+        return;
+      }
       const newRow = this.Table[row].slice(0);
       let oldValue = newRow[column];
       let isOldValueValid = oldValue && oldValue.value != "";
@@ -251,6 +265,11 @@ export default {
     leftDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
+      if(this.previewTable) {
+        this.$message.info("Default specification applied");
+        this.storeReapplyPartialSpec(true);
+        return;
+      }
       let hasCellConflict = false;
       if (column + value.valueList.length <= this.Table[row].length) {
         var newRow = new Array(this.Table[row].length);
@@ -319,6 +338,11 @@ export default {
     topDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
+      if(this.previewTable) {
+        this.$message.info("Default specification applied");
+        this.storeReapplyPartialSpec(true);
+        return;
+      }
       if (row + value.valueList.length <= this.Table.length) {
         for (let i = row; i < row + value.valueList.length; i++) {
           if(this.Table[i][column]) {
