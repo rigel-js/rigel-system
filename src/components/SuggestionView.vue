@@ -150,7 +150,9 @@ export default {
     },
     reapplyPartialSpec(val, oldval) {
       if(val) {
+        console.log("reapply");
         this.applyPartialSpec(this.partialSpecSuggestion[0].partialSpecList[0]);
+        this.storeReapplyPartialSpec(false);
       }
     }
   },
@@ -167,6 +169,7 @@ export default {
       "storeCanSuggest",
       "storeAttrInfo",
       "storePreviewTable",
+      "storeReapplyPartialSpec",
     ]),
     onSuggestionClick(suggestion) {
       // apply the suggestion
