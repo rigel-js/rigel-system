@@ -220,14 +220,14 @@ export default {
           column,
         });
 
-        let originAttr,
-          partialSpec = {};
+        let originAttr, partialSpec = {}, deleteSpecSuggestion = [];
         if (row >= this.rowInfo.row && column >= this.colInfo.column) {
           //body
           originAttr = oldValue.source;
           partialSpec["body"] = originAttr;
           let sourceDescription = Utils.calString(originAttr);
           partialSpec["description"] = `(), () => (${sourceDescription})`;
+          deleteSpecSuggestion = [partialSpec];
         } else if (row < this.rowInfo.row && column >= this.colInfo.column) {
           //column
           if (
@@ -241,6 +241,27 @@ export default {
           partialSpec["column_header"] = originAttr;
           let sourceDescription = Utils.calString(originAttr);
           partialSpec["description"] = `(), (${sourceDescription}) => ()`;
+          deleteSpecSuggestion.push(partialSpec);
+          let valueList = Utils.findValueList(originAttr, this.attrInfo);
+          let newValueList = [originAttr];
+          if(Utils.isCategorical(valueList)) {
+            for(let i = 0; i < valueList.length; i++) {
+              if(valueList[i] != oldValue.value) {
+                newValueList.push({
+                  value: valueList[i]
+                });
+              }
+            }
+            let strName = {
+              operator: "filterByValue",
+              parameters: newValueList
+            };
+            deleteSpecSuggestion.push({
+              isFilter: true,
+              column_header: strName,
+              description: `Filter ${sourceDescription} by value`,
+            });
+          }
         } else if (column < this.colInfo.column && row >= this.rowInfo.row) {
           //row
           if (
@@ -254,11 +275,31 @@ export default {
           partialSpec["row_header"] = originAttr;
           let sourceDescription = Utils.calString(originAttr);
           partialSpec["description"] = `(${sourceDescription}), () => ()`;
+          deleteSpecSuggestion.push(partialSpec);
+          let valueList = Utils.findValueList(originAttr, this.attrInfo);
+          let newValueList = [originAttr];
+          if(Utils.isCategorical(valueList)) {
+            for(let i = 0; i < valueList.length; i++) {
+              if(valueList[i] != oldValue.value) {
+                newValueList.push({
+                  value: valueList[i]
+                });
+              }
+            }
+            let strName = {
+              operator: "filterByValue",
+              parameters: newValueList
+            };
+            deleteSpecSuggestion.push({
+              isFilter: true,
+              row_header: strName,
+              description: `Filter ${sourceDescription} by value`,
+            });
+          }
         } else {
           return;
         }
 
-        let deleteSpecSuggestion = [partialSpec];
         this.storeDeleteSpecSuggestion(deleteSpecSuggestion);
       }
     },

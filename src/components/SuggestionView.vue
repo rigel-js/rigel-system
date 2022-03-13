@@ -26,17 +26,20 @@
           </Newcollapsepanel>
         </Newcollapse>
       </div>
-      <div v-else-if="this.deleteSpecSuggestion" class="suggestion-unit">
+      <div v-else-if="deleteSpecSuggestion" class="suggestion-unit">
         <div class="suggestionTitle">
           Choose recommendations based on your interactions.
         </div>
         <div
-          v-for="(item, index) in this.deleteSpecSuggestion"
+          v-for="(item, index) in deleteSpecSuggestion"
           :key="index"
-          class="partialspecpanel"
+          class="applypanel"
           @click="deletePartialSpec(item)"
         >
-          {{ item.description }}
+          <div class="applypanelcontent">
+            <a-icon type="bulb" class="icon applypanelicon"/>
+            <span class="applypaneltext"> {{ item.description }} </span>
+          </div>
         </div>
       </div>
       <div v-else>
@@ -454,26 +457,34 @@ export default {
       let deleteRow = this.currentActiveGrid.row,
         deleteColumn = this.currentActiveGrid.column;
       if (partialSpec.row_header) {
-        this.row_header.splice(deleteColumn - this.rowInfo.column, 1);
-        if (this.rowInfo.len > 1) {
-          this.storeRowInfo({
-            row: this.rowInfo.row,
-            column: this.rowInfo.column,
-            len: this.rowInfo.len - 1,
-          });
+        if(partialSpec.isFilter) {
+          this.row_header.splice(deleteColumn - this.rowInfo.column, 1, partialSpec.row_header);
         } else {
-          this.storeRowInfo({});
+          this.row_header.splice(deleteColumn - this.rowInfo.column, 1);
+          if (this.rowInfo.len > 1) {
+            this.storeRowInfo({
+              row: this.rowInfo.row,
+              column: this.rowInfo.column,
+              len: this.rowInfo.len - 1,
+            });
+          } else {
+            this.storeRowInfo({});
+          }
         }
       } else if (partialSpec.column_header) {
-        this.column_header.splice(deleteRow - this.colInfo.row, 1);
-        if (this.colInfo.len > 1) {
-          this.storeColInfo({
-            row: this.colInfo.row,
-            column: this.colInfo.column,
-            len: this.colInfo.len - 1,
-          });
+        if(partialSpec.isFilter) {
+          this.column_header.splice(deleteRow - this.colInfo.row, 1, partialSpec.column_header);
         } else {
-          this.storeColInfo({});
+          this.column_header.splice(deleteRow - this.colInfo.row, 1);
+          if (this.colInfo.len > 1) {
+            this.storeColInfo({
+              row: this.colInfo.row,
+              column: this.colInfo.column,
+              len: this.colInfo.len - 1,
+            });
+          } else {
+            this.storeColInfo({});
+          }
         }
       } else {
         for (let i = 0; i < this.body.length; i++) {
