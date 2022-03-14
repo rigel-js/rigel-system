@@ -20,7 +20,10 @@
     </div>
     <div class="specmenu">
       <div class="speccomponent">
-        <div class="spectitle">Row header:</div>
+        <a-tooltip>
+          <template slot="title">What object does each row represent?</template>
+          <div class="spectitle">Row header:</div>
+        </a-tooltip>
         <div
           class="specinput"
           id="rowinput"
@@ -51,7 +54,10 @@
         </div>
       </div>
       <div class="speccomponent">
-        <div class="spectitle">Column header:</div>
+        <a-tooltip>
+          <template slot="title"> What object does each column represent? </template>
+          <div class="spectitle">Column header:</div>
+        </a-tooltip>
         <div
           class="specinput"
           id="columninput"
@@ -82,7 +88,10 @@
         </div>
       </div>
       <div class="speccomponent">
-        <div class="spectitle">Body:</div>
+        <a-tooltip>
+          <template slot="title">Details of the object defined by each row and column.</template>
+          <div class="spectitle">Body:</div>
+        </a-tooltip>
         <div
           class="specinput"
           id="bodyinput"
