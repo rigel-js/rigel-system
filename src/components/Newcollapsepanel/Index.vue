@@ -25,7 +25,10 @@
 export default {
   name: "Newcollapsepanel",
   props: {
-    name: String,
+    name: {
+      type: [String, Number],
+      required: true,
+    },
     defaultClickAction: {
       type: Boolean,
       default: true,
@@ -39,7 +42,8 @@ export default {
   },
   computed: {
     innerName() {
-      return this.name || Math.random().toString(32).substr(2);
+      // return this.name ? this.name : Math.random().toString(32).substr(2);
+      return this.name;
     },
     activeKeys() {
       if (this.parent) {

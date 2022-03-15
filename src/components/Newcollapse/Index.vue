@@ -1,17 +1,24 @@
 <template>
-  <div>
-      <slot/>
-  </div>
+	<div>
+			<slot/>
+	</div>
 </template>
 
 <script>
 export default {
-  name: "Newcollapse",
-  props: {
-    // value: {
+	name: "Newcollapse",
+	props: {
+		// value: {
 		// 	type: Array,
 		// 	required: true,
-    // },
+		// },
+		level: {
+			type: Number,
+			default: 0,
+		},
+		initial: {
+			type: [String, Number],
+		},
 		activeClass: {
 			type: String,
 			default: "r-collapse-panel-active",
@@ -20,7 +27,7 @@ export default {
 			type: Boolean,
 			default: false
 		}
-  },
+	},
 	watch: {
 		value(val, oldval) {
 			// console.log("new", val);
@@ -33,17 +40,20 @@ export default {
 	mounted() {
 		this.$on("open", this.handlePanelOpen);
 		this.$on("close", this.handlePanelClose);
+		if(this.level == 0) {
+			this.value = [this.initial];
+		}
 	},
 	data() {
 		return ({
 			value: []
 		});
 	},
-  methods: {
-    handlechange(newActiveKeys, oldActiveKeys) {
-      console.log("newActiveKeys", newActiveKeys);
-      console.log("oldActiveKeys", oldActiveKeys);
-    },
+	methods: {
+		handlechange(newActiveKeys, oldActiveKeys) {
+			console.log("newActiveKeys", newActiveKeys);
+			console.log("oldActiveKeys", oldActiveKeys);
+		},
 		handlePanelOpen(key) {
 			// console.log("recvopen", key);
 			let newArr = [];
@@ -74,18 +84,18 @@ export default {
 			// this.$emit('change', tmp, this.value);
 			this.value = tmp;
 		}
-  },
+	},
 };
 </script>
 
 <style lang="scss">
 .collapse-demo {
-  width: 100%;
-  cursor: pointer;
-  // .collapse-demo-panel.collapse-demo-active {
-  //   .collapse-fixed > i {
-  //     transform: rotate(180deg) !important;
-  //   }
-  // }
+	width: 100%;
+	cursor: pointer;
+	// .collapse-demo-panel.collapse-demo-active {
+	//   .collapse-fixed > i {
+	//     transform: rotate(180deg) !important;
+	//   }
+	// }
 }
 </style>

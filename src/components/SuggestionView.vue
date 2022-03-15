@@ -4,10 +4,11 @@
     <div class="suggestion-container">
       <div v-if="this.partialSpecSuggestion" class="suggestion-unit">
         <div class="suggestionTitle">Disambiguate user interactions.</div>
-        <Newcollapse>
+        <Newcollapse :initial="0">
           <Newcollapsepanel
             v-for="(item, index) in this.partialSpecSuggestion"
             :key="index"
+            :name="index"
             :header="`${item.itemDescription} belongs to ${item.source}`"
           >
             <div
@@ -72,7 +73,7 @@
         <div class="suggestion-unit" v-if="this.suggestions.length > 0">
           <div class="suggestionTitle">Variations (Add more attributes)</div>
           <div class="variation-unit">
-            <Varunit :content="this.suggestions" />
+            <Varunit :content="this.suggestions" :level="0"/>
           </div>
         </div>
       </div>

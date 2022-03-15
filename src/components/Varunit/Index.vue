@@ -1,15 +1,17 @@
 <template>
   <div v-if="this.finalContent">
-    <Newcollapse>
+    <Newcollapse :level="level" :initial="0">
       <Newcollapsepanel
         v-for="(item, index) in this.finalContent"
         :key="index"
+        :name="index"
         :header="`Add ${item.add}`"
       >
-        <Newcollapse>
+        <Newcollapse :level="level+1" :initial="0">
           <Newcollapsepanel
             v-for="(spec, index2) in item.list"
             :key="index2"
+            :name="index2"
             :header="spec.description"
             :applySpec="spec"
           >
@@ -24,16 +26,18 @@
                 <span class="applypaneltext"> Apply </span>
               </div>
             </div>
-            <Newcollapse>
+            <Newcollapse :level="level+2" :initial="0">
               <Newcollapsepanel
                 header="Alternatives (Rearrange current attributes)"
+                :name="0"
               >
                 <alterpanel :spec="spec"/>
               </Newcollapsepanel>
               <Newcollapsepanel
                 header="Variations (Add more attributes)"
+                :name="0"
               >
-                <Varunit :spec="spec" />
+                <Varunit :spec="spec" :level="level+3"/>
               </Newcollapsepanel>
             </Newcollapse>
           </Newcollapsepanel>
@@ -58,6 +62,10 @@ export default {
     spec: {
       type: Object,
       default: undefined,
+    },
+    level: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
