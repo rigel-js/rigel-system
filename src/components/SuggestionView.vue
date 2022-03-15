@@ -77,24 +77,19 @@
           </div>
         </div>
       </div>
-      <!-- <div class="suggestion-unit">
-        <test>
-          <template v-slot:abc="message">
-            <div @click="message.test()"> test </div>
-          </template>
-        </test>
-      </div> -->
-      <!-- <div class="suggestion-unit">
-        <Newcollapse
-          v-model="activeKeys"
-          class="collapse-demo"
-          activeClass="collapse-demo-active"
-        >
-          <Newcollapsepanel name="one" class="collapse-demo-panel" header="test">
-            <div class="collapse-content">这是Panel 1的内容</div>
-          </Newcollapsepanel>
-        </Newcollapse>
-      </div> -->
+    </div>
+    <!-- preview -->
+    <div class="previewwindow" v-if="previewTable">
+      <spreadsheet 
+        name="preview" 
+        :table="previewTable" 
+        :key="JSON.stringify(this.previewTable)" 
+        :editable="false" 
+        :contentDraggable="false"
+        :fixedRowNum="5"
+        :fixedColNum="5"
+      >
+      </spreadsheet>
     </div>
   </div>
 </template>
@@ -104,6 +99,7 @@ import { mapActions, mapState } from "vuex";
 import { transform } from "rigel-tools";
 import Varunit from "./Varunit/Index.vue";
 import Utils from "@/utils.js";
+import Spreadsheet from "./Spreadsheet/Index.vue";
 // import test from "./test/Index.vue";
 
 export default {
@@ -143,7 +139,8 @@ export default {
     "canSuggest",
     "newSpec",
     "reapplyPartialSpec",
-    "currentTable"
+    "currentTable",
+    "previewTable",
   ]),
   watch: {
     partialSpecSuggestion(val, oldval) {
@@ -222,6 +219,10 @@ export default {
         });
         console.log(res);
         console.log(this.rowInfo, this.colInfo);
+        if(isPreview) {
+          this.storePreviewTable(res);
+          return;
+        }
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
         this.storeNewSpec(spec);
@@ -417,16 +418,15 @@ export default {
         }
         console.log(res);
         console.log(this.rowInfo, this.colInfo);
-        let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
-        console.log(table);
-        
-        if(isPreviewWindow) {
-          console.log(this.canSuggest);
-          this.storePreviewTable(table);
-          this.restoreCurrentState();
-          console.log("ok", table);
+        if(isPreview) {
+          this.storePreviewTable(res);
+          if(isPreviewWindow) {
+            this.restoreCurrentState();
+          }
           return;
         }
+        let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
+        console.log(table);
 
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
@@ -559,10 +559,12 @@ export default {
     restorePreview() {
       if(!this.canSuggest) {
         this.restoreCurrentState();
+        // this.storePreviewTable(undefined);
       }
     }
   },
   components: {
+    Spreadsheet,
     Varunit,
     // test
   },
@@ -641,5 +643,15 @@ export default {
 
 .suggestion-disambiguate::-webkit-scrollbar {
   display: none;
+}
+
+.previewwindow {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: white;
+  z-index: 4000;
+  -webkit-box-shadow: 0 2px 6px 0px rgb(0 0 0 / 32%);
+  min-width: 400px;
 }
 </style>

@@ -79,7 +79,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeCurrentTable", "storeNewSpec", "storeCanSuggest", "storeCurrentState", "restoreCurrentState"]),
+    ...mapActions(["storeCurrentTable", "storeNewSpec", "storeCanSuggest", "storeCurrentState", "restoreCurrentState", "storePreviewTable"]),
     handleApply(spec, isPreview) {
       if (!spec) return;
       if(!isPreview) {
@@ -108,7 +108,11 @@ export default {
           }
         }
         // console.log(res);
-        this.storeCurrentTable(res);
+        if(isPreview) {
+          this.storePreviewTable(res);
+        } else {
+          this.storeCurrentTable(res);
+        }
         this.storeNewSpec(spec);
       } catch (err) {
         this.$message.error("Illegal specification!");

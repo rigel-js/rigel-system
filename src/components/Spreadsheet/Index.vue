@@ -74,7 +74,15 @@ export default {
     contentDraggable: {
       type: Boolean,
       default: true,
-    }
+    },
+    fixedRowNum: {
+      type: Number,
+      default: 0,
+    },
+    fixedColNum: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -124,7 +132,32 @@ export default {
     initTable() {
       if (this.table) {
         if (this.name !== "targetTable") {
-          this.Table = this.table;
+          if(this.fixedRowNum && this.fixedColNum) {
+            let rowSize = this.table.length;
+            let columnSize = 0;
+            for (let i = 0; i < rowSize; i++) {
+              if (columnSize < this.table[i].length) {
+                columnSize = this.table[i].length;
+              }
+            }
+            this.Table = [];
+            for(let i = 0; i < this.fixedRowNum; i++) {
+              let tmp = [];
+              for(let j = 0; j < this.fixedColNum; j++) {
+                tmp.push(null);
+              }
+              this.Table.push(tmp);
+              for(let j = 0; j < this.fixedColNum; j++) {
+                if(i < rowSize && j < columnSize) {
+                  this.Table[i][j] = this.table[i][j];
+                } else {
+                  this.Table[i][j] = null;
+                }
+              }
+            }
+          } else {
+            this.Table = this.table;
+          }
         } else {
           // console.log(this.table);
           let table = this.table;
