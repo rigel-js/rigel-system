@@ -4,6 +4,7 @@
     :title="this.realValue"
     :draggable="draggable"
     :data-info="JSON.stringify(this.cellValue)"
+    :id="givenId"
     @dragstart="dragHandler"
     @drop="dropHandler"
     @dragover="allowDrop"
@@ -47,6 +48,7 @@ export default {
       type: String,
       default: "white",
     },
+    givenId: String,
   },
   computed: {
     ...mapState(["attrInfo"]),

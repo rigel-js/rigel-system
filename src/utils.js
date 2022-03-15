@@ -208,20 +208,22 @@ const genAlterSpec = (row_header, column_header, body) => {
     );
   } else {
     let cur = (1 << num_attr) - (1 << rowlen);
-    let tmprow = [],
-      tmpcol = [];
+    let tmprow = [], tmpcol = [];
     for (let i = 0; i < 1 << num_attr; i++) {
       if (i == cur) continue;
-      (tmprow = []), (tmpcol = []);
+      tmprow = [];
+      tmpcol = [];
       for (let j = 0; j < num_attr; j++) {
         let item =
           j < rowlen ? row_header[j] : column_header[j - rowlen];
+        console.log(item);
         if ((i >> j) & 1) {
           tmpcol.push(item);
         } else {
           tmprow.push(item);
         }
       }
+      console.log(tmprow, tmpcol, body);
       let spec = genSpec(tmprow, tmpcol, body);
       spec["description"] = stringfySpec(spec);
       specList.push(spec);

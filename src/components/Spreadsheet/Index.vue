@@ -30,6 +30,7 @@
           :value="cellValue"
           :editable="editable"
           :draggable="contentDraggable"
+          :givenId="`${name}_cell_${i}_${j}`"
           @cell-change="cellChangeHandler(i, j, $event)"
           @left-drop="leftDropHandler(i, j, $event)"
           @top-drop="topDropHandler(i, j, $event)"
@@ -194,17 +195,31 @@ export default {
             }; // 这里需要推荐匹配的attr
           }
         }
-        this.$set(this.Table, row, newRow);
-        console.log(row, column, value, this.Table);
         // this.calSuggestion();
         this.storeCurrentActiveGrid({
           row,
           column,
         });
-        let partialSpecSuggestion = this.disambiguateCell(
-          newRow[column].value,
-          newRow[column].source
-        );
+        let partialSpecSuggestion;
+        try {
+          partialSpecSuggestion = this.disambiguateCell(
+            newRow[column].value,
+            newRow[column].source
+          );
+        } catch (err) {
+          if(err.message == "INPUT") {
+            newRow[column] = null;
+            let el = document.getElementById(`${this.name}_cell_${row}_${column}`);
+            el.innerText = null;
+          } else {
+            throw err;
+          }
+        }
+
+        this.$set(this.Table, row, newRow);
+        this.$forceUpdate();
+        console.log(row, column, value, this.Table);
+
         if (partialSpecSuggestion) {
           this.storePartialSpecSuggestion(partialSpecSuggestion);
           console.log(partialSpecSuggestion);
@@ -368,6 +383,7 @@ export default {
         value.strName,
         true
       );
+      
       if (partialSpecSuggestion) {
         this.storePartialSpecSuggestion(partialSpecSuggestion);
         console.log(partialSpecSuggestion);
@@ -726,7 +742,7 @@ export default {
       let res = [];
       if (source.length == 0) {
         this.$message.error("Failed to find the source of the input");
-        return;
+        throw new Error("INPUT");
       }
       for (let i = 0; i < source.length; i++) {
         let key = source[i];

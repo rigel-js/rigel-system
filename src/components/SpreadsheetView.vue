@@ -38,7 +38,7 @@
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
-            @contextmenu.prevent="openMenu($event, item)"
+            @contextmenu.prevent="openMenu($event, item, 'row', index)"
           >
             <div v-if="index != 0" class="specoperator">×</div>
             <div class="spectext">
@@ -72,7 +72,7 @@
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
-            @contextmenu.prevent="openMenu($event, item)"
+            @contextmenu.prevent="openMenu($event, item, 'column', index)"
           >
             <div v-if="index != 0" class="specoperator">×</div>
             <div class="spectext">
@@ -106,7 +106,7 @@
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
-            @contextmenu.prevent="openMenu($event, item)"
+            @contextmenu.prevent="openMenu($event, 'body', index)"
           >
             <div v-if="index != 0" class="specoperator">+</div>
             <div class="spectext">
@@ -242,6 +242,8 @@ export default {
   data() {
     return {
       rightClickItem: {},
+      rightClickItemSource: "",
+      rightClickItemIndex: 0,
       rightClickItemValueList: [],
       rightClickItemIsCategorical: true,
       visible: false,
@@ -514,11 +516,13 @@ export default {
     applyHandler() {
       console.log("applyhandler");
       try {
+        console.log(this.row_header);
         let alterSpec = Utils.genAlterSpec(
           this.row_header,
           this.column_header,
           this.body
         );
+        console.log(alterSpec);
         this.storeAlterSpecList(alterSpec);
         let exploreSpec = Utils.genExploreSpec(
           this.row_header,
@@ -561,7 +565,7 @@ export default {
         }
       }
     },
-    openMenu(e, item) {
+    openMenu(e, item, source, index) {
       console.log(item);
       let valueList = [];
       if (item.valueList) {
@@ -571,6 +575,8 @@ export default {
       }
       console.log(valueList);
       this.rightClickItem = item;
+      this.rightClickItemSource = source;
+      this.rightClickItemIndex = index;
       this.rightClickItemValueList = valueList;
       this.rightClickItemIsCategorical = Utils.isCategorical(valueList);
       this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
@@ -621,6 +627,7 @@ export default {
       let op = this.rightClickItem;
       let associationRule;
       let colorList = Utils.genRandomColor(1);
+      let res = null;
 
       if (this.menuSortEnable) {
         if (this.menuSort == 1) {
@@ -645,15 +652,13 @@ export default {
         };
         // let attrName = op.strName ? (op.data ? `${op.data}.${op.attribute}` : op.attribute) : Utils.calString(op);
         let attrName = Utils.calString(strName);
-        let res = {
+        res = {
           strName: strName,
           // attribute: `${associationRule}(${attrName})`,
           attribute: attrName,
           color: colorList[0],
           valueList: Utils.unique(valueList),
         };
-        this.storeAttrInfo(res);
-        console.log(res);
       } else if (this.menuBinEnable) {
         associationRule = "bin";
         if (this.menuBinLowerBound > this.menuBinUpperBound) {
@@ -683,15 +688,13 @@ export default {
         };
         // let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
         let attrName = Utils.calString(strName);
-        let res = {
+        res = {
           strName: strName,
           // attribute: `${associationRule}(${attrName}, ${this.menuBinStep}, ${this.menuBinLowerBound}, ${this.menuBinUpperBound})`,
           attribute: attrName,
           color: colorList[0],
           valueList: valueList,
         };
-        this.storeAttrInfo(res);
-        console.log(res);
       } else if (this.menuFilterEnable) {
         if (this.rightClickItemIsCategorical) {
           associationRule = "filterByValue";
@@ -723,15 +726,13 @@ export default {
           //   attributeName += `, ${item}`;
           // });
           // attributeName += ")";
-          let res = {
+          res = {
             strName: strName,
             // attribute: attributeName,
             attribute: attrName,
             color: colorList[0],
             valueList: Utils.unique(valueList),
           };
-          this.storeAttrInfo(res);
-          console.log(res);
         } else {
           associationRule = "filterByBound";
           let valueList = [];
@@ -756,17 +757,51 @@ export default {
               { value: this.menuFilterUpperBound },
             ],
           };
-          let res = {
+          res = {
             strName: strName,
             // attribute: `${associationRule}(${op.attribute}, ${this.menuFilterLowerBound}, ${this.menuFilterUpperBound})`,
             attribute: Utils.calString(strName),
             color: colorList[0],
             valueList: Utils.unique(valueList),
           };
-          this.storeAttrInfo(res);
-          console.log(res);
         }
       }
+      this.storeAttrInfo(res);
+      console.log(res);
+      if(this.rightClickItemSource == "row") {
+        this.row_header[this.rightClickItemIndex] = res;
+      } else if(this.rightClickItemSource == "column") {
+        this.column_header[this.rightClickItemIndex] = res;
+      } else {
+        this.body[this.rightClickItemIndex] = res;
+      }
+      let spec = Utils.genSpec(this.row_header, this.column_header, this.body);
+      this.storeNewSpec(spec);
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = res[i][j].source;
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        console.log(res);
+        this.storeCurrentTable(res);
+      } catch (err) {
+        this.$message.error("Illegal specification!");
+      }
+      console.log(this.canSuggest);
+      this.visible = false;
     },
     onMenuReset() {
       this.justreset = true;
