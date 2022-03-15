@@ -511,6 +511,7 @@ export default {
         column_header: [],
         body: [],
       });
+      this.storeCurrentTable(undefined);
       this.$forceUpdate();
     },
     applyHandler() {
