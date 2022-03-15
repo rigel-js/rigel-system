@@ -365,8 +365,8 @@ const mapTable = (table, rowInfo, colInfo) => {
       columnSize = table[i].length;
     }
   }
-  let newRowSize = rowInfo.row - colInfo.len + rowSize;
-  let newColumnSize = colInfo.column - rowInfo.len + columnSize;
+  let newRowSize = rowInfo.row - (colInfo.len ? colInfo.len : 1) + rowSize;
+  let newColumnSize = colInfo.column - (rowInfo.len ? rowInfo.len : 1) + columnSize;
   let newTable = [];
   for (let i = 0; i < newRowSize; i++) {
     let tmp = [];

@@ -206,14 +206,27 @@ export default {
             }
           }
         }
-        // console.log(res);
+        let rowlen = Utils.specObj2List(spec.row_header).length;
+        let collen = Utils.specObj2List(spec.column_header).length;
+        this.storeRowInfo({
+          row: this.rowInfo.row,
+          column: this.rowInfo.column,
+          len: rowlen,
+        });
+        this.storeColInfo({
+          row: this.colInfo.row,
+          column: this.rowInfo.column + (rowlen == 0 ? 1 : rowlen),
+          len: collen,
+        });
+        console.log(res);
         console.log(this.rowInfo, this.colInfo);
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
-        // console.log(table);
+        console.log(table);
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
       } catch (err) {
         this.$message.error("Illegal specification!");
+        throw err;
       }
     },
     applyPartialSpec(partialSpec, isPreview, isPreviewWindow) {
@@ -283,8 +296,8 @@ export default {
             ) {
               this.storeColInfo({
                 row: this.colInfo.row,
-                column: this.colInfo.column,
-                len: this.colInfo.len + 1,
+                column: this.colInfo.column + 1,
+                len: this.colInfo.len,
               });
             }
           } else { // 推荐union
@@ -355,9 +368,9 @@ export default {
             this.column_header.push(partialSpec.column_header);
             if (this.colInfo.row + this.colInfo.len > this.rowInfo.row) {
               this.storeRowInfo({
-                row: this.rowInfo.row,
+                row: this.rowInfo.row + 1,
                 column: this.rowInfo.column,
-                len: this.rowInfo.len + 1,
+                len: this.rowInfo.len,
               });
             }
           } else {
@@ -400,7 +413,8 @@ export default {
             }
           }
         }
-        // console.log(res);
+        console.log(res);
+        console.log(this.rowInfo, this.colInfo);
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
         
