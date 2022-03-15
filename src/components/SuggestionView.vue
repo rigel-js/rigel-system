@@ -142,6 +142,7 @@ export default {
     "canSuggest",
     "newSpec",
     "reapplyPartialSpec",
+    "currentTable"
   ]),
   watch: {
     partialSpecSuggestion(val, oldval) {
@@ -543,9 +544,11 @@ export default {
       this.storeDeleteSpecSuggestion(null);
     },
     previewPartialSpec(partialSpec, iswindow) {
+      console.log(this.currentTable);
       this.storeCurrentState();
       this.storeCanSuggest(false);
       this.applyPartialSpec(partialSpec, true, iswindow);
+      console.log(this.currentTable);
     },
     previewSpec(spec) {
       this.storeCurrentState();

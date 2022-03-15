@@ -250,6 +250,7 @@ export default {
             this.row_header.length == 0 &&
             this.column_header.length == 1
           ) {
+            this.$message.info("No recommendation since the header will be empty");
             return; // header会被清空，这种情况不推荐
           }
           originAttr = this.column_header[row - this.colInfo.row];
@@ -284,6 +285,7 @@ export default {
             this.column_header.length == 0 &&
             this.row_header.length == 1
           ) {
+            this.$message.info("No recommendation since the header will be empty");
             return; // header会被清空，这种情况不推荐
           }
           originAttr = this.row_header[column - this.rowInfo.column];
@@ -400,6 +402,7 @@ export default {
         this.storeReapplyPartialSpec(true);
         return;
       }
+      let hasCellConflict = false;
       if (row + value.valueList.length <= this.Table.length) {
         for (let i = row; i < row + value.valueList.length; i++) {
           if(this.Table[i][column]) {
@@ -408,6 +411,7 @@ export default {
               value: `${originalValue}/${value.valueList[i - row]}`,
               source: value.strName,
             };
+            hasCellConflict = true;
           } else {
             this.Table[i][column] = {
               value: value.valueList[i - row],
@@ -430,6 +434,7 @@ export default {
               value: `${originalValue}/${value.valueList[i - row]}`,
               source: value.strName,
             };
+            hasCellConflict = true;
           } else {
             this.Table[i][column] = {
               value: value.valueList[i - row],
@@ -454,6 +459,9 @@ export default {
       if (partialSpecSuggestion) {
         this.storePartialSpecSuggestion(partialSpecSuggestion);
         console.log(partialSpecSuggestion);
+      }
+      if(hasCellConflict) {
+        this.$message.info("Value conflict exists");
       }
     },
     leftHoverHandler(row, column, value) {

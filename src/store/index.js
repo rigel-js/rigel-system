@@ -125,7 +125,8 @@ const mutations = {
     // currentState = Object.assign({}, state);
     // currentState.row_header = Object.assign({}, state.row_header);
     currentState = Utils.deepClone(state);
-    console.log(currentState.row_header);
+    currentState.currentTable = Utils.deepClone(state.currentTable);
+    console.log(currentState.currentTable);
   },
 
   restoreState(state) {
