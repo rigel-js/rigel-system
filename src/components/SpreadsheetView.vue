@@ -468,6 +468,16 @@ export default {
         }
         console.log(res);
         this.storeCurrentTable(res);
+        this.storeRowInfo({
+          row: this.column_header.length ? this.column_header.length : 1,
+          column: 0,
+          len: this.row_header.length, 
+        });
+        this.storeColInfo({
+          row: 0,
+          column: this.row_header.length ? this.row_header.length : 1,
+          len: this.column_header.length,        
+        });
       } catch (err) {
         this.$message.error("Illegal specification!");
       }

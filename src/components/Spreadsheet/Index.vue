@@ -288,12 +288,14 @@ export default {
             this.$message.info("No recommendation since the header will be empty");
             return; // header会被清空，这种情况不推荐
           }
-          originAttr = this.row_header[column - this.rowInfo.column];
+          originAttr = Utils.refineStrName(this.row_header[column - this.rowInfo.column]);
+          console.log(originAttr);
           partialSpec["row_header"] = originAttr;
           let sourceDescription = Utils.calString(originAttr);
           partialSpec["description"] = `(${sourceDescription}), () => ()`;
           deleteSpecSuggestion.push(partialSpec);
           let valueList = Utils.findValueList(originAttr, this.attrInfo);
+          console.log(valueList);
           let newValueList = [originAttr];
           if(Utils.isCategorical(valueList)) {
             for(let i = 0; i < valueList.length; i++) {
