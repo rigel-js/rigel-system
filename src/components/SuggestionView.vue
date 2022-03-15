@@ -263,7 +263,7 @@ export default {
             // 下面两行是冲突的时候取舍的策略 先这么写 如果后面觉得不合适再改
             let row =
               this.currentActiveGrid.row < this.colInfo.row + this.colInfo.len
-                ? this.colInfo + this.colInfo.len
+                ? this.colInfo.row + this.colInfo.len
                 : this.currentActiveGrid.row;
             let column =
               this.currentActiveGrid.column < this.colInfo.column
