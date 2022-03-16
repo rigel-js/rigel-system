@@ -196,7 +196,7 @@ export default {
     cellChangeHandler(row, column, value) {
       // this.Table[row][column] = value;
       if(this.previewTable) {
-        this.$message.info("Default specification applied");
+        this.$message.info("To perform the interaction, ambiguities should be resolved. Defaultly, the first suggestion is applied.");
         this.storeReapplyPartialSpec(true);
         return;
       }
@@ -363,7 +363,7 @@ export default {
       this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
       if(this.previewTable) {
-        this.$message.info("Default specification applied");
+        this.$message.info("To perform the interaction, ambiguities should be resolved. Defaultly, the first suggestion is applied.");
         this.storeReapplyPartialSpec(true);
         return;
       }
@@ -437,7 +437,7 @@ export default {
       this.leftHovered = this.topHovered = false;
       console.log(row, column, value);
       if(this.previewTable) {
-        this.$message.info("Default specification applied");
+        this.$message.info("To perform the interaction, ambiguities should be resolved. Defaultly, the first suggestion is applied.");
         this.storeReapplyPartialSpec(true);
         return;
       }
