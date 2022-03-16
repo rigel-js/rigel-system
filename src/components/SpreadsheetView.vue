@@ -274,6 +274,7 @@ export default {
       "canSuggest",
       "rowInfo",
       "colInfo",
+      "partialSpecSuggestion"
     ]),
   },
   watch: {
@@ -548,6 +549,10 @@ export default {
       }
     },
     rearrangeHandler() {
+      if(this.partialSpecSuggestion) {
+        this.$message.error("Please first disambiguate your specification.");
+        return;
+      }
       console.log(this.rowInfo, this.colInfo);
       if (!this.rowInfo || !this.colInfo) return;
       let newTable = Utils.rearrangeTable(
