@@ -546,10 +546,12 @@ export default {
       this.storeDeleteSpecSuggestion(null);
     },
     previewPartialSpec(e, partialSpec, iswindow) {
-      if(e){
-        console.log(e.target.className);
-        e.target.className = e.target.className.replace(/firsthover/, "");
-        console.log(e.target.className);
+      if (e) {
+        let tmp = e.target;
+        while(tmp) {
+          tmp.className = tmp.className.replace(/firsthover/, "");
+          tmp = tmp.previousSibling;
+        }
       }
       console.log(this.currentTable);
       this.storeCurrentState();
