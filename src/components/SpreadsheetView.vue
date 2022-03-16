@@ -815,6 +815,7 @@ export default {
         this.storeCurrentTable(res);
       } catch (err) {
         this.$message.error("Illegal specification!");
+        throw err;
       }
       console.log(this.canSuggest);
       this.visible = false;
