@@ -418,8 +418,8 @@ const rearrangeTable = (table, rowInfo, colInfo) => {
       columnSize = table[i].length;
     }
   }
-  let newRowSize = rowSize - colInfo.row;
-  let newColumnSize = columnSize - rowInfo.column;
+  let newRowSize = rowSize - rowInfo.row + colInfo.len;
+  let newColumnSize = columnSize - colInfo.column + rowInfo.len;
   let newTable = [];
   for (let i = 0; i < newRowSize; i++) {
     let tmp = [];
