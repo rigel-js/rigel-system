@@ -338,17 +338,24 @@ const genExploreSpec = (row_header, column_header, body, attrInfo) => {
 
 const deleteUsedSpec = (unusedSpec, header) => {
   if (!header) return;
+  console.log(unusedSpec, header);
   header.forEach((item) => {
-    if (refineStrName(item).operator == "attr") {
-      for (let j = 0; j < unusedSpec.length; j++) {
-        let spec = unusedSpec[j];
-        if (
-          refineStrName(item).data == spec.data &&
-          refineStrName(item).attribute == spec.attribute
-        ) {
-          unusedSpec.splice(j, 1);
-          break;
-        }
+    // if (refineStrName(item).operator == "attr") {
+    //   for (let j = 0; j < unusedSpec.length; j++) {
+    //     let spec = unusedSpec[j];
+    //     if (
+    //       refineStrName(item).data == spec.data &&
+    //       refineStrName(item).attribute == spec.attribute
+    //     ) {
+    //       unusedSpec.splice(j, 1);
+    //       break;
+    //     }
+    //   }
+    // }
+    for(let j = 0; j < unusedSpec.length; j++) {
+      if(compareObj(refineStrName(item), refineStrName(unusedSpec[j]))) {
+        unusedSpec.splice(j, 1);
+        break;
       }
     }
   });
@@ -491,6 +498,22 @@ const findValueList = (item, attrInfo) => {
 }
 
 const compareObj = (obj1, obj2) => {
+  console.log(obj1, obj2);
+  if(!obj1.operator && obj2.operator) {
+    return false;
+  } 
+  if(!obj2.operator && obj1.operator) {
+    return false;
+  }
+  if(!obj1.operator && !obj2.operator) {
+    if(obj1.value && obj2.value) {
+      return obj1.value == obj2.value;
+    } else if ((typeof(obj1) == "number" || typeof(obj2) == "string") && (typeof(obj1) == "number" || typeof(obj2) == "string")) {
+      return obj1 == obj2;
+    } else {
+      return false;
+    }
+  }
   if (obj1.operator == "attr" || obj1.data) {
     return obj1.data == obj2.data && obj1.attribute == obj2.attribute;
   } else {
