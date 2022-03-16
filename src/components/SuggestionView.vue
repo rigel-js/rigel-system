@@ -15,8 +15,9 @@
               v-for="(partialSpec, index2) in item.partialSpecList"
               :key="index2"
               class="applypanel"
+              :class="{'firsthover': index2 == 0}"
               @click="applyPartialSpec(partialSpec)"
-              @mouseenter="previewPartialSpec(partialSpec, false)"
+              @mouseenter="previewPartialSpec($event, partialSpec, false)"
               @mouseleave="restorePreview"
             >
               <div class="applypanelcontent">
@@ -147,7 +148,7 @@ export default {
       console.log(val);
       if(val && val.length > 0) {
           let partialSpec = val[0].partialSpecList[0];
-          this.previewPartialSpec(partialSpec, true);
+          this.previewPartialSpec(null, partialSpec, true);
       }
     },
     reapplyPartialSpec(val, oldval) {
@@ -544,7 +545,12 @@ export default {
       }
       this.storeDeleteSpecSuggestion(null);
     },
-    previewPartialSpec(partialSpec, iswindow) {
+    previewPartialSpec(e, partialSpec, iswindow) {
+      if(e){
+        console.log(e.target.className);
+        e.target.className = e.target.className.replace(/firsthover/, "");
+        console.log(e.target.className);
+      }
       console.log(this.currentTable);
       this.storeCurrentState();
       this.storeCanSuggest(false);
@@ -559,7 +565,7 @@ export default {
     restorePreview() {
       if(!this.canSuggest) {
         this.restoreCurrentState();
-        // this.storePreviewTable(undefined);
+        this.storePreviewTable(undefined);
       }
     }
   },
@@ -653,5 +659,9 @@ export default {
   z-index: 4000;
   -webkit-box-shadow: 0 2px 6px 0px rgb(0 0 0 / 32%);
   min-width: 400px;
+}
+
+.firsthover {
+  background-color: #eaebee !important;
 }
 </style>

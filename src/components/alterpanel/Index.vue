@@ -126,6 +126,7 @@ export default {
     restorePreview() {
       if(!this.canSuggest) {
         this.restoreCurrentState();
+        this.storePreviewTable(undefined);
       }
     }
   },
