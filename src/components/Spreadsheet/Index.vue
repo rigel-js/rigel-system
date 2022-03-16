@@ -211,6 +211,10 @@ export default {
           return;
         } else {
           this.$message.error("Cannot alter existing cell partially"); //不可以修改部分的cell
+          newRow[column] = oldValue;
+          this.$set(this.Table, row, newRow);
+          let el = document.getElementById(`${this.name}_cell_${row}_${column}`);
+          el.innerText = oldValue.value;
           return;
         }
       } else if (!isOldValueValid && isNewValueValid) {
