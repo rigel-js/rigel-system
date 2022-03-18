@@ -139,7 +139,7 @@ const mutations = {
       return;
     }
     stateStackIndex -= 1;
-    let currentState = stateStack[stateStackIndex - 1];
+    let currentState = Utils.deepClone(stateStack[stateStackIndex - 1]);
     state.activatedRelationIndex = currentState.activatedRelationIndex;
     state.rawRelations = currentState.rawRelations;
     state.relations = currentState.relations;

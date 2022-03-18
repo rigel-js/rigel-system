@@ -75,6 +75,8 @@ export default {
         } else {
           this.realValue = `[${tmp.value.lower}, ${tmp.value.upper}]`;
         }
+      } else if(typeof(tmp.value) != "undefined") {
+        this.realValue = "";
       } else {
         this.realValue = String(tmp);
       }

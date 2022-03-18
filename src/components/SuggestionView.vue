@@ -186,7 +186,7 @@ export default {
             if (res[i][j]) {
               let tmp = {};
               tmp.source = res[i][j].source;
-              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              tmp.value = typeof(res[i][j].value) != "undefined" ? res[i][j].value : res[i][j];
               res[i][j] = tmp;
             }
           }
@@ -382,7 +382,7 @@ export default {
             if (res[i][j]) {
               let tmp = {};
               tmp.source = res[i][j].source;
-              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              tmp.value = typeof(res[i][j].value) != "undefined" ? res[i][j].value : res[i][j];
               res[i][j] = tmp;
             }
           }
@@ -489,7 +489,7 @@ export default {
             if (res[i][j]) {
               let tmp = {};
               tmp.source = res[i][j].source;
-              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              tmp.value = typeof(res[i][j].value) != "undefined" ? res[i][j].value : res[i][j];
               res[i][j] = tmp;
             }
           }
@@ -577,7 +577,7 @@ export default {
             if (res[i][j]) {
               let tmp = {};
               tmp.source = res[i][j].source;
-              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              tmp.value = typeof(res[i][j].value) != "undefined" ? res[i][j].value : res[i][j];
               res[i][j] = tmp;
             }
           }
@@ -597,13 +597,13 @@ export default {
       console.log(sch);
       try {
         let res = transform(sch)[0];
-        // console.log(res);
+        console.log(res);
         for (let i = 0; i < res.length; i++) {
           for (let j = 0; j < res[i].length; j++) {
             if (res[i][j]) {
               let tmp = {};
               tmp.source = res[i][j].source;
-              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              tmp.value = typeof(res[i][j].value) != "undefined" ? res[i][j].value : res[i][j];
               res[i][j] = tmp;
             }
           }
