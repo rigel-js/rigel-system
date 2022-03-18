@@ -14,16 +14,26 @@
     @blur="blurHandler"
     @input="inputHandler"
     :contenteditable="editable && this.canedit"
+    @keydown.up="keyUpHandler"
+    @keydown.down="keyDownHandler"
+    @keydown.enter="keyEnterHandler"
   >
     {{ this.realValue }}
-    <div 
+    <div
       class="recommend-list"
       v-if="this.alterValue.length > 0"
       :style="{ left: left + 'px', top: top + 'px' }"
       :contenteditable="false"
     >
-      <div v-for="(value, index) in this.alterValue" :key="index" class="recommend-item" @click="applyHandler($event, value)">
-        {{`${value.value} (${value.description})`}}
+      <div
+        v-for="(value, index) in this.alterValue"
+        :key="index"
+        class="recommend-item"
+        @click="applyHandler(value)"
+        :class="{ onselect: index == currentIndex }"
+        @mouseenter="hoverHandler(index)"
+      >
+        {{ `${value.value} (${value.description})` }}
       </div>
     </div>
   </div>
@@ -31,7 +41,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import Utils from '@/utils.js';
+import Utils from "@/utils.js";
 export default {
   name: "SpreadsheetCell",
   props: {
@@ -61,9 +71,17 @@ export default {
       alterValue: [],
       left: 0,
       top: 0,
+      currentIndex: 0,
     };
   },
   created() {
+    this.$on("keyup", (e) => {
+      if(e.keyCode == 40) {
+        this.keyDownHandler();
+      } else if(e.keyCode == 38) {
+        this.keyUpHandler();
+      }
+    });
     this.cellValue = this.value;
     let tmp = this.cellValue;
     if (tmp) {
@@ -75,7 +93,7 @@ export default {
         } else {
           this.realValue = `[${tmp.value.lower}, ${tmp.value.upper}]`;
         }
-      } else if(typeof(tmp.value) != "undefined") {
+      } else if (typeof tmp.value != "undefined") {
         this.realValue = "";
       } else {
         this.realValue = String(tmp);
@@ -86,6 +104,26 @@ export default {
   },
   methods: {
     ...mapActions(["setDragSource"]),
+    hoverHandler(index) {
+      this.currentIndex = index;
+    },
+    keyDownHandler() {
+      // console.log("down");
+      if(this.currentIndex < this.alterValue.length - 1) {
+        this.currentIndex += 1;
+      }
+      console.log(this.currentIndex, this.alterValue.length);
+    },
+    keyUpHandler() {
+      // console.log("up");
+      if(this.currentIndex) {
+        this.currentIndex -= 1;
+      }
+      console.log(this.currentIndex, this.alterValue.length);
+    },
+    keyEnterHandler() {
+      this.applyHandler(this.alterValue[this.currentIndex]);
+    },
     dragHandler(event) {
       // event.dataTransfer.setData("dragValue", event.target.innerText);
       event.dataTransfer.setData("info", event.target.dataset.info);
@@ -147,12 +185,12 @@ export default {
 
     blurHandler(event) {
       console.log("blur");
-      if(!this.canedit) return;
+      if (!this.canedit) return;
       this.canedit = false;
       this.alterValue = [];
       let index = 0;
-      for(; index < event.target.innerText.length; index++) {
-        if(event.target.innerText[index] === "\n") {
+      for (; index < event.target.innerText.length; index++) {
+        if (event.target.innerText[index] === "\n") {
           break;
         }
       }
@@ -169,12 +207,13 @@ export default {
       this.left = tmp.left;
       console.log(event.target.innerText);
       let index = 0;
-      for(; index < event.target.innerText.length; index++) {
-        if(event.target.innerText[index] === "\n") {
+      for (; index < event.target.innerText.length; index++) {
+        if (event.target.innerText[index] === "\n") {
           break;
         }
       }
       this.recommendValue(event.target.innerText.substr(0, index));
+      this.currentIndex = 0;
     },
 
     dragLeaveHandler(event) {
@@ -188,7 +227,7 @@ export default {
     recommendValue(value) {
       console.log("recom", value);
       if (value.length == 0) {
-        return [];  // 非字母开头的字符串不推荐
+        return []; // 非字母开头的字符串不推荐
       }
       let res = [],
         res_no_capital = [];
@@ -237,7 +276,7 @@ export default {
       console.log(this.alterValue);
     },
 
-    applyHandler(event, value) {
+    applyHandler(value) {
       this.canedit = false;
       this.alterValue = [];
       console.log("apply", value);
@@ -247,7 +286,7 @@ export default {
         source: value.source,
       };
       this.$emit("cell-change", info);
-    }
+    },
 
     // setClass(leftHightlighted, topHightlighted) {
     //   let cl = {cell: true};
@@ -279,7 +318,7 @@ export default {
   padding: 5px 10px 5px 10px;
 }
 
-.recommend-item:hover {
+.onselect {
   background-color: #eaebee;
 }
 </style>
