@@ -75,7 +75,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["attrInfo", "rawRelations", "canSuggest"]),
+    ...mapState(["attrInfo", "rawRelations"]),
     finalContent() {
       if (this.content) return this.content;
       return this.newContent;
@@ -95,7 +95,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeCurrentTable", "storeNewSpec", "restoreCurrentState", "storeCurrentState", "storeCanSuggest", "storePreviewTable"]),
+    ...mapActions(["storeCurrentTable", "storeNewSpec", "restoreCurrentState", "storeCurrentState", "storePreviewTable"]),
     calcExplore(spec) {
       // calculation
       try {
@@ -130,12 +130,6 @@ export default {
     },
     handleApply(spec, isPreview) {
       if (!spec) return;
-      if (!isPreview) {
-        if (!this.canSuggest) {
-          this.restoreCurrentState();
-        }
-        this.storeCanSuggest(true);
-      }
       let sch = {
         data: this.rawRelations,
         target_table: [spec],
@@ -155,26 +149,40 @@ export default {
           }
         }
         // console.log(res);
-        if(isPreview) {
-          this.storePreviewTable(res);
-        } else {
-          this.storeCurrentTable(res);
-        }
+        this.storeCurrentTable(res);
         this.storeNewSpec(spec);
       } catch (err) {
         this.$message.error("Illegal specification!");
       }
     },
     previewSpec(spec) {
-      this.storeCurrentState();
-      this.storeCanSuggest(false);
-      this.handleApply(spec, true);
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        // console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = res[i][j].source;
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        // console.log(res);
+        this.storePreviewTable(res);
+      } catch (err) {
+        this.$message.error("Illegal specification!");
+        throw err;
+      }
     },
     restorePreview() {
-      if(!this.canSuggest) {
-        this.restoreCurrentState();
-        this.storePreviewTable(undefined);
-      }
+      this.storePreviewTable(undefined);
     }
   },
   components: {

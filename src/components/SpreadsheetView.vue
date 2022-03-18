@@ -271,7 +271,6 @@ export default {
       "row_header",
       "column_header",
       "body",
-      "canSuggest",
       "rowInfo",
       "colInfo",
       "partialSpecSuggestion"
@@ -280,7 +279,6 @@ export default {
   watch: {
     newSpec(val, oldval) {
       console.log(val);
-      console.log(this.canSuggest);
       if (val) {
         // this.row_header = Utils.specObj2List(val["row_header"]);
         // this.column_header = Utils.specObj2List(val["column_header"]);
@@ -291,7 +289,6 @@ export default {
           body: Utils.specObj2List(val["body"]),
         });
         this.storeNewSpec(null);
-        if (!this.canSuggest) return;
         console.log("genalter");
         try {
           let alterSpec = Utils.genAlterSpec(
@@ -317,25 +314,19 @@ export default {
       this.refineHeader(this.row_header);
       this.refineHeader(this.column_header);
       this.refineHeader(this.body);
-      if (this.canSuggest) {
-        this.applyHandler();
-      }
+      this.applyHandler();
     },
     column_header(val, oldval) {
       this.refineHeader(this.row_header);
       this.refineHeader(this.column_header);
       this.refineHeader(this.body);
-      if (this.canSuggest) {
-        this.applyHandler();
-      }
+      this.applyHandler();
     },
     body(val, oldval) {
       this.refineHeader(this.row_header);
       this.refineHeader(this.column_header);
       this.refineHeader(this.body);
-      if (this.canSuggest) {
-        this.applyHandler();
-      }
+      this.applyHandler();
     },
     visible(value) {
       if (value) {
@@ -817,7 +808,6 @@ export default {
         this.$message.error("Illegal specification!");
         throw err;
       }
-      console.log(this.canSuggest);
       this.visible = false;
     },
     onMenuReset() {

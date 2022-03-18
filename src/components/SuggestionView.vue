@@ -17,7 +17,7 @@
               class="applypanel"
               :class="{'firsthover': index2 == 0}"
               @click="applyPartialSpec(partialSpec)"
-              @mouseenter="previewPartialSpec($event, partialSpec, false)"
+              @mouseenter="previewPartialSpec($event, partialSpec)"
               @mouseleave="restorePreview"
             >
               <div class="applypanelcontent">
@@ -137,7 +137,6 @@ export default {
     "currentActiveGrid",
     "rowInfo",
     "colInfo",
-    "canSuggest",
     "newSpec",
     "reapplyPartialSpec",
     "currentTable",
@@ -148,7 +147,7 @@ export default {
       console.log(val);
       if(val && val.length > 0) {
           let partialSpec = val[0].partialSpecList[0];
-          this.previewPartialSpec(null, partialSpec, true);
+          this.previewPartialSpec(null, partialSpec);
       }
     },
     reapplyPartialSpec(val, oldval) {
@@ -169,7 +168,6 @@ export default {
       "storeColInfo",
       "storeCurrentState",
       "restoreCurrentState",
-      "storeCanSuggest",
       "storeAttrInfo",
       "storePreviewTable",
       "storeReapplyPartialSpec",
@@ -178,16 +176,7 @@ export default {
       // apply the suggestion
       console.log(suggestion);
     },
-    applySpec(spec, isPreview) {
-      if(!isPreview) {
-        if(!this.canSuggest) {
-          this.restoreCurrentState();
-        }
-        this.storeCanSuggest(true);
-      }
-
-      // console.log(JSON.stringify(spec));
-      // console.log(this.relations);
+    applySpec(spec) {
       let sch = {
         data: this.rawRelations,
         target_table: [spec],
@@ -220,10 +209,6 @@ export default {
         });
         console.log(res);
         console.log(this.rowInfo, this.colInfo);
-        if(isPreview) {
-          this.storePreviewTable(res);
-          return;
-        }
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
         this.storeNewSpec(spec);
@@ -233,18 +218,7 @@ export default {
         throw err;
       }
     },
-    applyPartialSpec(partialSpec, isPreview, isPreviewWindow) {
-      // console.log(partialSpec);
-      if(!isPreview) {
-        if(!this.canSuggest) {
-          console.log("beforeRestore");
-          this.restoreCurrentState();
-          console.log(this.newSpec);
-          console.log("afterRestore");
-        }
-        this.storeCanSuggest(true);
-      }
-
+    applyPartialSpec(partialSpec) {
       let derivedAttr = null, type = "";
 
       if (partialSpec.row_header) {
@@ -419,56 +393,45 @@ export default {
         }
         console.log(res);
         console.log(this.rowInfo, this.colInfo);
-        if(isPreview) {
-          this.storePreviewTable(res);
-          if(isPreviewWindow) {
-            this.restoreCurrentState();
-          }
-          return;
-        }
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
 
         this.storeNewSpec(spec);
         this.storeCurrentTable(table);
 
-        if(!isPreview) {
-          if(derivedAttr) {
-            let colorList = Utils.genRandomColor(1);
-            let valueList = [];
-            if(type == "row_header") {
-              for(let i = 0; i < table.length; i++) {
-                if(table[i][this.currentActiveGrid.column - this.rowInfo.column]) {
-                  let tmp = table[i][this.currentActiveGrid.column - this.rowInfo.column];
-                  valueList.push(tmp.value ? tmp.value : tmp);
-                }
-              }
-            } else {
-              for(let i = 0; i<table[this.currentActiveGrid.row - this.colInfo.row].length; i++) {
-                if(table[this.currentActiveGrid.row - this.colInfo.row][i]) {
-                  let tmp = table[this.currentActiveGrid.row - this.colInfo.row][i];
-                  valueList.push(tmp.value ? tmp.value : tmp);
-                }
+        if(derivedAttr) {
+          let colorList = Utils.genRandomColor(1);
+          let valueList = [];
+          if(type == "row_header") {
+            for(let i = 0; i < table.length; i++) {
+              if(table[i][this.currentActiveGrid.column - this.rowInfo.column]) {
+                let tmp = table[i][this.currentActiveGrid.column - this.rowInfo.column];
+                valueList.push(tmp.value ? tmp.value : tmp);
               }
             }
-            let relationAttr = {
-              strName: derivedAttr,
-              attribute: Utils.calString(derivedAttr),
-              color: colorList[0],
-              valueList: Utils.unique(valueList),
-            };
-            this.storeAttrInfo(relationAttr);
+          } else {
+            for(let i = 0; i<table[this.currentActiveGrid.row - this.colInfo.row].length; i++) {
+              if(table[this.currentActiveGrid.row - this.colInfo.row][i]) {
+                let tmp = table[this.currentActiveGrid.row - this.colInfo.row][i];
+                valueList.push(tmp.value ? tmp.value : tmp);
+              }
+            }
           }
+          let relationAttr = {
+            strName: derivedAttr,
+            attribute: Utils.calString(derivedAttr),
+            color: colorList[0],
+            valueList: Utils.unique(valueList),
+          };
+          this.storeAttrInfo(relationAttr);
         }
       } catch (err) {
         console.log(err);
         this.$message.error("Illegal specification!");
       }
       
-      if(!isPreview) {
-        this.storePartialSpecSuggestion(null);
-        this.storePreviewTable(undefined);
-      }
+      this.storePartialSpecSuggestion(null);
+      this.storePreviewTable(undefined);
     },
     deletePartialSpec(partialSpec) {
       let deleteRow = this.currentActiveGrid.row,
@@ -554,21 +517,110 @@ export default {
         }
       }
       console.log(this.currentTable);
-      this.storeCurrentState();
-      this.storeCanSuggest(false);
-      this.applyPartialSpec(partialSpec, true, iswindow);
+      let row_header = Utils.deepClone(this.row_header);
+      let column_header = Utils.deepClone(this.column_header);
+      let body = Utils.deepClone(this.body);
+      if (partialSpec.row_header) {
+        if (!this.rowInfo.len) {
+          row_header.push(partialSpec.row_header);
+        } else {
+          if (this.currentActiveGrid.column < this.rowInfo.column) {
+            row_header.splice(0, 0, partialSpec.row_header);
+          } else if(this.currentActiveGrid.column >= this.rowInfo.column + this.rowInfo.len){
+            row_header.push(partialSpec.row_header);
+          } else { // 推荐union
+            let attr1 = row_header[this.currentActiveGrid.column - this.rowInfo.column];
+            let attr2 = partialSpec.row_header;
+            // console.log(attr1, attr2);
+            let newAttr = {
+              operator: "union",
+              parameters: [attr1, attr2],
+            };
+            row_header[this.currentActiveGrid.column - this.rowInfo.column] = newAttr;
+          }
+        }
+      }
+
+      if (partialSpec.column_header) {
+        if (!this.colInfo.len) {
+          column_header.push(partialSpec.column_header);
+        } else {
+          if (this.currentActiveGrid.row < this.colInfo.row) {
+            column_header.splice(0, 0, partialSpec.column_header);
+          } else if(this.currentActiveGrid.row >= this.colInfo.row + this.colInfo.len) {
+            column_header.push(partialSpec.column_header);
+          } else {
+            let attr1 = column_header[this.currentActiveGrid.row - this.colInfo.row];
+            let attr2 = partialSpec.column_header;
+            // console.log(attr1, attr2);
+            let newAttr = {
+              operator: "union",
+              parameters: [attr1, attr2],
+            };
+            column_header[this.currentActiveGrid.row - this.colInfo.row] = newAttr;
+          }
+        }
+      }
+
+      if (partialSpec.body) {
+        body.push(partialSpec.body);
+      }
+
+      let spec = Utils.genSpec(row_header, column_header, body);
+      console.log(spec);
+
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = res[i][j].source;
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        this.storePreviewTable(res);
+      } catch(err) {
+        this.$message.error("Illegal specification!");
+        throw err;
+      }
       console.log(this.currentTable);
     },
     previewSpec(spec) {
-      this.storeCurrentState();
-      this.storeCanSuggest(false);
-      this.applySpec(spec, true);
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        // console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = res[i][j].source;
+              tmp.value = res[i][j].value ? res[i][j].value : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        console.log(res);
+        this.storePreviewTable(res);
+      } catch (err) {
+        this.$message.error("Illegal specification!");
+        throw err;
+      }
     },
     restorePreview() {
-      if(!this.canSuggest) {
-        this.restoreCurrentState();
-        this.storePreviewTable(undefined);
-      }
+      this.storePreviewTable(undefined);
     }
   },
   components: {

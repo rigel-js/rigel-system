@@ -26,7 +26,6 @@ const state = {
   currentActiveGrid: {},
   rowInfo: {},
   colInfo: {},
-  canSuggest: true,
   previewTable: undefined,
   reapplyPartialSpec: undefined,
 };
@@ -148,13 +147,8 @@ const mutations = {
     state.currentActiveGrid = currentState.currentActiveGrid;
     state.rowInfo = currentState.rowInfo;
     state.colInfo = currentState.colInfo;
-    state.canSuggest = currentState.canSuggest;
     // console.log(currentState.row_header);
     // console.log(state.row_header);;
-  },
-
-  changeCanSuggest(state, canSuggest) {
-    state.canSuggest = canSuggest;
   },
 
   changePreviewTable(state, previewTable) {
@@ -243,9 +237,6 @@ const actions = {
   },
   restoreCurrentState({ commit }) {
     commit("restoreState");
-  },
-  storeCanSuggest({ commit }, canSuggest) {
-    commit("changeCanSuggest", canSuggest);
   },
   storePreviewTable({ commit }, previewTable) {
     commit("changePreviewTable", previewTable);
