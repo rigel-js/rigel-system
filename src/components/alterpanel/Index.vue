@@ -79,7 +79,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeCurrentTable", "storeNewSpec", "storeCurrentState", "restoreCurrentState", "storePreviewTable"]),
+    ...mapActions(["storeCurrentTable", "storeCurrentState", "storePreviewTable", "storeGenRecommendation"]),
     handleApply(spec, isPreview) {
       if (!spec) return;
       let sch = {
@@ -102,7 +102,7 @@ export default {
         }
         // console.log(res);
         this.storeCurrentTable(res);
-        this.storeNewSpec(spec);
+        this.storeGenRecommendation(true);
       } catch (err) {
         this.$message.error("Illegal specification!");
         throw err;

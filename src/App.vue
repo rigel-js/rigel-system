@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import HeaderView from "./components/HeaderView.vue";
 import RelationView from "./components/RelationView.vue";
 import SpreadsheetView from "./components/SpreadsheetView.vue";
@@ -32,6 +33,12 @@ export default {
     RelationView,
     SpreadsheetView,
     SuggestionView,
+  },
+  mounted() {
+    this.storeCurrentState();
+  },
+  methods: {
+    ...mapActions(["storeCurrentState"]),
   },
 };
 </script>

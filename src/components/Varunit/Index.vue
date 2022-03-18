@@ -95,7 +95,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeCurrentTable", "storeNewSpec", "restoreCurrentState", "storeCurrentState", "storePreviewTable"]),
+    ...mapActions(["storeCurrentTable", "storeCurrentState", "storePreviewTable", "storeGenRecommendation"]),
     calcExplore(spec) {
       // calculation
       try {
@@ -128,7 +128,7 @@ export default {
       //   }
       // ]);
     },
-    handleApply(spec, isPreview) {
+    handleApply(spec) {
       if (!spec) return;
       let sch = {
         data: this.rawRelations,
@@ -150,7 +150,7 @@ export default {
         }
         // console.log(res);
         this.storeCurrentTable(res);
-        this.storeNewSpec(spec);
+        this.storeGenRecommendation(true);
       } catch (err) {
         this.$message.error("Illegal specification!");
       }

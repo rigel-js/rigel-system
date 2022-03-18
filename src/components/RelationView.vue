@@ -207,7 +207,7 @@ export default {
   },
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
-    ...mapActions(["storeAttrInfo", "setDragSource"]),
+    ...mapActions(["storeAttrInfo", "setDragSource", "storeCurrentState"]),
     onTabChange(targetIndex) {
       this.changeActivatedRelationIndex(targetIndex);
     },
@@ -260,6 +260,7 @@ export default {
       };
       this.storeAttrInfo(res);
       console.log(res);
+      this.storeCurrentState();
     },
 
     openMenu(e, item) {
@@ -475,6 +476,7 @@ export default {
           console.log(res);
         }
       }
+      this.storeCurrentState();
     },
   },
   components: {

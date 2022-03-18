@@ -2,8 +2,8 @@
   <div class="header-view">
     <div id="rigel-title">Rigel</div>
     <div id="undo-redo-toolbar">
-      <i class="icon iconfont">&#xebbd;</i>
-      <i class="icon iconfont">&#xeb83;</i>
+      <i class="icon iconfont" @click="handleUndo">&#xebbd;</i>
+      <i class="icon iconfont" @click="handleRedo">&#xeb83;</i>
     </div>
     <a-divider type="vertical" style="background-color: rgba(245, 245, 245, 100)"/>
     <div id="dataset-toolbar">
@@ -74,7 +74,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["storeRelation", "storeAttrInfo", "storeRawRelation", "storeAssociationRule"]),
+    ...mapActions(["storeRelation", "storeAttrInfo", "storeRawRelation", "storeAssociationRule", "storeCurrentState", "redo", "undo"]),
     onChangeMode(){
       // console.log(this.value);
       this.storeAssociationRule(this.value);
@@ -176,11 +176,18 @@ export default {
         console.log("attrInfo:", attrInfo);
         this.storeAttrInfo(attrInfo);
         this.storeRawRelation(jsonData);
+        this.storeCurrentState();
       } catch (e) {
         console.log(e);
         this.$message.error("Unsupported File Type");
       }
     },
+    handleUndo() {
+      this.undo();
+    },
+    handleRedo() {
+      this.redo();
+    }
   },
 };
 </script>

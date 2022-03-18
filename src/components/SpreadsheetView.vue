@@ -267,66 +267,42 @@ export default {
       "currentTable",
       "rawRelations",
       "attrInfo",
-      "newSpec",
       "row_header",
       "column_header",
       "body",
       "rowInfo",
       "colInfo",
-      "partialSpecSuggestion"
+      "partialSpecSuggestion",
+      "genRecommendation",
     ]),
   },
   watch: {
-    newSpec(val, oldval) {
-      console.log(val);
-      if (val) {
-        // this.row_header = Utils.specObj2List(val["row_header"]);
-        // this.column_header = Utils.specObj2List(val["column_header"]);
-        // this.body = Utils.specObj2List(val["body"]);
-        this.setSpec({
-          row_header: Utils.specObj2List(val["row_header"]),
-          column_header: Utils.specObj2List(val["column_header"]),
-          body: Utils.specObj2List(val["body"]),
-        });
-        this.storeNewSpec(null);
-        console.log("genalter");
-        try {
-          let alterSpec = Utils.genAlterSpec(
-            this.row_header,
-            this.column_header,
-            this.body
-          );
-          this.storeAlterSpecList(alterSpec);
-          let exploreSpec = Utils.genExploreSpec(
-            this.row_header,
-            this.column_header,
-            this.body,
-            this.attrInfo
-          );
-          this.storeSuggestion(exploreSpec);
-        } catch (err) {
-          console.log(err.message);
-          this.$message.error(err.message);
-        }
-      }
-    },
-    row_header(val, oldval) {
-      this.refineHeader(this.row_header);
-      this.refineHeader(this.column_header);
-      this.refineHeader(this.body);
-      this.applyHandler();
-    },
-    column_header(val, oldval) {
-      this.refineHeader(this.row_header);
-      this.refineHeader(this.column_header);
-      this.refineHeader(this.body);
-      this.applyHandler();
-    },
-    body(val, oldval) {
-      this.refineHeader(this.row_header);
-      this.refineHeader(this.column_header);
-      this.refineHeader(this.body);
-      this.applyHandler();
+    // row_header(val, oldval) {
+    //   this.refineHeader(this.row_header);
+    //   this.refineHeader(this.column_header);
+    //   this.refineHeader(this.body);
+    //   this.applyHandler();
+    // },
+    // column_header(val, oldval) {
+    //   this.refineHeader(this.row_header);
+    //   this.refineHeader(this.column_header);
+    //   this.refineHeader(this.body);
+    //   this.applyHandler();
+    // },
+    // body(val, oldval) {
+    //   this.refineHeader(this.row_header);
+    //   this.refineHeader(this.column_header);
+    //   this.refineHeader(this.body);
+    //   this.applyHandler();
+    // },
+    genRecommendation(val, oldval) {
+      if(val) {
+        this.refineHeader(this.row_header);
+        this.refineHeader(this.column_header);
+        this.refineHeader(this.body);
+        this.applyHandler();
+        this.storeGenRecommendation(false);
+      };
     },
     visible(value) {
       if (value) {
@@ -356,15 +332,13 @@ export default {
       "storeCurrentTable",
       "storeAlterSpecList",
       "storeSuggestion",
-      "storeNewSpec",
       "setSpec",
       "storeRowInfo",
       "storeColInfo",
-      "storeAttrInfo"
+      "storeAttrInfo",
+      "storeCurrentState",
+      "storeGenRecommendation",
     ]),
-    onInput(event) {
-      console.log(event);
-    },
     dragstartHandler(event) {
       // event.dataTransfer.setData("info", event.target.dataset.info);
       sessionStorage.setItem("info", event.target.dataset.info);
@@ -470,6 +444,7 @@ export default {
           column: this.row_header.length ? this.row_header.length : 1,
           len: this.column_header.length,        
         });
+        this.storeGenRecommendation(true);
       } catch (err) {
         this.$message.error("Illegal specification!");
       }
@@ -513,6 +488,7 @@ export default {
         column_header: [],
         body: [],
       });
+      this.storeGenRecommendation(true);
       this.storeCurrentTable(undefined);
       this.$forceUpdate();
     },
@@ -534,6 +510,7 @@ export default {
           this.attrInfo
         );
         this.storeSuggestion(exploreSpec);
+        this.storeCurrentState();
       } catch (err) {
         console.log(err.message);
         this.$message.error(err.message);
@@ -562,6 +539,7 @@ export default {
         column: this.rowInfo.len,
         len: this.colInfo.len,
       });
+      this.storeCurrentState();
     },
     refineHeader(header) {
       if (!header) return;
@@ -783,7 +761,6 @@ export default {
         this.body[this.rightClickItemIndex] = res;
       }
       let spec = Utils.genSpec(this.row_header, this.column_header, this.body);
-      this.storeNewSpec(spec);
       let sch = {
         data: this.rawRelations,
         target_table: [spec],
@@ -804,6 +781,7 @@ export default {
         }
         console.log(res);
         this.storeCurrentTable(res);
+        this.storeGenRecommendation(true);
       } catch (err) {
         this.$message.error("Illegal specification!");
         throw err;

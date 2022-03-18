@@ -137,7 +137,6 @@ export default {
     "currentActiveGrid",
     "rowInfo",
     "colInfo",
-    "newSpec",
     "reapplyPartialSpec",
     "currentTable",
     "previewTable",
@@ -148,6 +147,8 @@ export default {
       if(val && val.length > 0) {
           let partialSpec = val[0].partialSpecList[0];
           this.previewPartialSpec(null, partialSpec);
+      } else {
+        this.storePreviewTable(undefined);
       }
     },
     reapplyPartialSpec(val, oldval) {
@@ -161,21 +162,16 @@ export default {
   methods: {
     ...mapActions([
       "storeCurrentTable",
-      "storeNewSpec",
       "storePartialSpecSuggestion",
       "storeDeleteSpecSuggestion",
       "storeRowInfo",
       "storeColInfo",
       "storeCurrentState",
-      "restoreCurrentState",
       "storeAttrInfo",
       "storePreviewTable",
       "storeReapplyPartialSpec",
+      "storeGenRecommendation",
     ]),
-    onSuggestionClick(suggestion) {
-      // apply the suggestion
-      console.log(suggestion);
-    },
     applySpec(spec) {
       let sch = {
         data: this.rawRelations,
@@ -211,8 +207,8 @@ export default {
         console.log(this.rowInfo, this.colInfo);
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
-        this.storeNewSpec(spec);
         this.storeCurrentTable(table);
+        this.storeGenRecommendation(true);
       } catch (err) {
         this.$message.error("Illegal specification!");
         throw err;
@@ -396,7 +392,6 @@ export default {
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
 
-        this.storeNewSpec(spec);
         this.storeCurrentTable(table);
 
         if(derivedAttr) {
@@ -432,6 +427,7 @@ export default {
       
       this.storePartialSpecSuggestion(null);
       this.storePreviewTable(undefined);
+      this.storeGenRecommendation(true);
     },
     deletePartialSpec(partialSpec) {
       let deleteRow = this.currentActiveGrid.row,
@@ -501,14 +497,14 @@ export default {
         // console.log(res);
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
-        this.storeNewSpec(spec);
         this.storeCurrentTable(table);
       } catch (err) {
         this.$message.error("Illegal specification!");
       }
       this.storeDeleteSpecSuggestion(null);
+      this.storeGenRecommendation(true);
     },
-    previewPartialSpec(e, partialSpec, iswindow) {
+    previewPartialSpec(e, partialSpec) {
       if (e) {
         let tmp = e.target;
         while(tmp) {

@@ -17,7 +17,6 @@ const state = {
   dragSourceIsCell: false,
   associationRule: "union",
   alterSpecList: [],
-  newSpec: null,
   partialSpecSuggestion: null,
   deleteSpecSuggestion: null,
   row_header: [],
@@ -28,9 +27,11 @@ const state = {
   colInfo: {},
   previewTable: undefined,
   reapplyPartialSpec: undefined,
+  genRecommendation: false,
 };
 
-let currentState = {};
+// let currentState = {};
+let stateStack = [], stateStackIndex = 0;
 
 const mutations = {
   addRawRelation(state, relation) {
@@ -83,10 +84,6 @@ const mutations = {
     state.alterSpecList = newList;
   },
 
-  changeNewSpec(state, newSpec) {
-    state.newSpec = newSpec;
-  },
-
   changePartialSpecSuggestion(state, newSuggestion) {
     state.partialSpecSuggestion = newSuggestion;
   },
@@ -123,12 +120,26 @@ const mutations = {
   changeCurrentState(state) {
     // currentState = Object.assign({}, state);
     // currentState.row_header = Object.assign({}, state.row_header);
-    currentState = Utils.deepClone(state);
+    let currentState = Utils.deepClone(state);
     currentState.currentTable = Utils.deepClone(state.currentTable);
-    console.log(currentState.currentTable);
+    let len = stateStack.length;
+    if(stateStackIndex == len) {
+      stateStack.push(currentState);
+      stateStackIndex += 1;
+    } else if(stateStackIndex < len) {
+      stateStack[stateStackIndex] = currentState;
+      stateStackIndex += 1;
+      stateStack.splice(stateStackIndex, len - stateStackIndex);
+    }
   },
 
-  restoreState(state) {
+  undoState(state) {
+    if(stateStackIndex <= 1) {
+      console.log("invalid undo", stateStackIndex);
+      return;
+    }
+    stateStackIndex -= 1;
+    let currentState = stateStack[stateStackIndex - 1];
     state.activatedRelationIndex = currentState.activatedRelationIndex;
     state.rawRelations = currentState.rawRelations;
     state.relations = currentState.relations;
@@ -136,10 +147,37 @@ const mutations = {
     state.suggestions = currentState.suggestions;
     state.currentTable = currentState.currentTable;
     state.dragSourceIsCell = currentState.dragSourceIsCell;
-    state.associationRule = currentState.associationRule;
+    // state.associationRule = currentState.associationRule;
     state.alterSpecList = currentState.alterSpecList;
-    state.newSpec = currentState.newSpec;
-    // state.partialSpecSuggestion = currentState.partialSpecSuggestion;
+    state.partialSpecSuggestion = currentState.partialSpecSuggestion;
+    state.deleteSpecSuggestion = currentState.deleteSpecSuggestion;
+    state.row_header = currentState.row_header;
+    state.column_header = currentState.column_header;
+    state.body = currentState.body;
+    state.currentActiveGrid = currentState.currentActiveGrid;
+    state.rowInfo = currentState.rowInfo;
+    state.colInfo = currentState.colInfo;
+    // console.log(currentState.row_header);
+    // console.log(state.row_header);;
+  },
+
+  redoState(state) {
+    if(stateStackIndex >= stateStack.length) {
+      console.log("invalid redo", stateStackIndex);
+      return;
+    }
+    let currentState = stateStack[stateStackIndex];
+    stateStackIndex += 1;
+    state.activatedRelationIndex = currentState.activatedRelationIndex;
+    state.rawRelations = currentState.rawRelations;
+    state.relations = currentState.relations;
+    state.attrInfo = currentState.attrInfo;
+    state.suggestions = currentState.suggestions;
+    state.currentTable = currentState.currentTable;
+    state.dragSourceIsCell = currentState.dragSourceIsCell;
+    // state.associationRule = currentState.associationRule;
+    state.alterSpecList = currentState.alterSpecList;
+    state.partialSpecSuggestion = currentState.partialSpecSuggestion;
     state.deleteSpecSuggestion = currentState.deleteSpecSuggestion;
     state.row_header = currentState.row_header;
     state.column_header = currentState.column_header;
@@ -157,6 +195,10 @@ const mutations = {
 
   changeReapplyPartialSpec(state, reapplyPartialSpec) {
     state.reapplyPartialSpec = reapplyPartialSpec;
+  },
+
+  changeGenRecommendation(state, genRecommendation) {
+    state.genRecommendation = genRecommendation;
   },
 };
 
@@ -200,9 +242,6 @@ const actions = {
   storeAlterSpecList({ commit }, newList) {
     commit("changeAlterSpecList", newList);
   },
-  storeNewSpec({ commit }, newSpec) {
-    commit("changeNewSpec", newSpec);
-  },
   storePartialSpecSuggestion({ commit }, newSuggestion) {
     commit("changePartialSpecSuggestion", newSuggestion);
   },
@@ -235,14 +274,20 @@ const actions = {
   storeCurrentState({ commit }) {
     commit("changeCurrentState");
   },
-  restoreCurrentState({ commit }) {
-    commit("restoreState");
+  undo({ commit }) {
+    commit("undoState");
+  },
+  redo({ commit }) {
+    commit("redoState");
   },
   storePreviewTable({ commit }, previewTable) {
     commit("changePreviewTable", previewTable);
   },
   storeReapplyPartialSpec({ commit }, reapplyPartialSpec) {
     commit("changeReapplyPartialSpec", reapplyPartialSpec);
+  },
+  storeGenRecommendation({ commit }, genRecommendation) {
+    commit("changeGenRecommendation", genRecommendation);
   },
 };
 

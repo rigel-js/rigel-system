@@ -116,6 +116,7 @@ export default {
       "rowInfo",
       "colInfo",
       "previewTable",
+      "partialSpecSuggestion",
     ]),
   },
   methods: {
@@ -125,9 +126,9 @@ export default {
       "storeDeleteSpecSuggestion",
       "storeCurrentTable",
       "storeCurrentActiveGrid",
-      "storeNewSpec",
       "storePreviewTable",
       "storeReapplyPartialSpec",
+      "storeCurrentState",
     ]),
     initTable() {
       if (this.table) {
@@ -195,7 +196,7 @@ export default {
     },
     cellChangeHandler(row, column, value) {
       // this.Table[row][column] = value;
-      if(this.previewTable) {
+      if(this.partialSpecSuggestion && this.partialSpecSuggestion.length > 0) {
         this.$message.info("To perform the interaction, ambiguities should be resolved. Defaultly, the first suggestion is applied.");
         this.storeReapplyPartialSpec(true);
         return;
@@ -358,6 +359,7 @@ export default {
 
         this.storeDeleteSpecSuggestion(deleteSpecSuggestion);
       }
+      this.storeCurrentState();
     },
     leftDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
@@ -432,6 +434,7 @@ export default {
       if(hasCellConflict) {
         this.$message.info("Value conflict exists");
       }
+      this.storeCurrentState();
     },
     topDropHandler(row, column, value) {
       this.leftHovered = this.topHovered = false;
@@ -502,6 +505,7 @@ export default {
       if(hasCellConflict) {
         this.$message.info("Value conflict exists");
       }
+      this.storeCurrentState();
     },
     leftHoverHandler(row, column, value) {
       this.topHovered = false;
