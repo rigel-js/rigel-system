@@ -3,7 +3,7 @@
     <!-- Head -->
     <div class="row" v-if="head">
       <div
-        class="cell-container head-container"
+        class="cell-container"
         v-for="(cellValue, i) in head"
         :key="`${name}_head_${i}`"
       >
@@ -11,7 +11,7 @@
           :value="cellValue"
           :editable="false"
           :draggable="false"
-          :cellColor="headColor[i]"
+          :cellBold="true"
         />
       </div>
     </div>
@@ -65,7 +65,7 @@ export default {
     },
     initColNum: {
       type: Number,
-      default: 4,
+      default: 10,
     },
     editable: {
       type: Boolean,
@@ -82,6 +82,14 @@ export default {
     fixedColNum: {
       type: Number,
       default: 0,
+    },
+    minRowNum: {
+      type: Number,
+      default: 10,
+    },
+    minColNum: {
+      type: Number,
+      default: 15,
     },
   },
   data() {
@@ -131,36 +139,41 @@ export default {
       "storeCurrentState",
     ]),
     initTable() {
+      let finalRowNum = this.fixedRowNum ? this.fixedRowNum : (this.initRowNum < this.minRowNum ? this.minRowNum : this.initRowNum);
+      let finalColNum = this.fixedRowNum ? this.fixedRowNum : (this.initColNum < this.minColNum ? this.minColNum : this.initColNum);
+      if (this.head) {
+        let tmp = finalColNum - this.head.length;
+        for(let j = 0; j < tmp; j++) {
+          this.head.push(null);
+        }
+      }
       if (this.table) {
-        if (this.name !== "targetTable") {
-          if(this.fixedRowNum && this.fixedColNum) {
-            let rowSize = this.table.length;
-            let columnSize = 0;
-            for (let i = 0; i < rowSize; i++) {
-              if (columnSize < this.table[i].length) {
-                columnSize = this.table[i].length;
-              }
+        if(this.fixedRowNum && this.fixedColNum) {
+          let rowSize = this.table.length;
+          let columnSize = 0;
+          for (let i = 0; i < rowSize; i++) {
+            if (columnSize < this.table[i].length) {
+              columnSize = this.table[i].length;
             }
-            this.Table = [];
-            for(let i = 0; i < this.fixedRowNum; i++) {
-              let tmp = [];
-              for(let j = 0; j < this.fixedColNum; j++) {
-                tmp.push(null);
-              }
-              this.Table.push(tmp);
-              for(let j = 0; j < this.fixedColNum; j++) {
-                if(i < rowSize && j < columnSize) {
-                  this.Table[i][j] = this.table[i][j];
-                } else {
-                  this.Table[i][j] = null;
-                }
-              }
-            }
-          } else {
-            this.Table = this.table;
           }
+          this.Table = [];
+          for(let i = 0; i < this.fixedRowNum; i++) {
+            let tmp = [];
+            for(let j = 0; j < this.fixedColNum; j++) {
+              tmp.push(null);
+            }
+            this.Table.push(tmp);
+            for(let j = 0; j < this.fixedColNum; j++) {
+              if(i < rowSize && j < columnSize) {
+                this.Table[i][j] = this.table[i][j];
+              } else {
+                this.Table[i][j] = null;
+              }
+            }
+          }
+          return;
         } else {
-          // console.log(this.table);
+          console.log(this.table);
           let table = this.table;
           let rowSize = table.length;
           let columnSize = 0;
@@ -169,28 +182,33 @@ export default {
               columnSize = table[i].length;
             }
           }
+          finalColNum = finalColNum < columnSize ? columnSize : finalColNum;
+          console.log(finalColNum);
           // console.log(rowSize, columnSize);
           for (let i = 0; i < rowSize; i++) {
-            for (let j = 0; j < this.initColNum - table[i].length; j++) {
+            console.log(table[i].length);
+            let tmp = finalColNum - table[i].length;
+            for (let j = 0; j < tmp; j++) {
+              console.log("push")
               table[i].push(null);
             }
           }
-          if (rowSize < this.initRowNum) {
-            for (let i = 0; i < this.initRowNum - rowSize; i++) {
+          if (rowSize < finalRowNum) {
+            for (let i = 0; i < finalRowNum - rowSize; i++) {
               table.push(
                 new Array(
-                  columnSize < this.initColNum ? this.initColNum : columnSize
+                  columnSize < finalColNum ? finalColNum : columnSize
                 )
               );
             }
           }
           this.Table = table;
         }
-        // console.log(this.Table);
+        console.log(this.Table);
       } else {
-        this.Table = new Array(this.initRowNum);
-        for (let i = 0; i < this.initRowNum; i++) {
-          this.Table[i] = new Array(this.initColNum);
+        this.Table = new Array(finalRowNum);
+        for (let i = 0; i < finalRowNum; i++) {
+          this.Table[i] = new Array(finalColNum);
         }
       }
     },
@@ -685,39 +703,45 @@ export default {
 <style>
 .spreadsheet {
   text-align: left;
+  /* display: table; */
+  /* overflow: scroll; */
 }
 
 .row {
   width: 100%;
   height: 32px;
-  display: flex;
-  flex-direction: row;
+  /* display: flex;
+  flex-direction: row; */
+  display: table-row;
 }
 
-.row:first-child {
+/* .row:first-child {
   height: 32.5px;
 }
 
 .row:last-child {
   height: 32.5px;
-}
+} */
 
 .head-container .cell {
   text-align: center;
 }
 
 .cell-container {
-  flex: 1 1;
+  /* flex: 1 1; */
   border: 1px solid #bbb;
-  font: 100 16px/20px Times;
-  overflow-x: hidden;
+  /* font: 100 16px/20px Times; */
   overflow-y: auto;
-  position: relative;
+  display: table-cell;
+  min-width: 70px;
 }
 
 .cell-container .cell {
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
+  min-height: 20px;
+  line-height: 20px;
+  vertical-align: center;
   padding: 5px 5px 5px 5px;
 }
 

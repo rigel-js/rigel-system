@@ -6,6 +6,7 @@
         :key="index"
         :name="index"
         :header="`Add ${item.add}`"
+        :level="level"
       >
         <Newcollapse :level="level+1" :initial="0">
           <Newcollapsepanel
@@ -14,6 +15,7 @@
             :name="index2"
             :header="spec.description"
             :applySpec="spec"
+            :level="level+1"
           >
             <div
               class="applypanel"
@@ -21,7 +23,7 @@
               @mouseenter="previewSpec(spec)"
               @mouseleave="restorePreview"
             >
-              <div class="applypanelcontent">
+              <div class="applypanelcontent" :style="`padding-left:${7*level+21}px;`">
                 <a-icon type="bulb" class="icon applypanelicon"/>
                 <span class="applypaneltext"> Apply </span>
               </div>
@@ -30,12 +32,14 @@
               <Newcollapsepanel
                 header="Alternatives (Rearrange current attributes)"
                 :name="0"
+                :level="level+2"
               >
-                <alterpanel :spec="spec"/>
+                <alterpanel :spec="spec" :level="level+2"/>
               </Newcollapsepanel>
               <Newcollapsepanel
                 header="Variations (Add more attributes)"
-                :name="0"
+                :name="1"
+                :level="level+2"
               >
                 <Varunit :spec="spec" :level="level+3"/>
               </Newcollapsepanel>
@@ -95,7 +99,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeCurrentTable", "storeCurrentState", "storePreviewTable", "storeGenRecommendation"]),
+    ...mapActions(["storeCurrentTable", "storeCurrentState", "storePreviewTable", "storeGenRecommendation", "setSpec"]),
     calcExplore(spec) {
       // calculation
       try {
@@ -150,6 +154,11 @@ export default {
         }
         // console.log(res);
         this.storeCurrentTable(res);
+        this.setSpec({
+          row_header: Utils.specObj2List(spec["row_header"]),
+          column_header: Utils.specObj2List(spec["column_header"]),
+          body: Utils.specObj2List(spec["body"]),
+        });
         this.storeGenRecommendation(true);
       } catch (err) {
         this.$message.error("Illegal specification!");

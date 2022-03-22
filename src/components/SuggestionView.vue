@@ -1,7 +1,7 @@
 <template>
-  <div class="view suggestion-view">
-    <div class="view-title">Suggestions</div>
-    <div class="suggestion-container">
+  <div class="suggestion-view" id="suggestion-view">
+    <div class="view-title" id="suggestion-title">Suggestions</div>
+    <div class="suggestion-container" id="suggestion-container2">
       <div v-if="this.partialSpecSuggestion" class="suggestion-unit">
         <div class="suggestionTitle">Disambiguate user interactions.</div>
         <Newcollapse :initial="0">
@@ -53,7 +53,7 @@
         </div>
         <div class="suggestion-unit" v-if="this.alterSpecList.length > 0">
           <div class="suggestionTitle">
-            Alternatives (Rearrangle current attributes)
+            Alternatives
           </div>
           <div class="alter-unit">
             <div
@@ -72,7 +72,7 @@
           </div>
         </div>
         <div class="suggestion-unit" v-if="this.suggestions.length > 0">
-          <div class="suggestionTitle">Variations (Add more attributes)</div>
+          <div class="suggestionTitle">Variations</div>
           <div class="variation-unit">
             <Varunit :content="this.suggestions" :level="0"/>
           </div>
@@ -80,15 +80,14 @@
       </div>
     </div>
     <!-- preview -->
-    <div class="previewwindow" v-if="previewTable">
+    <div class="previewwindow" id="previewwindow">
+      <div class="previewTitle">Preview</div> 
       <spreadsheet 
         name="preview" 
         :table="previewTable" 
         :key="JSON.stringify(this.previewTable)" 
         :editable="false" 
         :contentDraggable="false"
-        :fixedRowNum="5"
-        :fixedColNum="5"
       >
       </spreadsheet>
     </div>
@@ -159,6 +158,28 @@ export default {
       }
     }
   },
+  mounted() {
+    let el = document.createElement("div");
+    el.className = "title-bg";
+    let tmp1 = document.getElementById("suggestion-view"), tmp2 = document.getElementById("body-container");
+    let rect1 = tmp1.getBoundingClientRect(), rect2 = tmp2.getBoundingClientRect();
+    // console.log(rect1, rect2);
+    el.style.top = `${rect1.top - rect2.top}px`;
+    el.style.left = `${rect1.left - rect2.left}px`;
+    tmp1.appendChild(el);
+
+    let el2 = document.getElementById("suggestion-container");
+    let el3 = document.getElementById("suggestion-title");
+    let el4 = document.getElementById("suggestion-container2");
+    let el5 = document.getElementById("previewwindow");
+    console.log(el2,el3,el4,el5);
+    let height = el2.getBoundingClientRect().height - el3.getBoundingClientRect().height - el4.getBoundingClientRect().height;
+    height -= 36; //margin
+    console.log(el4.getBoundingClientRect().height)
+    el5.style.height = `${height}px`;
+    el5.style.width = `${el2.getBoundingClientRect().width - 8}px`;
+    console.log(el5.style.height);
+  },
   methods: {
     ...mapActions([
       "storeCurrentTable",
@@ -171,6 +192,7 @@ export default {
       "storePreviewTable",
       "storeReapplyPartialSpec",
       "storeGenRecommendation",
+      "setSpec",
     ]),
     applySpec(spec) {
       let sch = {
@@ -208,6 +230,11 @@ export default {
         let table = Utils.mapTable(res, this.rowInfo, this.colInfo);
         console.log(table);
         this.storeCurrentTable(table);
+        this.setSpec({
+          row_header: Utils.specObj2List(spec["row_header"]),
+          column_header: Utils.specObj2List(spec["column_header"]),
+          body: Utils.specObj2List(spec["body"]),
+        });
         this.storeGenRecommendation(true);
       } catch (err) {
         this.$message.error("Illegal specification!");
@@ -630,18 +657,17 @@ export default {
 <style>
 .suggestion-view {
   width: 100%;
-  height: calc(100% - 20px);
-  overflow: hidden;
+  height: 100%;
 }
 
 .suggestion-container {
-  min-height: 50px;
-  margin: 20px 0 auto 0;
-  border-radius: 4px;
-  border: 1px solid rgba(187, 187, 187, 100);
+  height: 450px;
+  margin: 20px 0 10px 0;
   background: white;
-  overflow: hidden;
+  overflow-y: scroll;
 }
+
+
 
 .suggestion-container .ant-collapse {
   min-width: 0px;
@@ -651,6 +677,9 @@ export default {
 
 .suggestion-unit {
   margin: 25px 20px 40px 20px;
+  border: 1px solid #eaebee;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .alter-unit::-webkit-scrollbar {
@@ -658,7 +687,7 @@ export default {
 }
 
 .alter-unit {
-  height: 220px;
+  min-height: 80px;
   overflow: scroll;
 }
 
@@ -667,7 +696,7 @@ export default {
 }
 
 .variation-unit {
-  height: 250px;
+  min-height: 80px;
   overflow: scroll;
 }
 
@@ -680,11 +709,11 @@ export default {
 }
 
 .suggestionTitle {
-  font-size: 15px;
-  margin-left: 3px;
-  margin-bottom: 15px;
+  font-size: 20px;
+  padding: 4px 0 4px 10px;
   font-weight: bold;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  background-color: #eaebee;
 }
 
 .collapse-unit {
@@ -702,13 +731,21 @@ export default {
 }
 
 .previewwindow {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
   background-color: white;
-  z-index: 4000;
-  -webkit-box-shadow: 0 2px 6px 0px rgb(0 0 0 / 32%);
-  min-width: 400px;
+  overflow: scroll;
+  height: 0;
+  flex-direction: column;
+  width: 0;
+}
+
+.previewTitle {
+  font-size: 22px;
+  background-color: rgba(0, 0, 0, 0.87);
+  color: white;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  padding-left: 15px;
+  height: 36px;
+  line-height: 32px;
 }
 
 .firsthover {

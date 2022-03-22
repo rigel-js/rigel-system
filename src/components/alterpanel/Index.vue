@@ -8,7 +8,7 @@
       @mouseenter="previewSpec(suggestion)"
       @mouseleave="restorePreview"
     >
-      <div class="applypanelcontent">
+      <div class="applypanelcontent" :style="`padding-left:${7*level+7}px;`">
         <a-icon type="bulb" class="icon applypanelicon"/>
         <span class="applypaneltext"> {{ suggestion.description }} </span>
       </div>
@@ -26,6 +26,10 @@ export default {
     spec: {
       type: Object,
       default: null,
+    },
+    level: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
@@ -79,7 +83,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["storeCurrentTable", "storeCurrentState", "storePreviewTable", "storeGenRecommendation"]),
+    ...mapActions(["storeCurrentTable", "storeCurrentState", "storePreviewTable", "storeGenRecommendation", "setSpec"]),
     handleApply(spec, isPreview) {
       if (!spec) return;
       let sch = {
@@ -102,6 +106,11 @@ export default {
         }
         // console.log(res);
         this.storeCurrentTable(res);
+        this.setSpec({
+          row_header: Utils.specObj2List(spec["row_header"]),
+          column_header: Utils.specObj2List(spec["column_header"]),
+          body: Utils.specObj2List(spec["body"]),
+        });
         this.storeGenRecommendation(true);
       } catch (err) {
         this.$message.error("Illegal specification!");

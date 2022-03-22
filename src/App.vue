@@ -8,9 +8,9 @@
         <div id="relation-container">
           <relation-view></relation-view>
         </div>
-      </div>
-      <div id="spreadsheet-container">
-        <spreadsheet-view></spreadsheet-view>
+        <div id="spreadsheet-container">
+          <spreadsheet-view></spreadsheet-view>
+        </div>
       </div>
       <div id="suggestion-container">
         <suggestion-view></suggestion-view>
@@ -52,59 +52,58 @@ body {
 
 #app {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   /* min-width: 1680px; */
   /* min-height: 1050px; */
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
-  background: #eee;
 }
 
 #header-container {
   width: 100%;
   height: 50px;
-  margin-bottom: 5px;
   line-height: 20px;
   display: flex;
   flex-direction: column;
-  background-color: rgba(245, 245, 245, 100);
+  background-color: rgba(0, 0, 0, 0.87);
   /* border: 1px solid rgba(187, 187, 187, 100); */
-  -webkit-box-shadow: 0 2px 6px 0px rgb(0 0 0 / 22%);
+  /* -webkit-box-shadow: 0 2px 6px 0px rgb(0 0 0 / 22%); */
 }
 
 #body-container {
+  overflow: scroll;
   width: 100%;
   height: calc(100% - 55px);
   display: flex;
   flex-direction: row;
-  background-color: rgba(250, 250, 250, 100);
+  position: absolute;
+  /* border: 3px solid rgba(0, 0, 0, 0.87); */
   /* border: 1px solid rgba(187, 187, 187, 100); */
 }
 
 #extractor-container {
-  flex: 0 0 500px;
+  flex: 1 1 600px;
   display: flex;
   flex-direction: column;
-  margin: 15px 0 15px 15px;
+  margin: 10px 15px 10px 15px;
+  width: 60%;
 }
 
-#extractor-container #dataset-container {
-  flex: 0 0 525px;
-}
-
-#extractor-container #relation-container {
-  flex: 1 1;
-  overflow: hidden;
+#relation-container {
+  flex: 1 1 100px;
+  margin-bottom: 15px;
+  border: 3px solid rgba(0, 0, 0, 0.87);
 }
 
 #spreadsheet-container {
-  flex: 1 1;
-  margin: 15px 0 15px 15px;
+  flex: 1 1 100px;
+  border: 3px solid rgba(0, 0, 0, 0.87);
 }
 
 #suggestion-container {
-  flex: 0 0 450px;
-  margin: 15px;
+  flex: 1 1 500px;
+  margin: 10px 15px 10px 15px;
+  border: 3px solid rgba(0, 0, 0, 0.87);
 }
 
 .view {
@@ -112,15 +111,34 @@ body {
 }
 
 .view-title {
-  font-size: 24px;
+  font-size: 22px;
+  background-color: transparent;
+  color: white;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
   /* margin: 10px 0; */
   text-align: left;
+  width: 150px;
+  min-width: 150px;
+  padding-left: 15px;
+  display: inline-block;
+  height: 36px;
+  line-height: 32px;
+  z-index: 5;
+  position: relative;
 }
+
+.title-bg {
+  /* background-color: rgba(0, 0, 0, 0.87); */
+  border-top:36px solid rgba(0, 0, 0, 0.87);
+  border-left:0px solid transparent;
+  border-right:20px solid transparent;
+  width: 170px;
+  position: absolute;
+  -webkit-transform: translateZ(0);
+ }
 
 .applypanel {
   background-color: #fff;
-  margin-bottom: 3px;
 }
 
 .applypanel :hover{
@@ -128,7 +146,8 @@ body {
 }
 
 .applypanelcontent {
-  padding: 5px 0px 5px 0px;
+  border: 1px solid #eaebee;
+  padding: 7px 7px 7px 7px;
   width: 100%;
   height: 100%;
   transform: translateX(-2px);
@@ -140,5 +159,27 @@ body {
 .applypanelicon {
   display: inline-block;
   margin-right: 5px;
+  margin-left: 2px;
+}
+
+.ant-popover-message {
+  padding-bottom: 0 !important;
+}
+
+.ant-popover-buttons {
+  display: none !important;
+}
+
+/* .ant-btn{
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+} */
+
+.ant-popover-message-title {
+  padding-left: 0 !important;
+}
+
+.ant-tabs-bottom .ant-tabs-bottom-bar {
+  margin-top: 0 !important;
 }
 </style>

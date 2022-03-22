@@ -1,9 +1,15 @@
 <template>
   <div class="collapse-panel" :class="status ? activeClass : ''">
-    <div class="collapse-panel-fixed" @click="handleFixedClick">
+    <div class="collapse-panel-fixed" @click="handleFixedClick" :style="`padding-left:${7*level+7}px;`">
       <!-- @slot 固定头部，是一个作用域插槽，可提供toggle、open、close方法 -->
-      <div style="pointer-events: none">{{ header }}</div>
-      <i class="icon iconfont" style="transition: all 0.3s">&#xe65b;</i>
+      <i 
+        class="icon iconfont" 
+        style="transition: all 0.3s; color: #b3b3b3"
+        :style="level == 0 && name == 0 ? '' : 'transform: rotate(-90deg)'"
+        :class="level == 0 && name == 0 ? 'active' : ''"
+      >&#xe60a;
+      </i>
+      <div style="pointer-events: none; margin-left: 8px;">{{ header }}</div>
     </div>
     <transition
       @before-enter="beforeEnter"
@@ -34,6 +40,10 @@ export default {
       default: true,
     },
     header: String,
+    level: {
+			type: Number,
+			default: 0,
+		},
   },
   data() {
     return {
@@ -80,29 +90,29 @@ export default {
   },
   methods: {
     handleFixedClick(e) {
-      // console.log("click");
-      console.log(e.target.lastChild);
+      console.log("click");
+      console.log(e.target.firstChild);
       if (e.target.tagName == "I") {
         let className = e.target.className;
         let index = className ? className.indexOf("active") : -1;
         if (index != -1) {
-          e.target.style.transform = "rotate(0)";
+          e.target.style.transform = "rotate(-90deg)";
           let newstr = className.substr(0, index - 1);
           e.target.className = newstr;
         } else {
-          e.target.style.transform = "rotate(180deg)";
+          e.target.style.transform = "rotate(0)";
           e.target.className += " active";
         }
       } else {
-        let className = e.target.lastChild.className;
+        let className = e.target.firstChild.className;
         let index = className ? className.indexOf("active") : -1;
         if (index != -1) {
-          e.target.lastChild.style.transform = "rotate(0)";
+          e.target.firstChild.style.transform = "rotate(-90deg)";
           let newstr = className.substr(0, index - 1);
-          e.target.lastChild.className = newstr;
+          e.target.firstChild.className = newstr;
         } else {
-          e.target.lastChild.style.transform = "rotate(180deg)";
-          e.target.lastChild.className += " active";
+          e.target.firstChild.style.transform = "rotate(0)";
+          e.target.firstChild.className += " active";
         }
       }
       if (this.defaultClickAction) {
@@ -164,7 +174,6 @@ export default {
   .collapse-panel-content {
     overflow: hidden;
     transition: height 0.3s;
-    padding: 4px 0px 6px 9px;
     text-align: left;
   }
 }
@@ -173,13 +182,13 @@ export default {
   .collapse-panel-fixed {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: left;
     // background-color: #eaebee;
-    border-left-width: 10px;
-    border-left-style: solid;
-    border-left-color:#eaebee;
-    padding: 5px 0px 5px 7px;
-    margin-bottom: 5px;
+    // border-left-width: 10px;
+    // border-left-style: solid;
+    // border-left-color:#eaebee;
+    border: 1px solid #eaebee;
+    padding: 7px 0px 7px 7px;
     //   padding: 10px;
     // > i {
     // 	// font-size: 12px;
@@ -187,6 +196,10 @@ export default {
     // 	transition: transform 0.3s;
     // }
   }
+}
+
+.iconclass {
+  transform: rotate(-90deg);
 }
 </style>
 

@@ -9,7 +9,7 @@
     @drop="dropHandler"
     @dragover="allowDrop"
     @dragleave="dragLeaveHandler"
-    :style="{ 'background-color': cellColor }"
+    :class="{'text-bold': cellBold }"
     @click="clickHandler"
     @blur="blurHandler"
     @input="inputHandler"
@@ -54,9 +54,9 @@ export default {
       type: Boolean,
       default: true,
     },
-    cellColor: {
-      type: String,
-      default: "white",
+    cellBold: {
+      type: Boolean,
+      default: false,
     },
     givenId: String,
   },
@@ -320,5 +320,9 @@ export default {
 
 .onselect {
   background-color: #eaebee;
+}
+
+.text-bold {
+  font-weight: bold;
 }
 </style>

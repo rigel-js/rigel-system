@@ -2,7 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import store from "./store";
 
-import { Select, Input, Button, Tabs, Collapse, message, Radio, Checkbox, InputNumber, Switch, Empty, Icon, Divider, Tooltip } from "ant-design-vue";
+import { Select, Input, Button, Tabs, Collapse, message, Radio, Checkbox, InputNumber, Switch, Empty, Icon, Divider, Tooltip, Card, Popconfirm } from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
 import './assets/icons/iconfont/iconfont.css';
 // import Mycollapse from "./components/Mycollapse/Index.vue";
@@ -26,6 +26,8 @@ Vue.use(Empty);
 Vue.use(Icon);
 Vue.use(Divider);
 Vue.use(Tooltip);
+Vue.use(Card);
+Vue.use(Popconfirm);
 // Vue.component(Mycollapse.name, Mycollapse);
 // Vue.component(Mycollapsepanel.name, Mycollapsepanel);
 Vue.component(Varunit.name, Varunit);

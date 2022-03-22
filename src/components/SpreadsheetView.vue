@@ -1,29 +1,20 @@
 <template>
-  <div class="view spreadsheet-view">
-    <div
-      style="display: flex; flex-direction: row; justify-content: space-between"
-    >
+  <div class="spreadsheet-view" id="spreadsheet-view">
+    <div id="title-container">
       <div class="view-title">Target Table</div>
       <a-button class="rearrange-button" @click="rearrangeHandler">
-        Rearrange
+        Optimize Layout
       </a-button>
+      <a-button class="specbutton" @click="resetHandler">Clear Table</a-button>
+      <a-button class="specbutton">Export Table</a-button>
     </div>
-    <div class="spreadsheet-container">
-      <spreadsheet
-        name="targetTable"
-        :initRowNum="14"
-        :initColNum="5"
-        :editable="true"
-        :table="this.currentTable"
-        :key="JSON.stringify(this.currentTable)"
-      ></spreadsheet>
-    </div>
-    <div class="specmenu">
+
+    <div class="specmenu" id="specmenu">
       <div class="speccomponent">
-        <a-tooltip>
-          <template slot="title">What object does each row represent?</template>
-          <div class="spectitle">Row header:</div>
-        </a-tooltip>
+        <div class="spectitle">
+          <i class="icon iconfont">&#xe7e0;</i>
+          <div class="spectitle-text">Row</div>
+        </div>
         <div
           class="specinput"
           id="rowinput"
@@ -54,10 +45,10 @@
         </div>
       </div>
       <div class="speccomponent">
-        <a-tooltip>
-          <template slot="title"> What object does each column represent? </template>
-          <div class="spectitle">Column header:</div>
-        </a-tooltip>
+        <div class="spectitle">
+          <i class="icon iconfont" style="transform: rotate(90deg)">&#xe7e0;</i>
+          <div class="spectitle-text">Column</div>
+        </div>
         <div
           class="specinput"
           id="columninput"
@@ -88,10 +79,10 @@
         </div>
       </div>
       <div class="speccomponent">
-        <a-tooltip>
-          <template slot="title">Details of the object defined by each row and column.</template>
-          <div class="spectitle">Body:</div>
-        </a-tooltip>
+        <div class="spectitle">
+          <i class="icon iconfont">&#xebbf;</i>
+          <div class="spectitle-text">Cell</div>
+        </div>
         <div
           class="specinput"
           id="bodyinput"
@@ -121,113 +112,117 @@
           </div>
         </div>
       </div>
-      <div class="spectoolbar">
-        <!-- <a-button type="primary" class="specbutton" @click="applyHandler"
-          >Apply</a-button
-        > -->
-        <a-button class="specbutton" @click="resetHandler">Reset</a-button>
+    </div>
+
+    <div class="targetTableContainer" id="targetTableContainer">
+      <spreadsheet
+        name="targetTable"
+        :editable="true"
+        :table="this.currentTable"
+        :key="JSON.stringify(this.currentTable)"
+      ></spreadsheet>
+    </div>
+
+    <!-- context menu -->
+    <div
+      v-show="visible"
+      :style="{ left: left + 'px', top: top + 'px' }"
+      class="contextmenu"
+      id="menu_spreadsheetview"
+    >
+      <div>
+        <div class="menutext">Sorting</div>
+        <a-switch class="menuswitch" size="small" v-model="menuSortEnable" />
+      </div>
+      <div v-if="menuSortEnable">
+        <a-radio-group v-model="menuSort">
+          <a-radio :value="1"> Ascending </a-radio>
+          <br />
+          <a-radio :value="2"> Descending </a-radio>
+        </a-radio-group>
+      </div>
+      <div class="dashline"></div>
+
+      <div>
+        <div class="menutext">Filtering</div>
+        <a-switch
+          class="menuswitch"
+          size="small"
+          v-model="menuFilterEnable"
+        />
+      </div>
+      <!-- Categorical -->
+      <div
+        v-if="
+          menuFilterEnable &&
+          this.rightClickItem &&
+          this.rightClickItemValueList.length > 0 &&
+          this.rightClickItemIsCategorical
+        "
+      >
+        <a-checkbox-group
+          v-model="menuFilterValue"
+          name="checkboxgroup"
+          :options="this.rightClickItemValueList"
+        />
+      </div>
+      <!-- Quantitative -->
+      <div
+        v-if="
+          menuFilterEnable &&
+          this.rightClickItem &&
+          this.rightClickItemValueList.length > 0 &&
+          !this.rightClickItemIsCategorical
+        "
+      >
+        <a-input-number
+          class="menuInputNumber"
+          v-model="menuFilterLowerBound"
+        />
+        <div class="menuInputNumberLine" />
+        <a-input-number
+          class="menuInputNumber"
+          v-model="menuFilterUpperBound"
+        />
       </div>
 
-      <!-- context menu -->
-      <div
-        v-show="visible"
-        :style="{ left: left + 'px', top: top + 'px' }"
-        class="contextmenu"
-        id="menu_spreadsheetview"
-      >
+      <div class="dashline"></div>
+      <!-- Quantitative Only -->
+      <div v-if="this.rightClickItem && !this.rightClickItemIsCategorical">
         <div>
-          <div class="menutext">Sorting</div>
-          <a-switch class="menuswitch" size="small" v-model="menuSortEnable" />
+          <div class="menutext">Binning</div>
+          <a-switch class="menuswitch" size="small" v-model="menuBinEnable" />
         </div>
-        <div v-if="menuSortEnable">
-          <a-radio-group v-model="menuSort">
-            <a-radio :value="1"> Ascending </a-radio>
-            <br />
-            <a-radio :value="2"> Descending </a-radio>
-          </a-radio-group>
-        </div>
-        <div class="dashline"></div>
-
-        <div>
-          <div class="menutext">Filtering</div>
-          <a-switch
-            class="menuswitch"
-            size="small"
-            v-model="menuFilterEnable"
-          />
-        </div>
-        <!-- Categorical -->
-        <div
-          v-if="
-            menuFilterEnable &&
-            this.rightClickItem &&
-            this.rightClickItemValueList.length > 0 &&
-            this.rightClickItemIsCategorical
-          "
-        >
-          <a-checkbox-group
-            v-model="menuFilterValue"
-            name="checkboxgroup"
-            :options="this.rightClickItemValueList"
-          />
-        </div>
-        <!-- Quantitative -->
-        <div
-          v-if="
-            menuFilterEnable &&
-            this.rightClickItem &&
-            this.rightClickItemValueList.length > 0 &&
-            !this.rightClickItemIsCategorical
-          "
-        >
+        <div v-if="menuBinEnable">
           <a-input-number
             class="menuInputNumber"
-            v-model="menuFilterLowerBound"
+            v-model="menuBinLowerBound"
           />
           <div class="menuInputNumberLine" />
           <a-input-number
             class="menuInputNumber"
-            v-model="menuFilterUpperBound"
+            v-model="menuBinUpperBound"
           />
-        </div>
-
-        <div class="dashline"></div>
-        <!-- Quantitative Only -->
-        <div v-if="this.rightClickItem && !this.rightClickItemIsCategorical">
           <div>
-            <div class="menutext">Binning</div>
-            <a-switch class="menuswitch" size="small" v-model="menuBinEnable" />
-          </div>
-          <div v-if="menuBinEnable">
+            <div class="menutext">Step:</div>
             <a-input-number
               class="menuInputNumber"
-              v-model="menuBinLowerBound"
+              :min="1"
+              v-model="menuBinStep"
             />
-            <div class="menuInputNumberLine" />
-            <a-input-number
-              class="menuInputNumber"
-              v-model="menuBinUpperBound"
-            />
-            <div>
-              <div class="menutext">Step:</div>
-              <a-input-number
-                class="menuInputNumber"
-                :min="1"
-                v-model="menuBinStep"
-              />
-            </div>
           </div>
-          <div class="dashline"></div>
         </div>
+        <div class="dashline"></div>
+      </div>
 
-        <div class="menuButtonContainer">
-          <a-button type="primary" class="menubutton" @click="onMenuApply">
-            Apply
-          </a-button>
-          <a-button class="menubutton" @click="onMenuReset"> Reset </a-button>
-        </div>
+      <div class="menuButtonContainer">
+        <a-button type="primary" class="menubutton" @click="onMenuApply">
+          Apply
+        </a-button>
+        <a-button class="menubutton" @click="onMenuReset"> Reset </a-button>
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -297,6 +292,7 @@ export default {
     // },
     genRecommendation(val, oldval) {
       if(val) {
+        console.log("ok")
         this.refineHeader(this.row_header);
         this.refineHeader(this.column_header);
         this.refineHeader(this.body);
@@ -326,6 +322,27 @@ export default {
         this.menuSortEnable = this.menuFilterEnable = false;
       }
     },
+  },
+  mounted() {
+    let el = document.createElement("div");
+    el.className = "title-bg";
+    let tmp1 = document.getElementById("spreadsheet-view"), tmp2 = document.getElementById("body-container");
+    let rect1 = tmp1.getBoundingClientRect(), rect2 = tmp2.getBoundingClientRect();
+    // console.log(rect1, rect2);
+    el.style.top = `${rect1.top - rect2.top}px`;
+    el.style.left = `${rect1.left - rect2.left}px`;
+    tmp1.appendChild(el);
+
+    let el2 = document.getElementById("spreadsheet-container");
+    let el3 = document.getElementById("title-container");
+    let el4 = document.getElementById("specmenu");
+    let el5 = document.getElementById("targetTableContainer");
+    
+    let height = el2.getBoundingClientRect().height - el3.getBoundingClientRect().height - el4.getBoundingClientRect().height;
+    height -= 9; //margin
+    console.log(height)
+    el5.style.height = `${height}px`;
+    console.log(el5.style.height);
   },
   methods: {
     ...mapActions([
@@ -514,6 +531,7 @@ export default {
       } catch (err) {
         console.log(err.message);
         this.$message.error(err.message);
+        throw err;
       }
     },
     rearrangeHandler() {
@@ -581,8 +599,10 @@ export default {
       let x = e.clientX;
       let y = e.clientY;
 
-      this.top = y - 120;
+      this.top = y;
       this.left = x;
+
+      console.log(x,y);
 
       this.visible = true;
     },
@@ -817,24 +837,23 @@ export default {
 <style scoped>
 .spreadsheet-view {
   width: 100%;
-  height: 100%;
   overflow: hidden;
 }
 
-.spreadsheet-container {
-  height: 60%;
+.targetTableContainer {
   min-width: 500px;
   overflow: scroll;
-  margin: 20px 0 5px 0;
+  flex-direction: column;
+  height: 0px;
 }
 
-.spreadsheet-container::-webkit-scrollbar {
-  display: none; /* Chrome Safari */
-}
+/* .spreadsheet::-webkit-scrollbar {
+  display: none; Chrome Safari
+} */
 
 .specmenu {
   text-align: left;
-  margin-top: 50px;
+  margin-top: 4px;
   vertical-align: center;
   overflow: scroll;
   height: 40%;
@@ -845,26 +864,34 @@ export default {
 }
 
 .speccomponent {
-  margin-bottom: 21px;
+  margin: 1px 2px 1px 2px;
+  display: flex;
+  justify-content: left;
+  align-content: center;
+  height: 28px;
 }
 
 .spectitle {
-  display: inline-block;
-  margin-right: 10px;
+  display: flex;
   /* margin-bottom: 15px; */
-  height: 27px;
-  width: 130px;
-  text-align: right;
+  flex: 0 0 80px;
+  text-align: left;
+  background-color: #f2f2f2;
+  border: 1px solid rgba(187, 187, 187, 100);
+  padding: 0px 2px 0px 2px;
+}
+
+.spectitle-text{
+  margin-left: 6px;
+  margin-top: 1px;
 }
 
 .specinput {
   background: white;
-  display: inline-block;
-  min-height: 28px;
-  width: 350px;
-  margin-bottom: -9px;
-  border-radius: 4px;
+  flex: 1 1 350px;
   border: 1px solid rgba(187, 187, 187, 100);
+  overflow: auto;
+  width: 0;
 }
 
 .specinput::-webkit-scrollbar {
@@ -896,10 +923,8 @@ export default {
 }
 
 .specbutton {
-  width: 52px;
-  height: 26px;
-  padding: 0px 2px 0px 2px;
-  margin: auto 7px auto 7px;
+  padding: 2px 9px 2px 9px;
+  margin-left: 10px;
   text-align: center;
   display: inline-block;
 }
@@ -911,9 +936,23 @@ export default {
 }
 
 .rearrange-button {
-  padding: 0;
+  padding: 2px 9px 2px 9px;
   text-align: center;
-  width: 80px;
+  /* width: 80px; */
+  margin-left: 50px;
+  display: inline-block;
   /* margin: 10px 0; */
+}
+
+.hint {
+  color: #b3b3b3;
+  margin-right: 3px;
+  float: right;
+  pointer-events: none;
+}
+
+#title-container {
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>
