@@ -11,7 +11,7 @@
           :value="cellValue"
           :editable="false"
           :draggable="false"
-          :cellBold="true"
+          :color="headColor"
         />
       </div>
     </div>
@@ -55,7 +55,7 @@ export default {
   props: {
     table: Array,
     head: Array,
-    headColor: Array,
+    headColor: String,
     name: {
       type: String,
       default: "initTable",

@@ -46,7 +46,7 @@
         @dragover="attrAllowDrop"
         @contextmenu.prevent="openMenu($event, attr)"
       >
-        <div class="attrInfo-text">
+        <div class="attrInfo-text" :style="`color: ${attr.color}`">
           {{
             attr.data ? `${attr.data}.${attr.attribute}` : `${attr.attribute}`
           }}
@@ -347,13 +347,13 @@ export default {
           });
           relation.push(newItem);
         });
-        let colorList = Utils.genRandomColor(keys.length);
-        console.log("color", colorList);
+        let color = Utils.genRandomColor(1)[0];
+        console.log("color", color);
         let res = {
           name: jsonData.name,
           entityOrder: keys,
           relation: relation,
-          color: colorList,
+          color: color,
         };
         console.log("res: ", res);
         this.storeRelation(res);
@@ -367,7 +367,7 @@ export default {
             data: jsonData.name,
             attribute: key,
             strName: { operator: "attr", data: jsonData.name, attribute: key },
-            color: colorList[index],
+            color: color,
             valueList: Utils.unique(valueList),
             isCategorical: Utils.isCategorical(valueList),
           });
@@ -411,7 +411,7 @@ export default {
       let op1 = JSON.parse(event.dataTransfer.getData("info"));
       let op2 = JSON.parse(event.target.dataset.info);
       //union
-      let colorList = Utils.genRandomColor(1);
+      let color = Utils.genRandomColor(1);
       let valueList = [];
       op1.valueList.forEach((item) => {
         valueList.push(item);
@@ -428,7 +428,7 @@ export default {
       let res = {
         strName: strName,
         attribute: `${this.associationRule}(${name1}, ${name2})`,
-        color: colorList[0],
+        color: color,
         valueList: Utils.unique(valueList),
         isCategorical: Utils.unique(valueList),
       };
@@ -509,7 +509,7 @@ export default {
       }
       let op = this.rightClickItem;
       let associationRule;
-      let colorList = Utils.genRandomColor(1);
+      let color = Utils.genRandomColor(1);
 
       if (this.menuSortEnable) {
         if (this.menuSort == 1) {
@@ -536,7 +536,7 @@ export default {
         let res = {
           strName: strName,
           attribute: `${associationRule}(${attrName})`,
-          color: colorList[0],
+          color: color,
           valueList: Utils.unique(valueList),
           isCategorical: Utils.isCategorical(valueList),
         };
@@ -573,7 +573,7 @@ export default {
         let res = {
           strName: strName,
           attribute: `${associationRule}(${attrName}, ${this.menuBinStep}, ${this.menuBinLowerBound}, ${this.menuBinUpperBound})`,
-          color: colorList[0],
+          color: color,
           valueList: valueList,
           isCategorical: Utils.isCategorical(valueList),
         };
@@ -607,7 +607,7 @@ export default {
           let res = {
             strName: strName,
             attribute: attributeName,
-            color: colorList[0],
+            color: color,
             valueList: Utils.unique(valueList),
             isCategorical: Utils.isCategorical(valueList),
           };
@@ -639,7 +639,7 @@ export default {
           let res = {
             strName: strName,
             attribute: `${associationRule}(${op.attribute}, ${this.menuFilterLowerBound}, ${this.menuFilterUpperBound})`,
-            color: colorList[0],
+            color: color,
             valueList: Utils.unique(valueList),
             isCategorical: Utils.isCategorical(valueList),
           };

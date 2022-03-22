@@ -91,17 +91,45 @@ const linkEntityNamesByOperator = (entityNames, operator) => {
   });
 };
 
+const hsl2rgb = (h, s, l) => {
+  var r, g, b;
+  if(s == 0){
+    r = g = b = l; // achromatic
+  }else{
+    var hue2rgb = function hue2rgb(p, q, t){
+      if(t < 0) t += 1;
+      if(t > 1) t -= 1;
+      if(t < 1/6) return p + (q - p) * 6 * t;
+      if(t < 1/2) return q;
+      if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    }
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
 // 生成随机颜色
 const genRandomColor = (length) => {
   if (length == 0) {
     return [];
   }
-  var r = Math.floor(Math.random() * 256); //随机生成256以内r值
-  var g = Math.floor(Math.random() * 256); //随机生成256以内g值
-  var b = Math.floor(Math.random() * 256); //随机生成256以内b值
-  var a = Math.random();
+  var h = Math.random()*210/360; 
+  var s = Math.random()*0.4+0.6; //0.6~1 
+  var l = Math.random()*0.2+0.3; //0.3~0.5
+  console.log(h,s,l);
+  let tmp = hsl2rgb(h, s ,l);
+  let r = tmp[0];
+  let g = tmp[1];
+  let b = tmp[2];
+  console.log(r, g, b);
+
   if (length == 1) {
-    return [`rgb(${r},${g},${b},${a})`];
+    return [`rgb(${r},${g},${b})`];
   }
   const baseAlpha = 0.1; //基准透明度
   var res = [];
@@ -497,6 +525,15 @@ const findValueList = (item, attrInfo) => {
   }
 }
 
+const findColor = (item, attrInfo) => {
+  if (!attrInfo) return [];
+  for (let i = 0; i < attrInfo.length; i++) {
+    if (compareObj(attrInfo[i].strName, item)) {
+      return attrInfo[i].color;
+    }
+  }
+}
+
 const compareObj = (obj1, obj2) => {
   console.log(obj1, obj2);
   if(!obj1.operator && obj2.operator) {
@@ -535,5 +572,5 @@ const compareObj = (obj1, obj2) => {
 
 export default {
   generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString,
-  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable, findValueList
+  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable, findValueList, findColor
 };

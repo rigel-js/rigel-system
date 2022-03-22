@@ -17,6 +17,7 @@
     @keydown.up="keyUpHandler"
     @keydown.down="keyDownHandler"
     @keydown.enter="keyEnterHandler"
+    :style="`color: ${color}`"
   >
     {{ this.realValue }}
     <div
@@ -59,6 +60,7 @@ export default {
       default: false,
     },
     givenId: String,
+    color: String,
   },
   computed: {
     ...mapState(["attrInfo"]),

@@ -28,6 +28,7 @@
             :key="`row_${index}`"
             :id="`spec_row_${index}_${JSON.stringify(item)}`"
             class="specitem"
+            :style="`color: ${item.color}`"
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
@@ -62,6 +63,7 @@
             :key="`column_${index}`"
             :id="`spec_column_${index}_${JSON.stringify(item)}`"
             class="specitem"
+            :style="`color: ${item.color}`"
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
@@ -96,6 +98,7 @@
             :key="`body_${index}`"
             :id="`spec_body_${index}_${JSON.stringify(item)}`"
             class="specitem"
+            :style="`color: ${item.color}`"
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
@@ -564,6 +567,7 @@ export default {
         let attr = header[i];
         if (!attr.strName) {
           header[i]["description"] = Utils.calString(header[i]);
+          header[i]["color"] = Utils.findColor(attr, this.attrInfo);
         }
       }
     },
