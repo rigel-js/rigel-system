@@ -52,6 +52,7 @@
           }}
         </div>
         <div class="attrInfo-barchart">
+          <mychart :chartId="`attr_${index}`" :attr="attr"> </mychart>
         </div>
         <div class="attrInfo-handle">
           <a-popconfirm placement="bottomLeft" class="attrInfo-popconfirm">
@@ -191,6 +192,7 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 import Spreadsheet from "./Spreadsheet/Index.vue";
 import Cell from "./Spreadsheet/Cell.vue";
+import Mychart from "../components/Mychart/Index.vue";
 import Utils from "@/utils.js";
 import { EXAMPLE_DATA } from "@/CONSTANT";
 
@@ -267,7 +269,6 @@ export default {
       "setDragSource",
       "storeCurrentState",
       "storeRelation",
-      "storeAttrInfo",
       "storeRawRelation",
       "storeAssociationRule",
       "storeCurrentState",
@@ -368,6 +369,7 @@ export default {
             strName: { operator: "attr", data: jsonData.name, attribute: key },
             color: colorList[index],
             valueList: Utils.unique(valueList),
+            isCategorical: Utils.isCategorical(valueList),
           });
         });
         console.log("attrInfo:", attrInfo);
@@ -428,6 +430,7 @@ export default {
         attribute: `${this.associationRule}(${name1}, ${name2})`,
         color: colorList[0],
         valueList: Utils.unique(valueList),
+        isCategorical: Utils.unique(valueList),
       };
       this.storeAttrInfo(res);
       console.log(res);
@@ -436,7 +439,7 @@ export default {
 
     openMenu(e, item) {
       this.rightClickItem = item;
-      this.rightClickItemIsCategorical = Utils.isCategorical(item.valueList);
+      this.rightClickItemIsCategorical = item.isCategorical;
       this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
@@ -535,6 +538,7 @@ export default {
           attribute: `${associationRule}(${attrName})`,
           color: colorList[0],
           valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
         };
         this.storeAttrInfo(res);
         console.log(res);
@@ -571,6 +575,7 @@ export default {
           attribute: `${associationRule}(${attrName}, ${this.menuBinStep}, ${this.menuBinLowerBound}, ${this.menuBinUpperBound})`,
           color: colorList[0],
           valueList: valueList,
+          isCategorical: Utils.isCategorical(valueList),
         };
         this.storeAttrInfo(res);
         console.log(res);
@@ -604,6 +609,7 @@ export default {
             attribute: attributeName,
             color: colorList[0],
             valueList: Utils.unique(valueList),
+            isCategorical: Utils.isCategorical(valueList),
           };
           this.storeAttrInfo(res);
           console.log(res);
@@ -635,6 +641,7 @@ export default {
             attribute: `${associationRule}(${op.attribute}, ${this.menuFilterLowerBound}, ${this.menuFilterUpperBound})`,
             color: colorList[0],
             valueList: Utils.unique(valueList),
+            isCategorical: Utils.isCategorical(valueList),
           };
           this.storeAttrInfo(res);
           console.log(res);
@@ -645,6 +652,7 @@ export default {
   },
   components: {
     Spreadsheet,
+    Mychart,
     // Cell,
   },
 };
@@ -659,11 +667,11 @@ export default {
 .relations-container {
   /* min-height: 10%; */
   text-align: left;
-  height: 220px;
+  height: 180px;
 }
 
 .source-table {
-  height: 177px;
+  height: 137px;
   overflow: scroll;
 }
 
@@ -766,7 +774,7 @@ export default {
   overflow-x: scroll;
   white-space: nowrap;
   margin-top: 5px;
-  height: 175px;
+  height: 235px;
 }
 
 .attrCard {
@@ -786,13 +794,13 @@ export default {
   vertical-align: middle;
   display: inline-block;
   pointer-events: none;
-  margin-right: 100px;
 }
 
 .attrInfo-barchart {
   border-top: 1.5px solid #d5d5d5;
-  height: 70px;
-  overflow-y: scroll;
+  height: 140px;
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 
 .attrInfo-handle {

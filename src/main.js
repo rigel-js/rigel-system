@@ -10,6 +10,9 @@ import './assets/icons/iconfont/iconfont.css';
 import Varunit from "./components/Varunit/Index.vue";
 import Newcollapse from "./components/Newcollapse/Index.vue";
 import Newcollapsepanel from "./components/Newcollapsepanel/Index.vue";
+import * as echarts from 'echarts'
+
+Vue.prototype.$echarts = echarts;
 
 Vue.config.productionTip = false;
 

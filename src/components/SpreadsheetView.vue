@@ -6,7 +6,9 @@
         Optimize Layout
       </a-button>
       <a-button class="specbutton" @click="resetHandler">Clear Table</a-button>
-      <a-button class="specbutton">Export Table</a-button>
+      <a-button class="specbutton" @click="exportHandler"
+        >Export Table</a-button
+      >
     </div>
 
     <div class="specmenu" id="specmenu">
@@ -145,11 +147,7 @@
 
       <div>
         <div class="menutext">Filtering</div>
-        <a-switch
-          class="menuswitch"
-          size="small"
-          v-model="menuFilterEnable"
-        />
+        <a-switch class="menuswitch" size="small" v-model="menuFilterEnable" />
       </div>
       <!-- Categorical -->
       <div
@@ -194,15 +192,9 @@
           <a-switch class="menuswitch" size="small" v-model="menuBinEnable" />
         </div>
         <div v-if="menuBinEnable">
-          <a-input-number
-            class="menuInputNumber"
-            v-model="menuBinLowerBound"
-          />
+          <a-input-number class="menuInputNumber" v-model="menuBinLowerBound" />
           <div class="menuInputNumberLine" />
-          <a-input-number
-            class="menuInputNumber"
-            v-model="menuBinUpperBound"
-          />
+          <a-input-number class="menuInputNumber" v-model="menuBinUpperBound" />
           <div>
             <div class="menutext">Step:</div>
             <a-input-number
@@ -222,7 +214,6 @@
         <a-button class="menubutton" @click="onMenuReset"> Reset </a-button>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -291,14 +282,14 @@ export default {
     //   this.applyHandler();
     // },
     genRecommendation(val, oldval) {
-      if(val) {
-        console.log("ok")
+      if (val) {
+        console.log("ok");
         this.refineHeader(this.row_header);
         this.refineHeader(this.column_header);
         this.refineHeader(this.body);
         this.applyHandler();
         this.storeGenRecommendation(false);
-      };
+      }
     },
     visible(value) {
       if (value) {
@@ -326,8 +317,10 @@ export default {
   mounted() {
     let el = document.createElement("div");
     el.className = "title-bg";
-    let tmp1 = document.getElementById("spreadsheet-view"), tmp2 = document.getElementById("body-container");
-    let rect1 = tmp1.getBoundingClientRect(), rect2 = tmp2.getBoundingClientRect();
+    let tmp1 = document.getElementById("spreadsheet-view"),
+      tmp2 = document.getElementById("body-container");
+    let rect1 = tmp1.getBoundingClientRect(),
+      rect2 = tmp2.getBoundingClientRect();
     // console.log(rect1, rect2);
     el.style.top = `${rect1.top - rect2.top}px`;
     el.style.left = `${rect1.left - rect2.left}px`;
@@ -337,10 +330,13 @@ export default {
     let el3 = document.getElementById("title-container");
     let el4 = document.getElementById("specmenu");
     let el5 = document.getElementById("targetTableContainer");
-    
-    let height = el2.getBoundingClientRect().height - el3.getBoundingClientRect().height - el4.getBoundingClientRect().height;
+
+    let height =
+      el2.getBoundingClientRect().height -
+      el3.getBoundingClientRect().height -
+      el4.getBoundingClientRect().height;
     height -= 9; //margin
-    console.log(height)
+    console.log(height);
     el5.style.height = `${height}px`;
     console.log(el5.style.height);
   },
@@ -444,7 +440,10 @@ export default {
             if (res[i][j]) {
               let tmp = {};
               tmp.source = res[i][j].source;
-              tmp.value = typeof(res[i][j].value) != "undefined" ? res[i][j].value : res[i][j];
+              tmp.value =
+                typeof res[i][j].value != "undefined"
+                  ? res[i][j].value
+                  : res[i][j];
               res[i][j] = tmp;
             }
           }
@@ -454,12 +453,12 @@ export default {
         this.storeRowInfo({
           row: this.column_header.length ? this.column_header.length : 1,
           column: 0,
-          len: this.row_header.length, 
+          len: this.row_header.length,
         });
         this.storeColInfo({
           row: 0,
           column: this.row_header.length ? this.row_header.length : 1,
-          len: this.column_header.length,        
+          len: this.column_header.length,
         });
         this.storeGenRecommendation(true);
       } catch (err) {
@@ -535,7 +534,7 @@ export default {
       }
     },
     rearrangeHandler() {
-      if(this.partialSpecSuggestion) {
+      if (this.partialSpecSuggestion) {
         this.$message.error("Please first disambiguate your specification.");
         return;
       }
@@ -602,12 +601,12 @@ export default {
       this.top = y;
       this.left = x;
 
-      console.log(x,y);
+      console.log(x, y);
 
       this.visible = true;
     },
     closeMenu(e) {
-      if(this.justreset) return;
+      if (this.justreset) return;
       let x = e.clientX;
       let y = e.clientY;
       let menu = document.getElementById("menu_spreadsheetview");
@@ -741,7 +740,7 @@ export default {
         } else {
           associationRule = "filterByBound";
           let valueList = [];
-          for(let i=0;i<this.rightClickItemValueList.length;i++) {
+          for (let i = 0; i < this.rightClickItemValueList.length; i++) {
             let item = this.rightClickItemValueList[i];
             if (
               item >= this.menuFilterLowerBound &&
@@ -749,7 +748,7 @@ export default {
             ) {
               valueList.push(item);
             }
-          };
+          }
           if (valueList.length == 0) {
             this.$message.error("No satisfied item");
             return;
@@ -768,14 +767,15 @@ export default {
             attribute: Utils.calString(strName),
             color: colorList[0],
             valueList: Utils.unique(valueList),
+            isCategorical: Utils.isCategorical(valueList),
           };
         }
       }
       this.storeAttrInfo(res);
       console.log(res);
-      if(this.rightClickItemSource == "row") {
+      if (this.rightClickItemSource == "row") {
         this.row_header[this.rightClickItemIndex] = res;
-      } else if(this.rightClickItemSource == "column") {
+      } else if (this.rightClickItemSource == "column") {
         this.column_header[this.rightClickItemIndex] = res;
       } else {
         this.body[this.rightClickItemIndex] = res;
@@ -794,7 +794,10 @@ export default {
             if (res[i][j]) {
               let tmp = {};
               tmp.source = res[i][j].source;
-              tmp.value = typeof(res[i][j].value) != "undefined" ? res[i][j].value : res[i][j];
+              tmp.value =
+                typeof res[i][j].value != "undefined"
+                  ? res[i][j].value
+                  : res[i][j];
               res[i][j] = tmp;
             }
           }
@@ -826,6 +829,73 @@ export default {
         );
         this.menuBinStep = 5;
       }
+    },
+    exportHandler() {
+      let table = this.currentTable;
+      let CSV = "";
+      let rowSize = 0,
+        columnSize = 0;
+      for (let i = table.length - 1; i >= 0; i--) {
+        let ok = true;
+        for (let j = 0; j < table[i].length; j++) {
+          if (!table[i][j]) continue;
+          if (table[i][j] == "" || table[i][j].value == "") continue;
+          ok = false;
+          break;
+        }
+        if (!ok) {
+          rowSize = i + 1;
+          break;
+        }
+      }
+      for (let i = 0; i < rowSize; i++) {
+        for (let j = table[i].length - 1; j >= 0; j--) {
+          if (!table[i][j]) continue;
+          if (table[i][j] == "" || table[i][j].value == "") continue;
+          columnSize = columnSize > j + 1 ? columnSize : j + 1;
+        }
+      }
+      for (let i = 0; i < rowSize; i++) {
+        let linestr = "";
+        for (let j = 0; j < columnSize; j++) {
+          let tmp = table[i][j],
+            realValue;
+          if (tmp) {
+            if (tmp.value) {
+              if (!tmp.value.lower) {
+                realValue = String(tmp.value);
+              } else if (tmp.value.isRightOpen == true) {
+                realValue = `[${tmp.value.lower}, ${tmp.value.upper})`;
+              } else {
+                realValue = `[${tmp.value.lower}, ${tmp.value.upper}]`;
+              }
+            } else if (typeof tmp.value != "undefined") {
+              realValue = "";
+            } else {
+              realValue = String(tmp);
+            }
+          } else {
+            realValue = "";
+          }
+          linestr += realValue;
+          if (j == columnSize - 1) {
+            linestr += "\r\n";
+          } else {
+            linestr += ",";
+          }
+        }
+        CSV += String(linestr);
+      }
+      var fileName = "export";
+      var uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURI(CSV);
+      var link = document.createElement("a");
+      link.href = uri;
+      
+      link.style = "visibility:hidden";
+      link.download = fileName + ".csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
   },
   components: {
@@ -881,7 +951,7 @@ export default {
   padding: 0px 2px 0px 2px;
 }
 
-.spectitle-text{
+.spectitle-text {
   margin-left: 6px;
   margin-top: 1px;
 }

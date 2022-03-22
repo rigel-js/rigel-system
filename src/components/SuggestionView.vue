@@ -444,6 +444,7 @@ export default {
             attribute: Utils.calString(derivedAttr),
             color: colorList[0],
             valueList: Utils.unique(valueList),
+            isCategorical: Utils.isCategorical(valueList),
           };
           this.storeAttrInfo(relationAttr);
         }
