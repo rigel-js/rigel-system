@@ -740,11 +740,13 @@ export default {
 }
 
 .previewTitle {
-  font-size: 22px;
+  font-size: 20px;
   background-color: rgba(0, 0, 0, 0.87);
   color: white;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  /* font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"; */
+  font-family: DINAlternate-Bold;
   padding-left: 15px;
+  padding-top: 1px;
   height: 36px;
   line-height: 32px;
 }

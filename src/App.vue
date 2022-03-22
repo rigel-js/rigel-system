@@ -57,6 +57,7 @@ body {
   /* min-height: 1050px; */
   /* display: flex; */
   flex-direction: column;
+  font-family: DINMedium;
 }
 
 #header-container {
@@ -114,7 +115,8 @@ body {
   font-size: 22px;
   background-color: transparent;
   color: white;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  /* font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"; */
+  font-family: DINAlternate-Bold;
   /* margin: 10px 0; */
   text-align: left;
   width: 150px;
@@ -181,5 +183,15 @@ body {
 
 .ant-tabs-bottom .ant-tabs-bottom-bar {
   margin-top: 0 !important;
+}
+
+@font-face{
+  font-family: 'DINAlternate-Bold';
+  src: url("./assets/fonts/DINAlternate-Bold.ttf");
+}
+
+@font-face{
+  font-family: 'DINMedium';
+  src: url("./assets/fonts/DINMedium.ttf");
 }
 </style>

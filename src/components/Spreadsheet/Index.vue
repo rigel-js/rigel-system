@@ -24,6 +24,7 @@
         :class="{
           leftHightlightedCell: checkLeftHightlighted(i, j),
           topHightlightedCell: checkTopHightlighted(i, j),
+          bgcolor: head? (i%2==0) : (i%2==1)
         }"
       >
         <cell
@@ -757,6 +758,10 @@ export default {
 
 .cell-container::-webkit-scrollbar {
   display: none; /* Chrome Safari */
+}
+
+.bgcolor {
+  background-color: #eaebee;
 }
 
 /* .row:first-child .cell-container {

@@ -954,6 +954,7 @@ export default {
 .spectitle-text {
   margin-left: 6px;
   margin-top: 1px;
+  font-family: DINAlternate-Bold;
 }
 
 .specinput {
