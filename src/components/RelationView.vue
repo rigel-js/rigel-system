@@ -817,7 +817,7 @@ export default {
 
 .attrInfo-empty {
   height: 100px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 35px !important;
+  margin-bottom: 35px !important;
 }
 </style>
