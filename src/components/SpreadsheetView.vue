@@ -102,7 +102,7 @@
             :draggable="true"
             :data-info="JSON.stringify(item)"
             @dragstart="dragstartHandler"
-            @contextmenu.prevent="openMenu($event, 'body', index)"
+            @contextmenu.prevent="openMenu($event, item, 'body', index)"
           >
             <div v-if="index != 0" class="specoperator">+</div>
             <div class="spectext">
@@ -210,6 +210,63 @@
         <div class="dashline"></div>
       </div>
 
+      
+      <div v-if="rightClickItem">
+        <div>
+          <div class="menutext">Split</div>
+          <a-switch class="menuswitch" size="small" v-model="menuSplitEnable" />
+        </div>
+        <div v-if="menuSplitEnable">
+          <div>
+            <div class="menutext">Pattern:</div>
+            <a-input class="menuInput" v-model="menuSplitPattern"/>
+          </div>
+          <div>
+            <div class="menutext">Index:</div>
+            <a-input-number
+              class="menuInputNumber"
+              :min="0"
+              v-model="menuSplitIndex"
+            />
+          </div>
+        </div>
+        <div class="dashline"></div>
+      </div>
+
+      <div v-if="rightClickItem">
+        <div>
+          <div class="menutext">Concat</div>
+          <a-switch class="menuswitch" size="small" v-model="menuConcatEnable" />
+        </div>
+        <div class="dashline"></div>
+      </div>
+
+      <!-- Quantitative only -->
+      <div v-if="rightClickItem && !rightClickItemIsCategorical">
+        <div>
+          <div class="menutext">Sum</div>
+          <a-switch class="menuswitch" size="small" v-model="menuSumEnable" />
+        </div>
+        <div class="dashline"></div>
+      </div>
+
+      <!-- Quantitative only -->
+      <div v-if="rightClickItem && !rightClickItemIsCategorical">
+        <div>
+          <div class="menutext">Average</div>
+          <a-switch class="menuswitch" size="small" v-model="menuAverageEnable" />
+        </div>
+        <div class="dashline"></div>
+      </div>
+
+      <div v-if="rightClickItem">
+        <div>
+          <div class="menutext">Count</div>
+          <a-switch class="menuswitch" size="small" v-model="menuCountEnable" />
+        </div>
+        <div class="dashline"></div>
+      </div>
+
       <div class="menuButtonContainer">
         <a-button type="primary" class="menubutton" @click="onMenuApply">
           Apply
@@ -248,6 +305,13 @@ export default {
       menuBinUpperBound: null,
       menuBinLowerBound: null,
       menuBinStep: 5,
+      menuSplitEnable: true,
+      menuSplitPattern: "",
+      menuSplitIndex: 0,
+      menuConcatEnable: true,
+      menuAverageEnable: true,
+      menuSumEnable: true,
+      menuCountEnable: true,
       justreset: false,
     };
   },
@@ -303,17 +367,90 @@ export default {
     },
     menuSortEnable(value) {
       if (value) {
-        this.menuFilterEnable = this.menuBinEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
       }
     },
     menuFilterEnable(value) {
       if (value) {
-        this.menuSortEnable = this.menuBinEnable = false;
+        this.menuSortEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
       }
     },
     menuBinEnable(value) {
       if (value) {
-        this.menuSortEnable = this.menuFilterEnable = false;
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuSplitEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuConcatEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuSumEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuAverageEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuCountEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
       }
     },
   },
@@ -585,7 +722,14 @@ export default {
       this.rightClickItemIndex = index;
       this.rightClickItemValueList = valueList;
       this.rightClickItemIsCategorical = Utils.isCategorical(valueList);
-      this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
+      this.menuSortEnable = false;
+      this.menuFilterEnable = false;
+      this.menuBinEnable = false;
+      this.menuSplitEnable = false;
+      this.menuConcatEnable = false;
+      this.menuAverageEnable = false;
+      this.menuSumEnable = false;
+      this.menuCountEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
         this.menuFilterValue = valueList;
@@ -598,6 +742,8 @@ export default {
         );
         this.menuBinStep = 5;
       }
+      this.menuSplitPattern = "";
+      this.menuSplitIndex = 0;
 
       let x = e.clientX;
       let y = e.clientY;
@@ -627,14 +773,19 @@ export default {
       if (
         !this.menuSortEnable &&
         !this.menuBinEnable &&
-        !this.menuFilterEnable
+        !this.menuFilterEnable &&
+        !this.menuSplitEnable &&
+        !this.menuConcatEnable &&
+        !this.menuSumEnable &&
+        !this.menuAverageEnable &&
+        !this.menuCountEnable
       ) {
         this.$message.error("Please select an action");
         return;
       }
       let op = this.rightClickItem;
       let associationRule;
-      let colorList = Utils.genRandomColor(1);
+      let color = Utils.genRandomColor(1)[0];
       let res = null;
 
       if (this.menuSortEnable) {
@@ -664,7 +815,7 @@ export default {
           strName: strName,
           // attribute: `${associationRule}(${attrName})`,
           attribute: attrName,
-          color: colorList[0],
+          color: color,
           valueList: Utils.unique(valueList),
         };
       } else if (this.menuBinEnable) {
@@ -738,7 +889,7 @@ export default {
             strName: strName,
             // attribute: attributeName,
             attribute: attrName,
-            color: colorList[0],
+            color: color,
             valueList: Utils.unique(valueList),
           };
         } else {
@@ -769,11 +920,109 @@ export default {
             strName: strName,
             // attribute: `${associationRule}(${op.attribute}, ${this.menuFilterLowerBound}, ${this.menuFilterUpperBound})`,
             attribute: Utils.calString(strName),
-            color: colorList[0],
+            color: color,
             valueList: Utils.unique(valueList),
             isCategorical: Utils.isCategorical(valueList),
           };
         }
+      } else if (this.menuSplitEnable) {
+        if(this.menuSplitPattern == "") {
+          this.$message.error("Split pattern cannot be empty!");
+          return;
+        }
+        associationRule = "split";
+        let valueList = [];
+        this.rightClickItemValueList.forEach((item) => {
+          valueList.push(String(item).split(this.menuSplitPattern)[this.menuSplitIndex]);
+        });
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName ? op.strName : op, {value: this.menuSplitPattern}, {value: this.menuSplitIndex}],
+        };
+        let attrName = Utils.calString(strName);
+        res = {
+          strName: strName,
+          attribute: attrName,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+      } else if (this.menuConcatEnable) {
+        associationRule = "concat";
+        let valueList = [], tmp = "";
+        this.rightClickItemValueList.forEach((item) => {
+          tmp += String(item);
+        });
+        valueList.push(tmp);
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName ? op.strName : op],
+        };
+        let attrName = Utils.calString(strName);
+        res = {
+          strName: strName,
+          attribute: attrName,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+      } else if (this.menuSumEnable) {
+        associationRule = "sum";
+        let valueList = [], sum = 0;
+        this.rightClickItemValueList.forEach((item) => {
+          sum += Number(item);
+        });
+        valueList.push(sum);
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName ? op.strName : op],
+        };
+        let attrName = Utils.calString(strName);
+        res = {
+          strName: strName,
+          attribute: attrName,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+      } else if (this.menuAverageEnable) {
+        associationRule = "average";
+        let valueList = [], tmp = 0;
+        if(this.rightClickItemValueList.length != 0) {
+          this.rightClickItemValueList.forEach((item) => {
+            tmp += Number(item);
+          });
+          tmp /= this.rightClickItemValueList.length;
+        }
+        valueList.push(tmp);
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName ? op.strName : op],
+        };
+        let attrName = Utils.calString(strName);
+        res = {
+          strName: strName,
+          attribute: attrName,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+      } else if (this.menuCountEnable) {
+        associationRule = "count";
+        let valueList = [];
+        valueList.push(this.rightClickItemValueList.length);
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName ? op.strName : op],
+        };
+        let attrName = Utils.calString(strName);
+        res = {
+          strName: strName,
+          attribute: attrName,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
       }
       this.storeAttrInfo(res);
       console.log(res);
@@ -820,7 +1069,14 @@ export default {
       setTimeout(() => {
         this.justreset = false;
       }, 200);
-      this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
+      this.menuSortEnable = false;
+      this.menuFilterEnable = false;
+      this.menuBinEnable = false;
+      this.menuSplitEnable = false;
+      this.menuConcatEnable = false;
+      this.menuAverageEnable = false;
+      this.menuSumEnable = false;
+      this.menuCountEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
         this.menuFilterValue = this.rightClickItemValueList;
@@ -833,6 +1089,8 @@ export default {
         );
         this.menuBinStep = 5;
       }
+      this.menuSplitPattern = "";
+      this.menuSplitIndex = 0;
     },
     exportHandler() {
       let table = this.currentTable;

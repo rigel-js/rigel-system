@@ -17,7 +17,7 @@ export default {
 	},
 	mounted() {
 		console.log(this.attr.valueList);
-		if(this.attr.isCategorical) {
+		if(this.attr.valueList.length <= 1 || this.attr.isCategorical) {
 			this.drawLine_barchart(this.attr.valueList);
 		} else {
 			this.drawLine_histogram(this.attr.valueList);

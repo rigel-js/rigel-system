@@ -141,6 +141,7 @@ body {
 
 .applypanel {
   background-color: #fff;
+  cursor: pointer;
 }
 
 .applypanel :hover{

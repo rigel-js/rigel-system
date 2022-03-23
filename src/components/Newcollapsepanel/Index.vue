@@ -189,6 +189,7 @@ export default {
     // border-left-color:#eaebee;
     border: 1px solid #eaebee;
     padding: 7px 0px 7px 7px;
+    cursor: pointer;
     //   padding: 10px;
     // > i {
     // 	// font-size: 12px;

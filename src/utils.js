@@ -159,7 +159,9 @@ const checkValidSpec = (spec) => {
 // 字符串化spec
 const calString = (spec) => {
   if (!spec) return "";
-  if (spec.value) {
+  if (typeof(spec.value) == "string") {
+    return `'${String(spec.value)}'`;
+  } else if(typeof(spec.value) == "number") {
     return String(spec.value);
   } else if (spec.operator === "attr") {
     return `${spec.data}.${spec.attribute}`;
@@ -266,7 +268,7 @@ const genAlterSpec = (row_header, column_header, body) => {
 }
 
 const genSpec = (row_header, column_header, body) => {
-  // console.log(row_header, column_header);
+  console.log(row_header, column_header);
   let spec = {};
   if (row_header.length == 1) {
     spec["row_header"] = refineStrName(row_header[0]);

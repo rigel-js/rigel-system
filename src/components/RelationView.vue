@@ -26,10 +26,13 @@
       </a-button>
       <a-radio-group v-model="value" @change="onChangeMode" default-value="union" >
         <a-radio-button class="header-button" value="union" style="margin-left: 10px !important;"
-          >Union(Outer Join)</a-radio-button
+          >Union</a-radio-button
         >
         <a-radio-button class="header-button" value="intersect"
-          >Intersection(Inner Join)</a-radio-button
+          >Intersection</a-radio-button
+        >
+        <a-radio-button class="header-button" value="concat"
+          >Concat</a-radio-button
         >
       </a-radio-group>
     </div>
@@ -139,6 +142,62 @@
                 </div>
                 <div class="dashline"></div>
               </div>
+
+              <div v-if="rightClickItem">
+                <div>
+                  <div class="menutext">Split</div>
+                  <a-switch class="menuswitch" size="small" v-model="menuSplitEnable" />
+                </div>
+                <div v-if="menuSplitEnable">
+                  <div>
+                    <div class="menutext">Pattern:</div>
+                    <a-input class="menuInput" v-model="menuSplitPattern"/>
+                  </div>
+                  <div>
+                    <div class="menutext">Index:</div>
+                    <a-input-number
+                      class="menuInputNumber"
+                      :min="0"
+                      v-model="menuSplitIndex"
+                    />
+                  </div>
+                </div>
+                <div class="dashline"></div>
+              </div>
+
+              <div v-if="rightClickItem">
+                <div>
+                  <div class="menutext">Concat</div>
+                  <a-switch class="menuswitch" size="small" v-model="menuConcatEnable" />
+                </div>
+                <div class="dashline"></div>
+              </div>
+
+              <!-- Quantitative only -->
+              <div v-if="rightClickItem && !rightClickItemIsCategorical">
+                <div>
+                  <div class="menutext">Sum</div>
+                  <a-switch class="menuswitch" size="small" v-model="menuSumEnable" />
+                </div>
+                <div class="dashline"></div>
+              </div>
+
+              <!-- Quantitative only -->
+              <div v-if="rightClickItem && !rightClickItemIsCategorical">
+                <div>
+                  <div class="menutext">Average</div>
+                  <a-switch class="menuswitch" size="small" v-model="menuAverageEnable" />
+                </div>
+                <div class="dashline"></div>
+              </div>
+
+              <div v-if="rightClickItem">
+                <div>
+                  <div class="menutext">Count</div>
+                  <a-switch class="menuswitch" size="small" v-model="menuCountEnable" />
+                </div>
+                <div class="dashline"></div>
+              </div>
               
               <div class="menuButtonContainer">
                 <a-button type="primary" class="menubutton" @click="onMenuApply">
@@ -215,6 +274,13 @@ export default {
       menuBinUpperBound: null,
       menuBinLowerBound: null,
       menuBinStep: 5,
+      menuSplitEnable: true,
+      menuSplitPattern: "",
+      menuSplitIndex: 0,
+      menuConcatEnable: true,
+      menuAverageEnable: true,
+      menuSumEnable: true,
+      menuCountEnable: true,
       justreset: false,
       selectedValue: null,
       value: "union",
@@ -236,17 +302,90 @@ export default {
     // },
     menuSortEnable(value) {
       if (value) {
-        this.menuFilterEnable = this.menuBinEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
       }
     },
     menuFilterEnable(value) {
       if (value) {
-        this.menuSortEnable = this.menuBinEnable = false;
+        this.menuSortEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
       }
     },
     menuBinEnable(value) {
       if (value) {
-        this.menuSortEnable = this.menuFilterEnable = false;
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuSplitEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuConcatEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuSumEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuAverageEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuSumEnable = false;
+        this.menuCountEnable = false;
+      }
+    },
+    menuCountEnable(value) {
+      if(value) {
+        this.menuSortEnable = false;
+        this.menuFilterEnable = false;
+        this.menuBinEnable = false;
+        this.menuSplitEnable = false;
+        this.menuConcatEnable = false;
+        this.menuAverageEnable = false;
+        this.menuSumEnable = false;
       }
     },
   },
@@ -414,15 +553,20 @@ export default {
       }
       let op1 = JSON.parse(event.dataTransfer.getData("info"));
       let op2 = JSON.parse(event.target.dataset.info);
-      //union
-      let color = Utils.genRandomColor(1);
+      let color = Utils.genRandomColor(1)[0];
       let valueList = [];
-      op1.valueList.forEach((item) => {
-        valueList.push(item);
-      });
-      op2.valueList.forEach((item) => {
-        valueList.push(item);
-      });
+      if(this.associationRule == "union" || this.associationRule == "intersect") {
+        op1.valueList.forEach((item) => {
+          valueList.push(item);
+        });
+        op2.valueList.forEach((item) => {
+          valueList.push(item);
+        });
+      } else if(this.associationRule == "concat") {
+        for(let i = 0; i < op1.valueList.length && i < op2.valueList.length; i++) {
+          valueList.push(String(op1.valueList[i]).concat(String(op2.valueList[i])));
+        }
+      }
       let strName = {
         operator: this.associationRule,
         parameters: [op1.strName, op2.strName],
@@ -444,7 +588,14 @@ export default {
     openMenu(e, item) {
       this.rightClickItem = item;
       this.rightClickItemIsCategorical = item.isCategorical;
-      this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
+      this.menuSortEnable = false;
+      this.menuFilterEnable = false;
+      this.menuBinEnable = false;
+      this.menuSplitEnable = false;
+      this.menuConcatEnable = false;
+      this.menuAverageEnable = false;
+      this.menuSumEnable = false;
+      this.menuCountEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
         this.menuFilterValue = item.valueList;
@@ -457,6 +608,8 @@ export default {
         );
         this.menuBinStep = 5;
       }
+      this.menuSplitPattern = "";
+      this.menuSplitIndex = 0;
 
       // console.log(item);
       // console.log(this.rightClickItemIsCategorical);
@@ -487,7 +640,14 @@ export default {
       setTimeout(() => {
         this.justreset = false;
       }, 200);
-      this.menuSortEnable = this.menuFilterEnable = this.menuBinEnable = false;
+      this.menuSortEnable = false;
+      this.menuFilterEnable = false;
+      this.menuBinEnable = false;
+      this.menuSplitEnable = false;
+      this.menuConcatEnable = false;
+      this.menuAverageEnable = false;
+      this.menuSumEnable = false;
+      this.menuCountEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
         this.menuFilterValue = this.rightClickItem.valueList;
@@ -500,13 +660,20 @@ export default {
         );
         this.menuBinStep = 5;
       }
+      this.menuSplitPattern = "";
+      this.menuSplitIndex = 0;
     },
 
     onMenuApply() {
       if (
         !this.menuSortEnable &&
         !this.menuBinEnable &&
-        !this.menuFilterEnable
+        !this.menuFilterEnable &&
+        !this.menuSplitEnable &&
+        !this.menuConcatEnable &&
+        !this.menuSumEnable &&
+        !this.menuAverageEnable &&
+        !this.menuCountEnable
       ) {
         this.$message.error("Please select an action");
         return;
@@ -650,6 +817,114 @@ export default {
           this.storeAttrInfo(res);
           console.log(res);
         }
+      } else if (this.menuSplitEnable) {
+        if(this.menuSplitPattern == "") {
+          this.$message.error("Split pattern cannot be empty!");
+          return;
+        }
+        associationRule = "split";
+        let valueList = [];
+        op.valueList.forEach((item) => {
+          valueList.push(String(item).split(this.menuSplitPattern)[this.menuSplitIndex]);
+        });
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName, {value: this.menuSplitPattern}, {value: this.menuSplitIndex}],
+        };
+        let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
+        let res = {
+          strName: strName,
+          attribute: `${associationRule}(${attrName}, '${this.menuSplitPattern}', ${this.menuSplitIndex})`,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+        this.storeAttrInfo(res);
+        console.log(res);
+      } else if (this.menuConcatEnable) {
+        associationRule = "concat";
+        let valueList = [], tmp = "";
+        op.valueList.forEach((item) => {
+          tmp += String(item);
+        });
+        valueList.push(tmp);
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName],
+        };
+        let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
+        let res = {
+          strName: strName,
+          attribute: `${associationRule}(${attrName})`,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+        this.storeAttrInfo(res);
+        console.log(res);
+      } else if (this.menuSumEnable) {
+        associationRule = "sum";
+        let valueList = [], sum = 0;
+        op.valueList.forEach((item) => {
+          sum += Number(item);
+        });
+        valueList.push(sum);
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName],
+        };
+        let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
+        let res = {
+          strName: strName,
+          attribute: `${associationRule}(${attrName})`,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+        this.storeAttrInfo(res);
+        console.log(res);
+      } else if (this.menuAverageEnable) {
+        associationRule = "average";
+        let valueList = [], tmp = 0;
+        if(op.valueList.length != 0) {
+          op.valueList.forEach((item) => {
+            tmp += Number(item);
+          });
+          tmp /= op.valueList.length;
+        }
+        valueList.push(tmp);
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName],
+        };
+        let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
+        let res = {
+          strName: strName,
+          attribute: `${associationRule}(${attrName})`,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+        this.storeAttrInfo(res);
+        console.log(res);
+      } else if (this.menuCountEnable) {
+        associationRule = "count";
+        let valueList = [];
+        valueList.push(op.valueList.length);
+        let strName = {
+          operator: associationRule,
+          parameters: [op.strName],
+        };
+        let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
+        let res = {
+          strName: strName,
+          attribute: `${associationRule}(${attrName})`,
+          color: color,
+          valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
+        };
+        this.storeAttrInfo(res);
+        console.log(res);
       }
       this.storeCurrentState();
     },
@@ -722,12 +997,19 @@ export default {
   margin: auto 7px auto 7px;
   text-align: center;
   display: inline-block;
+  font-family: DINMedium !important;
 }
 
 .menuButtonContainer {
   vertical-align: center;
   text-align: center;
   margin: 7px auto;
+}
+
+.menuInput {
+  display: inline-block;
+  width: 80px !important;
+  margin: 4px auto 6px 6px !important;
 }
 
 .menuInputNumber {
@@ -741,6 +1023,7 @@ export default {
 .menutext {
   display: inline-block;
   margin-right: 5px;
+  font-family: DINMedium !important;
 }
 
 .menuswitch {
