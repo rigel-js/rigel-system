@@ -49,7 +49,7 @@
           v-if="this.alterSpecList.length == 0 && this.suggestions.length == 0"
           class="suggestion-empty"
         >
-          <a-empty style="padding-top: 10px" />
+          <a-empty style="padding-top: 100px" />
         </div>
         <div class="suggestion-unit" v-if="this.alterSpecList.length > 0">
           <div class="suggestionTitle">
@@ -662,7 +662,7 @@ export default {
 }
 
 .suggestion-container {
-  height: 450px;
+  height: 500px;
   margin: 20px 0 10px 0;
   background: white;
   overflow-y: scroll;

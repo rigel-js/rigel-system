@@ -33,7 +33,7 @@
         >
       </a-radio-group>
     </div>
-    <div class="barchart-container" v-if="attrInfo && attrInfo.length > 0">
+    <div class="barchart-container" id="barchart-container" v-show="attrInfo && attrInfo.length > 0">
       <div
         class="attrCard"
         v-for="(attr, index) in attrInfo"
@@ -151,7 +151,7 @@
         </div>
       </div>
     </div>
-    <div v-else class="barchart-container">
+    <div v-if="!attrInfo || attrInfo.length == 0" class="barchart-container">
       <a-empty class="attrInfo-empty"/>
     </div>
 
@@ -261,6 +261,10 @@ export default {
     el.style.top = `${rect1.top - rect2.top}px`;
     el.style.left = `${rect1.left - rect2.left}px`;
     tmp1.appendChild(el);
+
+    let el2 = document.getElementById("barchart-container");
+    let el3 = document.getElementById("relation-view");
+    el2.style.width = `${el3.getBoundingClientRect().width - 10}px`;
   },
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
