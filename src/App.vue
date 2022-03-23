@@ -157,6 +157,7 @@ body {
 
 .applypaneltext {
   display: inline-block;
+  pointer-events: none;
 }
 .applypanelicon {
   display: inline-block;

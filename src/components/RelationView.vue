@@ -22,7 +22,7 @@
         Import
       </a-button>
       <a-button class="header-button" @click="importNewData">
-        Import New
+        Choose File
       </a-button>
       <a-radio-group v-model="value" @change="onChangeMode" default-value="union" >
         <a-radio-button class="header-button" value="union" style="margin-left: 10px !important;"
