@@ -478,6 +478,7 @@ export default {
     height -= 9; //margin
     console.log(height);
     el5.style.height = `${height}px`;
+    el5.style.width = `${el2.getBoundingClientRect().width}px`;
     console.log(el5.style.height);
   },
   methods: {
