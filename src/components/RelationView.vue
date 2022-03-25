@@ -280,7 +280,7 @@
     </div>
 
     <div class="relations-container" id="relations-container">
-      <spreadsheet v-if="relations.length == 0" class="source-table" />
+      <spreadsheet v-if="relations.length == 0" class="source-table" :style="`height: ${sheetHeight}px`"/>
       <a-tabs
         v-else
         type="editable-card"
@@ -294,7 +294,7 @@
           :key="index"
           :tab="relation.name"
         >
-          <div class="source-table">
+          <div class="source-table" :style="`height: ${sheetHeight}px`">
             <spreadsheet
               :name="relation.name"
               :head="relation.entityOrder"
@@ -349,6 +349,7 @@ export default {
       justreset: false,
       selectedValue: null,
       value: "union",
+      sheetHeight: 0,
     };
   },
   computed: {
@@ -480,7 +481,10 @@ export default {
 
     let el4 = document.getElementById("relations-container");
     let el5 = document.getElementById("dataset-toolbar");
-    el4.style.height = `${el3.getBoundingClientRect().height - el2.getBoundingClientRect().height - el5.getBoundingClientRect().height - 50}px`
+    let el6 = document.getElementById("relation-container");
+    let tmp = el6.getBoundingClientRect().height - el2.getBoundingClientRect().height - el5.getBoundingClientRect().height - 50;
+    el4.style.height = `${tmp}px`
+    this.sheetHeight = tmp - 40;
   },
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),

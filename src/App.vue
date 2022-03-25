@@ -97,7 +97,7 @@ body {
 }
 
 #spreadsheet-container {
-  flex: 1 1 100px;
+  flex: 1 1 200px;
   border: 3px solid rgba(0, 0, 0, 0.87);
 }
 
