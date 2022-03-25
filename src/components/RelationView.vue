@@ -1207,7 +1207,6 @@ export default {
   height: 140px;
   overflow-x: scroll;
   overflow-y: hidden;
-  pointer-events: none;
 }
 
 .attrInfo-handle {
