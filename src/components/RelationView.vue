@@ -388,6 +388,14 @@ export default {
         this.menuSumEnable = false;
       }
     },
+    relations(val, oldval) {
+      setTimeout(() => {
+        let el = document.getElementsByClassName("ant-tabs-tab");
+        for(let i = 0; i < el.length; i++) {
+          el[i].style.color = this.relations[i].color;
+        }
+      }, 10);
+    }
   },
   mounted() {
     let el = document.createElement("div");
@@ -526,6 +534,11 @@ export default {
     },
     onTabChange(targetIndex) {
       this.changeActivatedRelationIndex(targetIndex);
+      // setTimeout(() => {
+      //   let el = document.getElementsByClassName("ant-tabs-tab-active")[0];
+      //   console.log(el, targetIndex);
+      //   el.style.color = this.relations[targetIndex].color;
+      // }, 100);
     },
     onTabEdit(targetIndex, action) {
       if (action == "remove") {
@@ -553,15 +566,25 @@ export default {
       }
       let op1 = JSON.parse(event.dataTransfer.getData("info"));
       let op2 = JSON.parse(event.target.dataset.info);
+      if(Utils.compareObj(Utils.refineStrName(op1), Utils.refineStrName(op2))) {
+        this.$message.error("Error: Cannot join the same attribute");
+        return;
+      }
       let color = Utils.genRandomColor(1)[0];
       let valueList = [];
-      if(this.associationRule == "union" || this.associationRule == "intersect") {
-        op1.valueList.forEach((item) => {
-          valueList.push(item);
-        });
+      if(this.associationRule == "union") {
+        let s = new Set(op1.valueList);
         op2.valueList.forEach((item) => {
-          valueList.push(item);
+          s.add(item);
         });
+        valueList = Array.from(s);
+      } else if(this.associationRule == "intersect") {
+        let s = new Set(op1.valueList);
+        op2.valueList.forEach((item) => {
+          if(s.has(item)) {
+            valueList.push(item);
+          }
+        })
       } else if(this.associationRule == "concat") {
         for(let i = 0; i < op1.valueList.length && i < op2.valueList.length; i++) {
           valueList.push(String(op1.valueList[i]).concat(String(op2.valueList[i])));

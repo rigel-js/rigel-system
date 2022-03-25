@@ -578,5 +578,5 @@ const compareObj = (obj1, obj2) => {
 
 export default {
   generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString,
-  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable, findValueList, findColor
+  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable, findValueList, findColor, compareObj
 };
