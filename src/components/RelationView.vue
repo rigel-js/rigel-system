@@ -1094,7 +1094,7 @@ export default {
   margin: 5px 5px 5px 5px;
   padding: 5px 5px 5px 5px;
   border: 1.5px solid #d5d5d5;
-  width: 210px;
+  width: 170px;
 }
 
 .attrInfo-text {

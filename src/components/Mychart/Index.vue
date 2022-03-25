@@ -31,7 +31,7 @@ export default {
 				len += String(item).length
 			});
 			let el = document.getElementById(this.chartId);
-			el.style.width = `${len * 10 + 80 > 210 ? len * 10 + 80 : 210}px`;
+			el.style.width = `${len * 10 + 80 > 150 ? len * 10 + 80 : 150}px`;
       let myChart = this.$echarts.init(el);
       let tmp = [];
       let dict = {};
@@ -51,7 +51,7 @@ export default {
         yAxis: {
           type: "value",
           axisLabel: {
-            show: false,
+            show: true,
           },
         },
         xAxis: {
@@ -77,7 +77,9 @@ export default {
     },
     drawLine_histogram(valueList) {
       this.$echarts.registerTransform(transform.histogram);
-      let myChart = this.$echarts.init(document.getElementById(this.chartId));
+			let el = document.getElementById(this.chartId);
+			el.style.width = '230px';
+      let myChart = this.$echarts.init(el);
       // var girth = [8.3,8.6, 8.8, 10.5, 10.7, 10.8, 11.0, 11.0, 11.1, 11.2, 11.3, 11.4, 11.4, 11.7, 12.0, 12.9, 12.9, 13.3, 13.7, 13.8, 14.0, 14.2, 14.5, 16.0, 16.3, 17.3, 17.5, 17.9, 18.0, 18.0, 20.6];
       var bins = ecStat.histogram(valueList, "sturges");
       // console.log(bins.data);

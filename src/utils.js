@@ -203,16 +203,17 @@ const stringfySpec = (spec) => {
 
 //判断attribute是否为categorical
 const isCategorical = (valueList) => {
-  let ok = true;
+  // let ok = true;
   for (let i = 0; i < valueList.length; i++) {
     if (typeof (valueList[i]) != "number") {
       return true;
     }
-    if(valueList[i] % 1 != 0) {
-      ok = false;
-    }
+    // if(valueList[i] % 1 != 0) {
+    //   ok = false;
+    // }
   }
-  return ok;
+  // return ok;
+  return false;
 }
 
 //将row_header等spec object转为数组形式
