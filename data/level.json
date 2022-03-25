@@ -1,0 +1,49 @@
+{
+    "name": "level",
+    "values": [
+        {
+            "City": "Hangzhou",
+            "Level": "First-level"
+        },
+        {
+            "City": "Ningbo",
+            "Level": "Second-level"
+        },
+        {
+            "City": "Wenzhou",
+            "Level": "Second-level"
+        },
+        {
+            "City": "Jiaxing",
+            "Level": "Second-level"
+        },
+        {
+            "City": "Huzhou",
+            "Level": "Third-level"
+        },
+        {
+            "City": "Shaoxing",
+            "Level": "Second-level"
+        },
+        {
+            "City": "Jinhua",
+            "Level": "Second-level"
+        },
+        {
+            "City": "Quzhou",
+            "Level": "Fourth-level"
+        },
+        {
+            "City": "Zhoushan",
+            "Level": "Third-level"
+        },
+        {
+            "City": "Taizhou",
+            "Level": "Second-level"
+        },
+        {
+            "City": "Lishui",
+            "Level": "Third-level"
+        }
+    ]
+}

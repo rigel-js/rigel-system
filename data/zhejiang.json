@@ -1,0 +1,170 @@
+{
+    "name": "zhejiang",
+    "values": [
+        {
+            "city": "Hangzhou",
+            "year": "2019",
+            "gdp": "15373.05"
+        },
+        {
+            "city": "Hangzhou",
+            "year": "2018",
+            "gdp": "13509.2"
+        },
+        {
+            "city": "Hangzhou",
+            "year": "2017",
+            "gdp": "12603.36"
+        },
+        {
+            "city": "Ningbo",
+            "year": "2019",
+            "gdp": "11985.12"
+        },
+        {
+            "city": "Ningbo",
+            "year": "2018",
+            "gdp": "10745.5"
+        },
+        {
+            "city": "Ningbo",
+            "year": "2017",
+            "gdp": "9842.94"
+        },
+        {
+            "city": "Wenzhou",
+            "year": "2019",
+            "gdp": "6606.11"
+        },
+        {
+            "city": "Wenzhou",
+            "year": "2018",
+            "gdp": "6006.2"
+        },
+        {
+            "city": "Wenzhou",
+            "year": "2017",
+            "gdp": "5453.17"
+        },
+        {
+            "city": "Jiaxing",
+            "year": "2019",
+            "gdp": "5370.32"
+        },
+        {
+            "city": "Jiaxing",
+            "year": "2018",
+            "gdp": "4872"
+        },
+        {
+            "city": "Jiaxing",
+            "year": "2017",
+            "gdp": "4355.24"
+        },
+        {
+            "city": "Huzhou",
+            "year": "2019",
+            "gdp": "3122.43"
+        },
+        {
+            "city": "Huzhou",
+            "year": "2018",
+            "gdp": "2719.1"
+        },
+        {
+            "city": "Huzhou",
+            "year": "2017",
+            "gdp": "2476.13"
+        },
+        {
+            "city": "Shaoxing",
+            "year": "2019",
+            "gdp": "5780.74"
+        },
+        {
+            "city": "Shaoxing",
+            "year": "2018",
+            "gdp": "5416.9"
+        },
+        {
+            "city": "Shaoxing",
+            "year": "2017",
+            "gdp": "5108.04"
+        },
+        {
+            "city": "Jinhua",
+            "year": "2019",
+            "gdp": "4559.91"
+        },
+        {
+            "city": "Jinhua",
+            "year": "2018",
+            "gdp": "4100.2"
+        },
+        {
+            "city": "Jinhua",
+            "year": "2017",
+            "gdp": "3870.22"
+        },
+        {
+            "city": "Quzhou",
+            "year": "2019",
+            "gdp": "1573.51"
+        },
+        {
+            "city": "Quzhou",
+            "year": "2018",
+            "gdp": "1470.6"
+        },
+        {
+            "city": "Quzhou",
+            "year": "2017",
+            "gdp": "1380"
+        },
+        {
+            "city": "Zhoushan",
+            "year": "2019",
+            "gdp": "1371.6"
+        },
+        {
+            "city": "Zhoushan",
+            "year": "2018",
+            "gdp": "1316.7"
+        },
+        {
+            "city": "Zhoushan",
+            "year": "2017",
+            "gdp": "1218.95"
+        },
+        {
+            "city": "Taizhou",
+            "year": "2019",
+            "gdp": "5134.05"
+        },
+        {
+            "city": "Taizhou",
+            "year": "2018",
+            "gdp": "4874.7"
+        },
+        {
+            "city": "Taizhou",
+            "year": "2017",
+            "gdp": "4388.22"
+        },
+        {
+            "city": "Lishui",
+            "year": "2019",
+            "gdp": "1476.61"
+        },
+        {
+            "city": "Lishui",
+            "year": "2018",
+            "gdp": "1394.7"
+        },
+        {
+            "city": "Lishui",
+            "year": "2017",
+            "gdp": "1298.2"
+        }
+    ]
+}

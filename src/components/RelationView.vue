@@ -567,7 +567,7 @@ export default {
       let op1 = JSON.parse(event.dataTransfer.getData("info"));
       let op2 = JSON.parse(event.target.dataset.info);
       if(Utils.compareObj(Utils.refineStrName(op1), Utils.refineStrName(op2))) {
-        this.$message.error("Error: Cannot join the same attribute");
+        this.$message.error("Error: Combining the same variable is not allowed");
         return;
       }
       let color = Utils.genRandomColor(1)[0];
