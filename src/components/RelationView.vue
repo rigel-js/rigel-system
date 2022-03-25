@@ -519,7 +519,7 @@ export default {
             attribute: key,
             strName: { operator: "attr", data: jsonData.name, attribute: key },
             color: color,
-            valueList: Utils.unique(valueList),
+            valueList: valueList,
             isCategorical: Utils.isCategorical(valueList),
           });
         });
@@ -601,7 +601,7 @@ export default {
         attribute: `${this.associationRule}(${name1}, ${name2})`,
         color: color,
         valueList: Utils.unique(valueList),
-        isCategorical: Utils.unique(valueList),
+        isCategorical: Utils.isCategorical(valueList),
       };
       this.storeAttrInfo(res);
       console.log(res);
@@ -1094,6 +1094,7 @@ export default {
   margin: 5px 5px 5px 5px;
   padding: 5px 5px 5px 5px;
   border: 1.5px solid #d5d5d5;
+  width: 210px;
 }
 
 .attrInfo-text {
