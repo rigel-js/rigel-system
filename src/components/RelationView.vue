@@ -18,14 +18,19 @@
           </a-select-option>
         </a-select>
       </div>
-      <a-button class="header-button" @click="importDataset">
-        Import
-      </a-button>
+      <a-button class="header-button" @click="importDataset"> Import </a-button>
       <a-button class="header-button" @click="importNewData">
         Choose File
       </a-button>
-      <a-radio-group v-model="value" @change="onChangeMode" default-value="union" >
-        <a-radio-button class="header-button" value="union" style="margin-left: 10px !important;"
+      <a-radio-group
+        v-model="value"
+        @change="onChangeMode"
+        default-value="union"
+      >
+        <a-radio-button
+          class="header-button"
+          value="union"
+          style="margin-left: 10px !important"
           >Union</a-radio-button
         >
         <a-radio-button class="header-button" value="intersect"
@@ -36,35 +41,55 @@
         >
       </a-radio-group>
     </div>
-    <div class="barchart-container" id="barchart-container" v-show="attrInfo && attrInfo.length > 0">
+    <div
+      class="barchart-container"
+      id="barchart-container"
+      v-show="attrInfo && attrInfo.length > 0"
+    >
       <div
         class="attrCard"
         v-for="(attr, index) in attrInfo"
         :key="`${attr.data}_${attr.attribute}_${index}`"
-        :id="`attr_${JSON.stringify(attr)}`"
-        :data-info="JSON.stringify(attr)"
-        :draggable="true"
-        @dragstart="attrDragHandler"
-        @drop="attrDropHandler"
-        @dragover="attrAllowDrop"
-        @contextmenu.prevent="openMenu($event, attr)"
       >
         <div class="attrInfo-text" :style="`color: ${attr.color}`">
-          {{
-            attr.data ? `${attr.data}.${attr.attribute}` : `${attr.attribute}`
-          }}
+          <a-tooltip placement="topLeft" :title="attr.data ? `${attr.data}.${attr.attribute}` : `${attr.attribute}`">
+          <p
+            :id="`attr_${JSON.stringify(attr)}`"
+            :data-info="JSON.stringify(attr)"
+            :draggable="true"
+            @dragstart="attrDragHandler"
+            @drop="attrDropHandler"
+            @dragover="attrAllowDrop"
+            @contextmenu.prevent="openMenu($event, attr)"
+          >
+            
+              {{
+                attr.data ? `${attr.data}.${attr.attribute}` : `${attr.attribute}`
+              }}
+
+          </p>
+          </a-tooltip>
         </div>
         <div class="attrInfo-barchart">
           <mychart :chartId="`attr_${index}`" :attr="attr"> </mychart>
         </div>
         <div class="attrInfo-handle">
           <a-popconfirm placement="bottomLeft" class="attrInfo-popconfirm">
-            <div style="display:none" slot="icon"/>
-            <a-button type="primary" class="attrInfo-button" @click="openMenu($event, attr)">Derive</a-button>
+            <div style="display: none" slot="icon" />
+            <a-button
+              type="primary"
+              class="attrInfo-button"
+              @click="openMenu($event, attr)"
+              >Derive</a-button
+            >
             <template slot="title">
               <div>
                 <div class="menutext">Sorting</div>
-                <a-switch class="menuswitch" size="small" v-model="menuSortEnable" />
+                <a-switch
+                  class="menuswitch"
+                  size="small"
+                  v-model="menuSortEnable"
+                />
               </div>
               <div v-if="menuSortEnable">
                 <a-radio-group v-model="menuSort">
@@ -78,7 +103,11 @@
 
               <div>
                 <div class="menutext">Filtering</div>
-                <a-switch class="menuswitch" size="small" v-model="menuFilterEnable" />
+                <a-switch
+                  class="menuswitch"
+                  size="small"
+                  v-model="menuFilterEnable"
+                />
               </div>
               <!-- Categorical -->
               <div
@@ -125,12 +154,22 @@
               <div v-if="rightClickItem && !rightClickItemIsCategorical">
                 <div>
                   <div class="menutext">Binning</div>
-                  <a-switch class="menuswitch" size="small" v-model="menuBinEnable" />
+                  <a-switch
+                    class="menuswitch"
+                    size="small"
+                    v-model="menuBinEnable"
+                  />
                 </div>
                 <div v-if="menuBinEnable">
-                  <a-input-number class="menuInputNumber" v-model="menuBinLowerBound" />
+                  <a-input-number
+                    class="menuInputNumber"
+                    v-model="menuBinLowerBound"
+                  />
                   <div class="menuInputNumberLine" />
-                  <a-input-number class="menuInputNumber" v-model="menuBinUpperBound" />
+                  <a-input-number
+                    class="menuInputNumber"
+                    v-model="menuBinUpperBound"
+                  />
                   <div>
                     <div class="menutext">Step:</div>
                     <a-input-number
@@ -146,12 +185,16 @@
               <div v-if="rightClickItem">
                 <div>
                   <div class="menutext">Split</div>
-                  <a-switch class="menuswitch" size="small" v-model="menuSplitEnable" />
+                  <a-switch
+                    class="menuswitch"
+                    size="small"
+                    v-model="menuSplitEnable"
+                  />
                 </div>
                 <div v-if="menuSplitEnable">
                   <div>
                     <div class="menutext">Pattern:</div>
-                    <a-input class="menuInput" v-model="menuSplitPattern"/>
+                    <a-input class="menuInput" v-model="menuSplitPattern" />
                   </div>
                   <div>
                     <div class="menutext">Index:</div>
@@ -168,7 +211,11 @@
               <div v-if="rightClickItem">
                 <div>
                   <div class="menutext">Concat</div>
-                  <a-switch class="menuswitch" size="small" v-model="menuConcatEnable" />
+                  <a-switch
+                    class="menuswitch"
+                    size="small"
+                    v-model="menuConcatEnable"
+                  />
                 </div>
                 <div class="dashline"></div>
               </div>
@@ -177,7 +224,11 @@
               <div v-if="rightClickItem && !rightClickItemIsCategorical">
                 <div>
                   <div class="menutext">Sum</div>
-                  <a-switch class="menuswitch" size="small" v-model="menuSumEnable" />
+                  <a-switch
+                    class="menuswitch"
+                    size="small"
+                    v-model="menuSumEnable"
+                  />
                 </div>
                 <div class="dashline"></div>
               </div>
@@ -186,7 +237,11 @@
               <div v-if="rightClickItem && !rightClickItemIsCategorical">
                 <div>
                   <div class="menutext">Average</div>
-                  <a-switch class="menuswitch" size="small" v-model="menuAverageEnable" />
+                  <a-switch
+                    class="menuswitch"
+                    size="small"
+                    v-model="menuAverageEnable"
+                  />
                 </div>
                 <div class="dashline"></div>
               </div>
@@ -194,16 +249,26 @@
               <div v-if="rightClickItem">
                 <div>
                   <div class="menutext">Count</div>
-                  <a-switch class="menuswitch" size="small" v-model="menuCountEnable" />
+                  <a-switch
+                    class="menuswitch"
+                    size="small"
+                    v-model="menuCountEnable"
+                  />
                 </div>
                 <div class="dashline"></div>
               </div>
-              
+
               <div class="menuButtonContainer">
-                <a-button type="primary" class="menubutton" @click="onMenuApply">
+                <a-button
+                  type="primary"
+                  class="menubutton"
+                  @click="onMenuApply"
+                >
                   Apply
                 </a-button>
-                <a-button class="menubutton" @click="onMenuReset"> Reset </a-button>
+                <a-button class="menubutton" @click="onMenuReset">
+                  Reset
+                </a-button>
               </div>
             </template>
           </a-popconfirm>
@@ -211,10 +276,10 @@
       </div>
     </div>
     <div v-if="!attrInfo || attrInfo.length == 0" class="barchart-container">
-      <a-empty class="attrInfo-empty"/>
+      <a-empty class="attrInfo-empty" />
     </div>
 
-    <div class="relations-container">
+    <div class="relations-container" id="relations-container">
       <spreadsheet v-if="relations.length == 0" class="source-table" />
       <a-tabs
         v-else
@@ -334,7 +399,7 @@ export default {
       }
     },
     menuSplitEnable(value) {
-      if(value) {
+      if (value) {
         this.menuSortEnable = false;
         this.menuFilterEnable = false;
         this.menuBinEnable = false;
@@ -345,7 +410,7 @@ export default {
       }
     },
     menuConcatEnable(value) {
-      if(value) {
+      if (value) {
         this.menuSortEnable = false;
         this.menuFilterEnable = false;
         this.menuBinEnable = false;
@@ -356,7 +421,7 @@ export default {
       }
     },
     menuSumEnable(value) {
-      if(value) {
+      if (value) {
         this.menuSortEnable = false;
         this.menuFilterEnable = false;
         this.menuBinEnable = false;
@@ -367,7 +432,7 @@ export default {
       }
     },
     menuAverageEnable(value) {
-      if(value) {
+      if (value) {
         this.menuSortEnable = false;
         this.menuFilterEnable = false;
         this.menuBinEnable = false;
@@ -378,7 +443,7 @@ export default {
       }
     },
     menuCountEnable(value) {
-      if(value) {
+      if (value) {
         this.menuSortEnable = false;
         this.menuFilterEnable = false;
         this.menuBinEnable = false;
@@ -391,11 +456,11 @@ export default {
     relations(val, oldval) {
       setTimeout(() => {
         let el = document.getElementsByClassName("ant-tabs-tab");
-        for(let i = 0; i < el.length; i++) {
+        for (let i = 0; i < el.length; i++) {
           el[i].style.color = this.relations[i].color;
         }
       }, 10);
-    }
+    },
   },
   mounted() {
     let el = document.createElement("div");
@@ -412,6 +477,10 @@ export default {
     let el2 = document.getElementById("barchart-container");
     let el3 = document.getElementById("relation-view");
     el2.style.width = `${el3.getBoundingClientRect().width - 10}px`;
+
+    let el4 = document.getElementById("relations-container");
+    let el5 = document.getElementById("dataset-toolbar");
+    el4.style.height = `${el3.getBoundingClientRect().height - el2.getBoundingClientRect().height - el5.getBoundingClientRect().height - 50}px`
   },
   methods: {
     ...mapMutations(["changeActivatedRelationIndex", "removeRelationByIndex"]),
@@ -424,7 +493,7 @@ export default {
       "storeAssociationRule",
       "storeCurrentState",
     ]),
-    onChangeMode(){
+    onChangeMode() {
       // console.log(this.value);
       this.storeAssociationRule(this.value);
     },
@@ -546,6 +615,7 @@ export default {
       }
     },
     attrDragHandler(event) {
+      console.log(event.target);
       event.dataTransfer.setData("info", event.target.dataset.info);
       event.dataTransfer.setData("type", "attr");
       sessionStorage.setItem("info", event.target.dataset.info);
@@ -566,28 +636,38 @@ export default {
       }
       let op1 = JSON.parse(event.dataTransfer.getData("info"));
       let op2 = JSON.parse(event.target.dataset.info);
-      if(Utils.compareObj(Utils.refineStrName(op1), Utils.refineStrName(op2))) {
-        this.$message.error("Error: Combining the same variable is not allowed");
+      if (
+        Utils.compareObj(Utils.refineStrName(op1), Utils.refineStrName(op2))
+      ) {
+        this.$message.error(
+          "Error: Combining the same variable is not allowed"
+        );
         return;
       }
       let color = Utils.genRandomColor(1)[0];
       let valueList = [];
-      if(this.associationRule == "union") {
+      if (this.associationRule == "union") {
         let s = new Set(op1.valueList);
         op2.valueList.forEach((item) => {
           s.add(item);
         });
         valueList = Array.from(s);
-      } else if(this.associationRule == "intersect") {
+      } else if (this.associationRule == "intersect") {
         let s = new Set(op1.valueList);
         op2.valueList.forEach((item) => {
-          if(s.has(item)) {
+          if (s.has(item)) {
             valueList.push(item);
           }
-        })
-      } else if(this.associationRule == "concat") {
-        for(let i = 0; i < op1.valueList.length && i < op2.valueList.length; i++) {
-          valueList.push(String(op1.valueList[i]).concat(String(op2.valueList[i])));
+        });
+      } else if (this.associationRule == "concat") {
+        for (
+          let i = 0;
+          i < op1.valueList.length && i < op2.valueList.length;
+          i++
+        ) {
+          valueList.push(
+            String(op1.valueList[i]).concat(String(op2.valueList[i]))
+          );
         }
       }
       let strName = {
@@ -841,18 +921,24 @@ export default {
           console.log(res);
         }
       } else if (this.menuSplitEnable) {
-        if(this.menuSplitPattern == "") {
+        if (this.menuSplitPattern == "") {
           this.$message.error("Split pattern cannot be empty!");
           return;
         }
         associationRule = "split";
         let valueList = [];
         op.valueList.forEach((item) => {
-          valueList.push(String(item).split(this.menuSplitPattern)[this.menuSplitIndex]);
+          valueList.push(
+            String(item).split(this.menuSplitPattern)[this.menuSplitIndex]
+          );
         });
         let strName = {
           operator: associationRule,
-          parameters: [op.strName, {value: this.menuSplitPattern}, {value: this.menuSplitIndex}],
+          parameters: [
+            op.strName,
+            { value: this.menuSplitPattern },
+            { value: this.menuSplitIndex },
+          ],
         };
         let attrName = op.data ? `${op.data}.${op.attribute}` : op.attribute;
         let res = {
@@ -866,7 +952,8 @@ export default {
         console.log(res);
       } else if (this.menuConcatEnable) {
         associationRule = "concat";
-        let valueList = [], tmp = "";
+        let valueList = [],
+          tmp = "";
         op.valueList.forEach((item) => {
           tmp += String(item);
         });
@@ -887,7 +974,8 @@ export default {
         console.log(res);
       } else if (this.menuSumEnable) {
         associationRule = "sum";
-        let valueList = [], sum = 0;
+        let valueList = [],
+          sum = 0;
         op.valueList.forEach((item) => {
           sum += Number(item);
         });
@@ -908,8 +996,9 @@ export default {
         console.log(res);
       } else if (this.menuAverageEnable) {
         associationRule = "average";
-        let valueList = [], tmp = 0;
-        if(op.valueList.length != 0) {
+        let valueList = [],
+          tmp = 0;
+        if (op.valueList.length != 0) {
           op.valueList.forEach((item) => {
             tmp += Number(item);
           });
@@ -968,12 +1057,12 @@ export default {
 
 .relations-container {
   /* min-height: 10%; */
+  height: 10px;
   text-align: left;
-  height: 180px;
 }
 
 .source-table {
-  height: 137px;
+  /* height: 137px; */
   overflow: scroll;
 }
 
@@ -983,7 +1072,7 @@ export default {
   border-bottom: 1px solid #eaebee;
 }
 
-::-webkit-scrollbar :horizontal{
+::-webkit-scrollbar :horizontal {
   height: 4px;
   background: gray;
 }
@@ -1094,17 +1183,19 @@ export default {
   margin: 5px 5px 5px 5px;
   padding: 5px 5px 5px 5px;
   border: 1.5px solid #d5d5d5;
-  width: 170px;
+  width: 190px;
 }
 
 .attrInfo-text {
   line-height: 20px;
   height: 20px;
   font-size: 14px;
-  text-align: center;
+  text-align: left;
   vertical-align: middle;
   display: inline-block;
-  pointer-events: none;
+  pointer-events: true !important;
+  width: 180px;
+  overflow: hidden;
 }
 
 .attrInfo-barchart {
@@ -1112,6 +1203,7 @@ export default {
   height: 140px;
   overflow-x: scroll;
   overflow-y: hidden;
+  pointer-events: none;
 }
 
 .attrInfo-handle {
