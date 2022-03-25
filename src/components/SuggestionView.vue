@@ -174,7 +174,7 @@ export default {
     let el5 = document.getElementById("previewwindow");
     console.log(el2,el3,el4,el5);
     let height = el2.getBoundingClientRect().height - el3.getBoundingClientRect().height - el4.getBoundingClientRect().height;
-    height -= 36; //margin
+    height -= 66; //margin
     console.log(el4.getBoundingClientRect().height)
     el5.style.height = `${height}px`;
     el5.style.width = `${el2.getBoundingClientRect().width - 8}px`;
@@ -734,7 +734,7 @@ export default {
 
 .previewwindow {
   background-color: white;
-  overflow: scroll;
+  overflow: hidden;
   height: 0;
   flex-direction: column;
   width: 0;

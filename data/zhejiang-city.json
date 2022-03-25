@@ -4,167 +4,200 @@
         {
             "city": "Hangzhou",
             "year": "2019",
-            "gdp": 15373.05
+            "gdp": 15373.05,
+            "population": 1036.0
         },
         {
             "city": "Hangzhou",
             "year": "2018",
-            "gdp": 13509.2
+            "gdp": 13509.2,
+            "population": 980.6
         },
         {
             "city": "Hangzhou",
             "year": "2017",
-            "gdp": 12603.36
+            "gdp": 12603.36,
+            "population": 946.8
         },
         {
             "city": "Ningbo",
             "year": "2019",
-            "gdp": 11985.12
+            "gdp": 11985.12,
+            "population": 854.2
         },
         {
             "city": "Ningbo",
             "year": "2018",
-            "gdp": 10745.5
+            "gdp": 10745.5,
+            "population": 820.2
         },
         {
             "city": "Ningbo",
             "year": "2017",
-            "gdp": 9842.94
+            "gdp": 9842.94,
+            "population": 800.5
         },
         {
             "city": "Wenzhou",
             "year": "2019",
-            "gdp": 6606.11
+            "gdp": 6606.11,
+            "population": 930.0
         },
         {
             "city": "Wenzhou",
             "year": "2018",
-            "gdp": 6006.2
+            "gdp": 6006.2,
+            "population": 925.0
         },
         {
             "city": "Wenzhou",
             "year": "2017",
-            "gdp": 5453.17
+            "gdp": 5453.17,
+            "population": 921.5
         },
         {
             "city": "Jiaxing",
             "year": "2019",
-            "gdp": 5370.32
+            "gdp": 5370.32,
+            "population": 480
         },
         {
             "city": "Jiaxing",
             "year": "2018",
-            "gdp": 4872.0
+            "gdp": 4872.0,
+            "population": 472.6
         },
         {
             "city": "Jiaxing",
             "year": "2017",
-            "gdp": 4355.24
+            "gdp": 4355.24,
+            "population": 465.2
         },
         {
             "city": "Huzhou",
             "year": "2019",
-            "gdp": 3122.43
+            "gdp": 3122.43,
+            "population": 306.0
         },
         {
             "city": "Huzhou",
             "year": "2018",
-            "gdp": 2719.1
+            "gdp": 2719.1,
+            "population": 302.7
         },
         {
             "city": "Huzhou",
             "year": "2017",
-            "gdp": 2476.13
+            "gdp": 2476.13,
+            "population": 299.5
         },
         {
             "city": "Shaoxing",
             "year": "2019",
-            "gdp": 5780.74
+            "gdp": 5780.74,
+            "population": 505.7
         },
         {
             "city": "Shaoxing",
             "year": "2018",
-            "gdp": 5416.9
+            "gdp": 5416.9,
+            "population": 503.5
         },
         {
             "city": "Shaoxing",
             "year": "2017",
-            "gdp": 5108.04
+            "gdp": 5108.04,
+            "population": 501.0
         },
         {
             "city": "Jinhua",
             "year": "2019",
-            "gdp": 4559.91
+            "gdp": 4559.91,
+            "population": 562.4
         },
         {
             "city": "Jinhua",
             "year": "2018",
-            "gdp": 4100.2
+            "gdp": 4100.2,
+            "population": 560.4
         },
         {
             "city": "Jinhua",
             "year": "2017",
-            "gdp": 3870.22
+            "gdp": 3870.22,
+            "population": 556.4
         },
         {
             "city": "Quzhou",
             "year": "2019",
-            "gdp": 1573.51
+            "gdp": 1573.51,
+            "population": 221.8
         },
         {
             "city": "Quzhou",
             "year": "2018",
-            "gdp": 1470.6
+            "gdp": 1470.6,
+            "population": 220.9
         },
         {
             "city": "Quzhou",
             "year": "2017",
-            "gdp": 1380.0
+            "gdp": 1380.0,
+            "population": 218.5
         },
         {
             "city": "Zhoushan",
             "year": "2019",
-            "gdp": 1371.6
+            "gdp": 1371.6,
+            "population": 117.6
         },
         {
             "city": "Zhoushan",
             "year": "2018",
-            "gdp": 1316.7
+            "gdp": 1316.7,
+            "population": 117.3
         },
         {
             "city": "Zhoushan",
             "year": "2017",
-            "gdp": 1218.95
+            "gdp": 1218.95,
+            "population": 116.8
         },
         {
             "city": "Taizhou",
             "year": "2019",
-            "gdp": 5134.05
+            "gdp": 5134.05,
+            "population": 615.0
         },
         {
             "city": "Taizhou",
             "year": "2018",
-            "gdp": 4874.7
+            "gdp": 4874.7,
+            "population": 613.9
         },
         {
             "city": "Taizhou",
             "year": "2017",
-            "gdp": 4388.22
+            "gdp": 4388.22,
+            "population": 611.8
         },
         {
             "city": "Lishui",
             "year": "2019",
-            "gdp": 1476.61
+            "gdp": 1476.61,
+            "population": 221.3
         },
         {
             "city": "Lishui",
             "year": "2018",
-            "gdp": 1394.7
+            "gdp": 1394.7,
+            "population": 219.9
         },
         {
             "city": "Lishui",
             "year": "2017",
-            "gdp": 1298.2
+            "gdp": 1298.2,
+            "population": 218.6
         }
     ]
 }

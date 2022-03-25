@@ -2,6 +2,22 @@
     "name": "level",
     "values": [
         {
+            "City": "Beijing",
+            "Level": "First-level"  
+        },
+        {
+            "City": "Tianjin",
+            "Level": "First-level"  
+        },
+        {
+            "City": "Shanghai",
+            "Level": "First-level"  
+        },
+        {
+            "City": "Chongqing",
+            "Level": "Second-level"  
+        },
+        {
             "City": "Hangzhou",
             "Level": "First-level"
         },
