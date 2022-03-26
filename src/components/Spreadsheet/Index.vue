@@ -734,7 +734,7 @@ export default {
   /* font: 100 16px/20px Times; */
   overflow-y: auto;
   display: table-cell;
-  min-width: 70px;
+  min-width: 100px;
 }
 
 .cell-container .cell {
