@@ -66,6 +66,7 @@ export default {
             name: "2011",
             type: "bar",
             data: tmp,
+            barWidth: "35px",
           },
         ],
       };
