@@ -234,7 +234,7 @@ export default {
       let res = [],
         res_no_capital = [];
       for (let i = 0; i < this.attrInfo.length; i++) {
-        let valueList = this.attrInfo[i].valueList;
+        let valueList = Utils.unique(this.attrInfo[i].valueList);
         if (valueList) {
           for (let j = 0; j < valueList.length; j++) {
             let isPrefix = true;
