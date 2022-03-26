@@ -86,8 +86,9 @@ export default {
     });
     this.cellValue = this.value;
     let tmp = this.cellValue;
-    if (tmp) {
-      if (tmp.value) {
+    console.log(this.value);
+    if (tmp != undefined) {
+      if (tmp.value != undefined) {
         if (!tmp.value.lower) {
           this.realValue = String(Utils.toFix(tmp.value));
         } else if (tmp.value.isRightOpen == true) {
@@ -95,14 +96,15 @@ export default {
         } else {
           this.realValue = `[${Utils.toFix(tmp.value.lower)}, ${Utils.toFix(tmp.value.upper)}]`;
         }
-      } else if (typeof tmp.value != "undefined") {
-        this.realValue = "";
-      } else {
+      } else if(typeof tmp == "string" || typeof tmp == "number"){
         this.realValue = String(Utils.toFix(tmp));
+      } else {
+        this.realValue = "";
       }
     } else {
       this.realValue = "";
     }
+    console.log(this.realValue)
   },
   methods: {
     ...mapActions(["setDragSource"]),

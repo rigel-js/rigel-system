@@ -187,10 +187,10 @@ export default {
           console.log(finalColNum);
           // console.log(rowSize, columnSize);
           for (let i = 0; i < rowSize; i++) {
-            console.log(table[i].length);
+            // console.log(table[i].length);
             let tmp = finalColNum - table[i].length;
             for (let j = 0; j < tmp; j++) {
-              console.log("push")
+              // console.log("push")
               table[i].push(null);
             }
           }

@@ -31,7 +31,7 @@ export default {
 				len += String(item).length
 			});
 			let el = document.getElementById(this.chartId);
-			el.style.width = `${len * 10 + 80 > 170 ? len * 10 + 80 : 170}px`;
+			el.style.width = `${len * 8 + 80 > 170 ? len * 8 + 80 : 170}px`;
       let myChart = this.$echarts.init(el);
       let tmp = [];
       let dict = {};
@@ -45,7 +45,7 @@ export default {
           left: 10,
           right: 0,
           top: 10,
-          bottom: 0,
+          bottom: 10,
           containLabel: true,
         },
         yAxis: {

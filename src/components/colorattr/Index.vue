@@ -37,7 +37,7 @@ export default {
         let index2 = this.findAttr(oldString, i, 1);
         let attr1 = oldString.slice(index1, i);
         let attr2 = oldString.slice(i + 1, index2 + 1);
-        console.log(index1, index2, attr1, attr2);
+        // console.log(index1, index2, attr1, attr2);
         let color = undefined;
         for (let j = 0; j < this.attrInfo.length; j++) {
           if (
@@ -64,7 +64,7 @@ export default {
     }
     newString += oldString.slice(lastIndex);
     this.realString = newString;
-    console.log(this.realString);
+    // console.log(this.realString);
   },
   methods: {
     isAlpha(s) {
@@ -94,7 +94,7 @@ export default {
             ok = false;
           }
         }
-        console.log(i, ok);
+        // console.log(i, ok);
         if (!ok) {
           if (delta == 1) {
             return i - 1;

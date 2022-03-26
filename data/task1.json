@@ -1,0 +1,57 @@
+{
+	"name": "task1",
+	"values": [
+		{
+			"Paper": "D3 data-driven documents",
+			"Author": "Michael Bostock"
+		},
+		{
+			"Paper": "D3 data-driven documents",
+			"Author": "Vadim Ogievetsky"
+		},
+		{
+			"Paper": "D3 data-driven documents",
+			"Author": "Jeffrey Heer"
+		},
+		{
+			"Paper": "Lyra: An interactive visualization design environment",
+			"Author": "Arvind Satyanarayan"
+		},
+		{
+			"Paper": "Lyra: An interactive visualization design environment",
+			"Author": "Jeffrey Heer"
+		},
+		{
+			"Paper": "Reactive vega: A streaming dataflow architecture for declarative interactive visualization",
+			"Author": "Arvind Satyanarayan"
+		},
+		{
+			"Paper": "Reactive vega: A streaming dataflow architecture for declarative interactive visualization",
+			"Author": "Ryan Russell"
+		},
+		{
+			"Paper": "Reactive vega: A streaming dataflow architecture for declarative interactive visualization",
+			"Author": "Jane Hoffswell"
+		},
+		{
+			"Paper": "Reactive vega: A streaming dataflow architecture for declarative interactive visualization",
+			"Author": "Jeffrey Heer"
+		},
+		{
+			"Paper": "Vega-lite: A grammar of interactive graphics",
+			"Author": "Arvind Satyanarayan"
+		},
+		{
+			"Paper": "Vega-lite: A grammar of interactive graphics",
+			"Author": "Dominik Moritz"
+		},
+		{
+			"Paper": "Vega-lite: A grammar of interactive graphics",
+			"Author": "Kanit Wongsuphasawat"
+		},
+		{
+			"Paper": "Vega-lite: A grammar of interactive graphics",
+			"Author": "Jeffrey Heer"
+		}
+	]
+}

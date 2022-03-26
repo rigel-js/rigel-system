@@ -11,10 +11,10 @@
         >
           <a-select-option
             v-for="data in EXAMPLE_DATA"
-            :key="data.id"
+            :key="data.name"
             :value="JSON.stringify(data)"
           >
-            {{ data.id }}
+            {{ data.name }}
           </a-select-option>
         </a-select>
       </div>
@@ -123,7 +123,7 @@
                 <a-checkbox-group
                   v-model="menuFilterValue"
                   name="checkboxgroup"
-                  :options="rightClickItem.valueList"
+                  :options="rightClickItemValueList"
                   @change="onFilterCheckboxChange"
                 />
               </div>
@@ -524,7 +524,7 @@ export default {
       }
       try {
         // console.log(this.selectedValue.value);
-        this.importData(JSON.stringify(this.selectedValue.value));
+        this.importData(JSON.stringify(this.selectedValue));
       } catch (e) {
         console.log(e);
         this.$message.error("Unsupported File Type");
@@ -588,7 +588,9 @@ export default {
         keys.forEach((key, index) => {
           let valueList = [];
           jsonData.values.forEach((item) => {
-            valueList.push(item[key]);
+            if(item[key] != undefined) {
+              valueList.push(item[key]);
+            }
           });
           attrInfo.push({
             data: jsonData.name,

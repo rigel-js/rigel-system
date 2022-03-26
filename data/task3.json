@@ -1,0 +1,57 @@
+{
+	"name": "task3",
+	"values": [
+		{
+			"Name": "Niles C.",
+			"Type": "Tel",
+			"Number": "(800)645-8397",
+			"Usage": "home"
+		},
+		{
+			"Name": "Niles C.",
+			"Type": "Tel",
+			"Number": "(800)645-8398",
+			"Usage": "work"
+		},
+		{
+			"Name": "Niles C.",
+			"Type": "Fax",
+			"Number": "(907)586-7252",
+			"Usage": "work"
+		},
+		{
+			"Name": "Jean H.",
+			"Type": "Tel",
+			"Number": "(918)781-4600",
+			"Usage": "home"
+		},
+		{
+			"Name": "Jean H.",
+			"Type": "Tel",
+			"Number": "(918)781-4601",
+			"Usage": "work"
+		},
+		{
+			"Name": "Jean H.",
+			"Type": "Fax",
+			"Number": "(918)781-4603",
+			"Usage": "home"
+		},
+		{
+			"Name": "Jean H.",
+			"Type": "Fax",
+			"Number": "(918)781-4604",
+			"Usage": "work"
+		},
+		{
+			"Name": "Bach J.",
+			"Number": "781-4605",
+			"Usage": "work"
+		},
+		{
+			"Name": "Bach J.",
+			"Number": "(918)781-4604",
+			"Usage": "work"
+		}
+	]
+}
