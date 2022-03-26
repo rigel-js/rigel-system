@@ -742,6 +742,7 @@ export default {
   font-family: DINAlternate-Bold;
   color: #b4b4b4;
   background-color: #eaebee;
+  white-space: nowrap;
 }
 
 .collapse-unit {

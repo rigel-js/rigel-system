@@ -2,15 +2,21 @@
   <div class="collapse-panel" :class="status ? activeClass : ''">
     <div class="collapse-panel-fixed" @click="handleFixedClick" :style="`padding-left:${7*level+7}px;`">
       <!-- @slot 固定头部，是一个作用域插槽，可提供toggle、open、close方法 -->
-      <i 
+      <!-- <i 
         class="icon iconfont" 
         style="transition: all 0.3s; color: #b3b3b3"
         :style="level == 0 && name == 0 ? '' : 'transform: rotate(-90deg)'"
         :class="level == 0 && name == 0 ? 'active' : ''"
       >&#xe60a;
+      </i> -->
+      <i 
+        class="icon iconfont" 
+        style="transition: all 0.3s; color: #b3b3b3"
+        :style="'transform: rotate(-90deg)'"
+      >&#xe60a;
       </i>
       <div style="pointer-events: none; margin-left: 8px;">
-        <colorattr :spec="header"/>
+        <colorattr :spec="header" :key="header"/>
       </div>
     </div>
     <transition

@@ -40,9 +40,9 @@ export default {
 	mounted() {
 		this.$on("open", this.handlePanelOpen);
 		this.$on("close", this.handlePanelClose);
-		if(this.level == 0) {
-			this.value = [this.initial];
-		}
+		// if(this.level == 0) {
+		// 	this.value = [this.initial];
+		// }
 	},
 	data() {
 		return ({

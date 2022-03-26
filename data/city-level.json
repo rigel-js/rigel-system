@@ -3,63 +3,63 @@
     "values": [
         {
             "City": "Beijing",
-            "Level": "First-level"  
+            "level": "First-level"  
         },
         {
             "City": "Tianjin",
-            "Level": "First-level"  
+            "level": "First-level"  
         },
         {
             "City": "Shanghai",
-            "Level": "First-level"  
+            "level": "First-level"  
         },
         {
             "City": "Chongqing",
-            "Level": "Second-level"  
+            "level": "Second-level"  
         },
         {
             "City": "Hangzhou",
-            "Level": "First-level"
+            "level": "First-level"
         },
         {
             "City": "Ningbo",
-            "Level": "Second-level"
+            "level": "Second-level"
         },
         {
             "City": "Wenzhou",
-            "Level": "Second-level"
+            "level": "Second-level"
         },
         {
             "City": "Jiaxing",
-            "Level": "Second-level"
+            "level": "Second-level"
         },
         {
             "City": "Huzhou",
-            "Level": "Third-level"
+            "level": "Third-level"
         },
         {
             "City": "Shaoxing",
-            "Level": "Second-level"
+            "level": "Second-level"
         },
         {
             "City": "Jinhua",
-            "Level": "Second-level"
+            "level": "Second-level"
         },
         {
             "City": "Quzhou",
-            "Level": "Fourth-level"
+            "level": "Fourth-level"
         },
         {
             "City": "Zhoushan",
-            "Level": "Third-level"
+            "level": "Third-level"
         },
         {
             "City": "Taizhou",
-            "Level": "Second-level"
+            "level": "Second-level"
         },
         {
             "City": "Lishui",
-            "Level": "Third-level"
+            "level": "Third-level"
         }
     ]
 }

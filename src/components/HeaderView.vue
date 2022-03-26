@@ -2,8 +2,8 @@
   <div class="header-view">
     <div id="rigel-title">Rigel</div>
     <div id="undo-redo-toolbar">
-      <i class="icon iconfont" style="color: white" @click="handleUndo">&#xebbd;</i>
-      <i class="icon iconfont" style="color: white" @click="handleRedo">&#xeb83;</i>
+      <i class="icon iconfont" style="color: white; cursor: pointer;" @click="handleUndo">&#xebbd;</i>
+      <i class="icon iconfont" style="color: white; cursor: pointer;" @click="handleRedo">&#xeb83;</i>
     </div>
     
     
