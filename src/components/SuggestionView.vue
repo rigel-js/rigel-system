@@ -422,7 +422,7 @@ export default {
         this.storeCurrentTable(table);
 
         if(derivedAttr) {
-          let colorList = Utils.genRandomColor(1);
+          let color = Utils.genRandomColor(1)[0];
           let valueList = [];
           if(type == "row_header") {
             for(let i = 0; i < table.length; i++) {
@@ -442,7 +442,7 @@ export default {
           let relationAttr = {
             strName: derivedAttr,
             attribute: Utils.calString(derivedAttr),
-            color: colorList[0],
+            color: color,
             valueList: Utils.unique(valueList),
             isCategorical: Utils.isCategorical(valueList),
           };
