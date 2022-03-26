@@ -1,22 +1,22 @@
 export const EXAMPLE_DATA = [
-  {
-    "name": "crime",
-    "values": [
-      { "state": "Alabama", "year": "2004", "crime": 4029.3 },
-      { "state": "Alabama", "year": "2005", "crime": 3900 },
-      { "state": "Alaska", "crime": 3370.9, "year": "2004" },
-      { "state": "Alaska", "crime": 3615, "year": "2005" }
-    ]
-  },
-  {
-    "name": "gdp",
-    "values": [
-      { "state": "Alabama", "year": "2005", "gdp": 100 },
-      { "state": "Alabama", "year": "2006", "gdp": 120 },
-      { "state": "Alaska", "year": "2005", "gdp": 50 },
-      { "state": "Alaska", "year": "2006", "gdp": 55 }
-    ]
-  },
+  // {
+  //   "name": "crime",
+  //   "values": [
+  //     { "state": "Alabama", "year": "2004", "crime": 4029.3 },
+  //     { "state": "Alabama", "year": "2005", "crime": 3900 },
+  //     { "state": "Alaska", "crime": 3370.9, "year": "2004" },
+  //     { "state": "Alaska", "crime": 3615, "year": "2005" }
+  //   ]
+  // },
+  // {
+  //   "name": "gdp",
+  //   "values": [
+  //     { "state": "Alabama", "year": "2005", "gdp": 100 },
+  //     { "state": "Alabama", "year": "2006", "gdp": 120 },
+  //     { "state": "Alaska", "year": "2005", "gdp": 50 },
+  //     { "state": "Alaska", "year": "2006", "gdp": 55 }
+  //   ]
+  // },
   {
     "name": "provincial-city",
     "values": [
@@ -576,7 +576,7 @@ export const EXAMPLE_DATA = [
     ]
   },
   {
-    "name": "task1",
+    "name": "paper",
     "values": [
       {
         "Paper": "D3 data-driven documents",
@@ -633,7 +633,7 @@ export const EXAMPLE_DATA = [
     ]
   },
   {
-    "name": "task2",
+    "name": "crime",
     "values": [
       {
         "State": "Alabama",
@@ -738,7 +738,7 @@ export const EXAMPLE_DATA = [
     ]
   },
   {
-    "name": "task3",
+    "name": "Tel",
     "values": [
       {
         "Name": "Niles C.",
