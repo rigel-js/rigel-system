@@ -50,7 +50,13 @@ const mutations = {
   },
 
   addAttrInfo(state, attrInfo) {
-    state.attrInfo = attrInfo.concat(state.attrInfo);
+    // console.log(state.attrInfo, attrInfo)
+    // state.attrInfo = attrInfo.concat(state.attrInfo);
+    if(attrInfo instanceof Array) {
+      state.attrInfo = attrInfo.concat(state.attrInfo);
+    } else {
+      state.attrInfo.splice(0, 0, attrInfo);
+    }
   },
 
   changeActivatedRelationIndex(state, index) {
