@@ -45,6 +45,7 @@
       class="barchart-container"
       id="barchart-container"
       v-show="attrInfo && attrInfo.length > 0"
+      :key="JSON.stringify(attrInfo)"
     >
       <div
         class="attrCard"
@@ -497,6 +498,7 @@ export default {
       "storeRawRelation",
       "storeAssociationRule",
       "storeCurrentState",
+      "removeAttrInfoByTableName",
     ]),
     onChangeMode() {
       // console.log(this.value);
@@ -616,7 +618,10 @@ export default {
     },
     onTabEdit(targetIndex, action) {
       if (action == "remove") {
+        let targetRelation = this.relations[targetIndex];
         this.removeRelationByIndex(targetIndex);
+        this.removeAttrInfoByTableName(targetRelation.name);
+        this.storeCurrentState();
       }
     },
     attrDragHandler(event) {

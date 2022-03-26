@@ -206,6 +206,15 @@ const mutations = {
   changeGenRecommendation(state, genRecommendation) {
     state.genRecommendation = genRecommendation;
   },
+
+  removeAttrInfo(state, name) {
+    for(let i = 0; i < state.attrInfo.length; i++) {
+      if(state.attrInfo[i].data == name) {
+        state.attrInfo.splice(i, 1);
+        i--;
+      }
+    }
+  }
 };
 
 const actions = {
@@ -295,6 +304,9 @@ const actions = {
   storeGenRecommendation({ commit }, genRecommendation) {
     commit("changeGenRecommendation", genRecommendation);
   },
+  removeAttrInfoByTableName({ commit }, name) {
+    commit("removeAttrInfo", name);
+  }
 };
 
 export default new Vuex.Store({

@@ -575,9 +575,18 @@ const compareObj = (obj1, obj2) => {
   }
 }
 
-
+const toFix = (s) => {
+  if(typeof(s) != "number") return s;
+  let t = Number(s);
+  if(t % 1 != 0) {
+    return t.toFixed(2);
+  } else {
+    return t;
+  }
+}
 
 export default {
   generateSuggestions, genRandomColor, unique, checkValidSpec, stringfySpec, isCategorical, specObj2List, refineStrName, calString,
-  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable, findValueList, findColor, compareObj
+  genAlterSpec, genSpec, genExploreSpec, deleteUsedSpec, mapTable, deepClone, rearrangeTable, findValueList, findColor, compareObj,
+  toFix
 };

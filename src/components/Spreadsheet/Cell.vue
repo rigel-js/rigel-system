@@ -89,16 +89,16 @@ export default {
     if (tmp) {
       if (tmp.value) {
         if (!tmp.value.lower) {
-          this.realValue = String(tmp.value);
+          this.realValue = String(Utils.toFix(tmp.value));
         } else if (tmp.value.isRightOpen == true) {
-          this.realValue = `[${tmp.value.lower}, ${tmp.value.upper})`;
+          this.realValue = `[${Utils.toFix(tmp.value.lower)}, ${Utils.toFix(tmp.value.upper)})`;
         } else {
-          this.realValue = `[${tmp.value.lower}, ${tmp.value.upper}]`;
+          this.realValue = `[${Utils.toFix(tmp.value.lower)}, ${Utils.toFix(tmp.value.upper)}]`;
         }
       } else if (typeof tmp.value != "undefined") {
         this.realValue = "";
       } else {
-        this.realValue = String(tmp);
+        this.realValue = String(Utils.toFix(tmp));
       }
     } else {
       this.realValue = "";
