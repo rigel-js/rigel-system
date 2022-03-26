@@ -54,8 +54,13 @@
           <a-empty style="padding-top: 100px" />
         </div>
         <div class="suggestion-unit" v-if="this.alterSpecList.length > 0">
-          <div class="suggestionTitle">
-            Alternatives
+          <div style="display: flex; justify-contents: space-between; width: 100%;">
+            <div class="suggestionTitle" style="flex: 1 0">
+              Alternatives
+            </div>
+            <div class="suggestionTitleHint">
+              Rearrange current data.
+            </div>
           </div>
           <div class="alter-unit">
             <div
@@ -75,7 +80,14 @@
           </div>
         </div>
         <div class="suggestion-unit" v-if="this.suggestions.length > 0">
-          <div class="suggestionTitle">Variations</div>
+          <div style="display: flex; justify-contents: space-between; width: 100%;">
+            <div class="suggestionTitle" style="flex: 1 0">
+              Variations
+            </div>
+            <div class="suggestionTitleHint">
+              Add or remove data in the table.
+            </div>
+          </div>
           <div class="variation-unit">
             <Varunit :content="this.suggestions" :level="0"/>
           </div>
@@ -718,6 +730,17 @@ export default {
   font-weight: bold;
   /* font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"; */
   font-family: DINAlternate-Bold;
+  background-color: #eaebee;
+}
+
+.suggestionTitleHint {
+  flex: 1 1; 
+  padding: 4px 10px 4px 0px;
+  text-align: right; 
+  font-size: 18px;
+  font-weight: bold;
+  font-family: DINAlternate-Bold;
+  color: #b4b4b4;
   background-color: #eaebee;
 }
 
