@@ -86,7 +86,7 @@ export default {
     });
     this.cellValue = this.value;
     let tmp = this.cellValue;
-    console.log(this.value);
+    // console.log(this.value);
     if (tmp != undefined) {
       if (tmp.value != undefined) {
         if (!tmp.value.lower) {
@@ -104,7 +104,7 @@ export default {
     } else {
       this.realValue = "";
     }
-    console.log(this.realValue)
+    // console.log(this.realValue)
   },
   methods: {
     ...mapActions(["setDragSource"]),

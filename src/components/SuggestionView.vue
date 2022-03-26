@@ -677,7 +677,7 @@ export default {
 }
 
 .suggestion-container {
-  height: 500px;
+  height: 70%;
   margin: 20px 0 10px 0;
   background: white;
   overflow-y: scroll;
