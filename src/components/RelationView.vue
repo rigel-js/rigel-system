@@ -325,6 +325,7 @@ export default {
   data() {
     return {
       rightClickItem: {},
+      rightClickItemValueList: [],
       rightClickItemIsCategorical: true,
       visible: false,
       top: 0,
@@ -694,6 +695,7 @@ export default {
 
     openMenu(e, item) {
       this.rightClickItem = item;
+      this.rightClickItemValueList = Utils.unique(item.valueList);
       this.rightClickItemIsCategorical = item.isCategorical;
       this.menuSortEnable = false;
       this.menuFilterEnable = false;
@@ -705,7 +707,7 @@ export default {
       this.menuCountEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
-        this.menuFilterValue = item.valueList;
+        this.menuFilterValue = Utils.unique(item.valueList);
       } else {
         this.menuBinUpperBound = this.menuFilterUpperBound = Math.max(
           ...item.valueList
@@ -757,7 +759,7 @@ export default {
       this.menuCountEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
-        this.menuFilterValue = this.rightClickItem.valueList;
+        this.menuFilterValue = Utils.unique(item.valueList);
       } else {
         this.menuBinUpperBound = this.menuFilterUpperBound = Math.max(
           ...this.rightClickItem.valueList

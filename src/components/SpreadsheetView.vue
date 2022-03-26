@@ -721,7 +721,7 @@ export default {
       this.rightClickItem = item;
       this.rightClickItemSource = source;
       this.rightClickItemIndex = index;
-      this.rightClickItemValueList = valueList;
+      this.rightClickItemValueList = Utils.unique(valueList);
       this.rightClickItemIsCategorical = Utils.isCategorical(valueList);
       this.menuSortEnable = false;
       this.menuFilterEnable = false;
@@ -733,7 +733,7 @@ export default {
       this.menuCountEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
-        this.menuFilterValue = valueList;
+        this.menuFilterValue = Utils.unique(valueList);
       } else {
         this.menuBinUpperBound = this.menuFilterUpperBound = Math.max(
           ...valueList
@@ -818,6 +818,7 @@ export default {
           attribute: attrName,
           color: color,
           valueList: Utils.unique(valueList),
+          isCategorical: Utils.isCategorical(valueList),
         };
       } else if (this.menuBinEnable) {
         associationRule = "bin";
@@ -852,8 +853,9 @@ export default {
           strName: strName,
           // attribute: `${associationRule}(${attrName}, ${this.menuBinStep}, ${this.menuBinLowerBound}, ${this.menuBinUpperBound})`,
           attribute: attrName,
-          color: colorList[0],
+          color: color,
           valueList: valueList,
+          isCategorical: Utils.isCategorical(valueList),
         };
       } else if (this.menuFilterEnable) {
         if (this.rightClickItemIsCategorical) {
@@ -1080,7 +1082,7 @@ export default {
       this.menuCountEnable = false;
       this.menuSort = 1;
       if (this.rightClickItemIsCategorical) {
-        this.menuFilterValue = this.rightClickItemValueList;
+        this.menuFilterValue = Utils.unique(this.rightClickItemValueList);
       } else {
         this.menuBinUpperBound = this.menuFilterUpperBound = Math.max(
           ...this.rightClickItemValueList
