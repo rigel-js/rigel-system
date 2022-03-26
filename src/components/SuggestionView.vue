@@ -22,7 +22,8 @@
             >
               <div class="applypanelcontent">
                 <a-icon type="bulb" class="icon applypanelicon"/>
-                <span class="applypaneltext"> {{ partialSpec.description }} </span>
+                <!-- <span class="applypaneltext"> {{ partialSpec.description }} </span> -->
+                <colorattr :spec="partialSpec.description" class="applypaneltext"/>
               </div>
             </div>
           </Newcollapsepanel>
@@ -40,7 +41,8 @@
         >
           <div class="applypanelcontent">
             <a-icon type="bulb" class="icon applypanelicon"/>
-            <span class="applypaneltext"> {{ item.description }} </span>
+            <!-- <span class="applypaneltext"> {{ item.description }} </span> -->
+            <colorattr :spec="item.description" class="applypaneltext"/>
           </div>
         </div>
       </div>
@@ -66,7 +68,8 @@
             >
               <div class="applypanelcontent">
                 <a-icon type="bulb" class="icon applypanelicon"/>
-                <span class="applypaneltext"> {{ suggestion.description }} </span>
+                <!-- <span class="applypaneltext"> {{ suggestion.description }} </span> -->
+                <colorattr :spec="suggestion.description" class="applypaneltext"/>
               </div>
             </div>
           </div>

@@ -39,8 +39,6 @@
               {{
                 item.description
                   ? item.description
-                  : item.data
-                  ? `${item.data}.${item.attribute}`
                   : `${item.attribute}`
               }}
             </div>

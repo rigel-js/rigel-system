@@ -10,6 +10,7 @@ import './assets/icons/iconfont/iconfont.css';
 import Varunit from "./components/Varunit/Index.vue";
 import Newcollapse from "./components/Newcollapse/Index.vue";
 import Newcollapsepanel from "./components/Newcollapsepanel/Index.vue";
+import colorattr from "./components/colorattr/Index.vue";
 import * as echarts from 'echarts'
 
 Vue.prototype.$echarts = echarts;
@@ -36,6 +37,7 @@ Vue.use(Popconfirm);
 Vue.component(Varunit.name, Varunit);
 Vue.component(Newcollapse.name, Newcollapse);
 Vue.component(Newcollapsepanel.name, Newcollapsepanel);
+Vue.component(colorattr.name, colorattr);
 Vue.prototype.$message = message;
 
 new Vue({

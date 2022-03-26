@@ -9,7 +9,9 @@
         :class="level == 0 && name == 0 ? 'active' : ''"
       >&#xe60a;
       </i>
-      <div style="pointer-events: none; margin-left: 8px;">{{ header }}</div>
+      <div style="pointer-events: none; margin-left: 8px;">
+        <colorattr :spec="header"/>
+      </div>
     </div>
     <transition
       @before-enter="beforeEnter"

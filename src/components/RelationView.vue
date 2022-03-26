@@ -64,7 +64,7 @@
           >
             
               {{
-                attr.data ? `${attr.data}.${attr.attribute}` : `${attr.attribute}`
+                `${attr.attribute}`
               }}
 
           </p>

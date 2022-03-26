@@ -10,7 +10,8 @@
     >
       <div class="applypanelcontent" :style="`padding-left:${7*level+7}px;`">
         <a-icon type="bulb" class="icon applypanelicon"/>
-        <span class="applypaneltext"> {{ suggestion.description }} </span>
+        <!-- <span class="applypaneltext"> {{ suggestion.description }} </span> -->
+        <colorattr :spec="suggestion.description" class="applypaneltext"/>
       </div>
     </div>
   </div>
