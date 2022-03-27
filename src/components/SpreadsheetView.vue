@@ -743,8 +743,8 @@ export default {
       let x = e.clientX;
       let y = e.clientY;
 
-      this.top = y;
-      this.left = x;
+      this.top = y-100;
+      this.left = x + 20;
 
       console.log(x, y);
 
