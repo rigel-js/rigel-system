@@ -351,19 +351,20 @@ const genExploreSpec = (row_header, column_header, body, attrInfo) => {
         tmpbody.push(t);
       });
     }
-    tmprow.push(item);
-    let spec = genSpec(tmprow, tmpcol, tmpbody);
-    spec["description"] = stringfySpec(spec);
-    specList.push(spec);
-    tmprow.splice(tmprow.length - 1, 1);
+    // tmprow.push(item);
+    // let spec = genSpec(tmprow, tmpcol, tmpbody);
+    // spec["description"] = stringfySpec(spec);
+    // specList.push(spec);
+    // tmprow.splice(tmprow.length - 1, 1);
     tmpbody.push(item);
     let spec2 = genSpec(tmprow, tmpcol, tmpbody);
     spec2["description"] = stringfySpec(spec2);
-    specList.push(spec2);
+    // specList.push(spec2);
     let item_str = calString(refineStrName(item));
     specListWithAdd.push({
       "add": item_str,
-      "list": specList
+      // "list": specList
+      "spec": spec2,
     });
   });
   // console.log(specListWithAdd);

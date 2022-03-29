@@ -699,7 +699,7 @@ export default {
       for (let i = 0; i < header.length; i++) {
         let attr = header[i];
         if (!attr.strName) {
-          header[i]["description"] = Utils.calString(header[i]);
+          header[i]["description"] = header[i].data ? header[i].attribute : Utils.calString(header[i]);
           header[i]["color"] = Utils.findColor(attr, this.attrInfo);
         }
       }

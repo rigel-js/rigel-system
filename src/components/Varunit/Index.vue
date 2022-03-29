@@ -1,6 +1,20 @@
 <template>
   <div v-if="this.finalContent">
-    <Newcollapse :level="level" :initial="0">
+    <div
+      v-for="(item, index) in this.finalContent"
+      :key="JSON.stringify(item)+String(index)"
+      class="applypanel"
+      @click="handleApply(item.spec)"
+      @mouseenter="previewSpec(item.spec)"
+      @mouseleave="restorePreview"
+    >
+      <div class="applypanelcontent">
+        <a-icon type="bulb" class="icon applypanelicon"/>
+        <!-- <span class="applypaneltext"> {{ partialSpec.description }} </span> -->
+        <colorattr :spec="`Add ${item.add}`" class="applypaneltext"/>
+      </div>
+    </div>
+    <!-- <Newcollapse :level="level" :initial="0">
       <Newcollapsepanel
         v-for="(item, index) in this.finalContent"
         :key="index"
@@ -47,7 +61,7 @@
           </Newcollapsepanel>
         </Newcollapse>
       </Newcollapsepanel>
-    </Newcollapse>
+    </Newcollapse> -->
   </div>
 </template>
 
