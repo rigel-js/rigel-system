@@ -19,7 +19,7 @@
     @keydown.enter="keyEnterHandler"
     :style="`color: ${color}`"
   >
-    {{ this.realValue }}
+    {{ this.realValue.length > 50 ? this.realValue.slice(0, 50) + "..." : this.realValue }}
     <div
       class="recommend-list"
       v-if="this.alterValue.length > 0"

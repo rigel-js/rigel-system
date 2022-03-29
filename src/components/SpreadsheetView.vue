@@ -924,6 +924,8 @@ export default {
           };
         }
       } else if (this.menuSplitEnable) {
+        this.$message.warn("Warning: This function is still under development.");
+        return;
         if(this.menuSplitPattern == "") {
           this.$message.error("Split pattern cannot be empty!");
           return;

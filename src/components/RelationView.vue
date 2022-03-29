@@ -31,9 +31,10 @@
           class="header-button"
           value="union"
           style="margin-left: 10px !important"
-          >Union</a-radio-button
-        >
-        <a-radio-button class="header-button" value="intersect"
+          disabled
+          >Union
+        </a-radio-button>
+        <a-radio-button class="header-button" value="intersect" disabled
           >Intersection</a-radio-button
         >
         <a-radio-button class="header-button" value="concat"
@@ -933,6 +934,8 @@ export default {
           console.log(res);
         }
       } else if (this.menuSplitEnable) {
+        this.$message.warn("Warning: This function is still under development.");
+        return;
         if (this.menuSplitPattern == "") {
           this.$message.error("Split pattern cannot be empty!");
           return;
