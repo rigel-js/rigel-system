@@ -265,7 +265,8 @@
         <a-button type="primary" class="menubutton" @click="onMenuApply">
           Apply
         </a-button>
-        <a-button class="menubutton" @click="onMenuReset"> Reset </a-button>
+        <!-- <a-button class="menubutton" @click="onMenuReset"> Reset </a-button> -->
+        <a-button class="menubutton" type="danger" @click="onMenuDelete"> Delete </a-button>
       </div>
     </div>
   </div>
@@ -743,7 +744,7 @@ export default {
       let x = e.clientX;
       let y = e.clientY;
 
-      this.top = y-100;
+      this.top = y-180;
       this.left = x + 20;
 
       console.log(x, y);
@@ -1156,6 +1157,46 @@ export default {
       link.click();
       document.body.removeChild(link);
     },
+
+    onMenuDelete() {
+      if (this.rightClickItemSource == "row") {
+        this.row_header.splice(this.rightClickItemIndex, 1);
+      } else if (this.rightClickItemSource == "column") {
+        this.column_header.splice(this.rightClickItemIndex, 1);
+      } else {
+        this.body.splice(this.rightClickItemIndex, 1);
+      }
+      let spec = Utils.genSpec(this.row_header, this.column_header, this.body);
+      let sch = {
+        data: this.rawRelations,
+        target_table: [spec],
+      };
+      console.log(sch);
+      try {
+        let res = transform(sch)[0];
+        console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          for (let j = 0; j < res[i].length; j++) {
+            if (res[i][j]) {
+              let tmp = {};
+              tmp.source = res[i][j].source;
+              tmp.value =
+                typeof res[i][j].value != "undefined"
+                  ? res[i][j].value
+                  : res[i][j];
+              res[i][j] = tmp;
+            }
+          }
+        }
+        console.log(res);
+        this.storeCurrentTable(res);
+        this.storeGenRecommendation(true);
+      } catch (err) {
+        this.$message.error("Illegal specification!");
+        throw err;
+      }
+      this.visible = false;
+    }
   },
   components: {
     Spreadsheet,

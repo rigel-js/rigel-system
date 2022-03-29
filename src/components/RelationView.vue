@@ -25,7 +25,7 @@
       <a-radio-group
         v-model="value"
         @change="onChangeMode"
-        default-value="union"
+        default-value="concat"
       >
         <a-radio-button
           class="header-button"
@@ -284,8 +284,7 @@
       <spreadsheet v-if="relations.length == 0" class="source-table" :style="`height: ${sheetHeight}px`"/>
       <a-tabs
         v-else
-        type="editable-card"
-        @edit="onTabEdit"
+        type="card"
         @change="onTabChange"
         :hideAdd="true"
         tabPosition="bottom"
@@ -350,7 +349,7 @@ export default {
       menuCountEnable: true,
       justreset: false,
       selectedValue: null,
-      value: "union",
+      value: "concat",
       sheetHeight: 0,
     };
   },
@@ -618,14 +617,14 @@ export default {
       //   el.style.color = this.relations[targetIndex].color;
       // }, 100);
     },
-    onTabEdit(targetIndex, action) {
-      if (action == "remove") {
-        let targetRelation = this.relations[targetIndex];
-        this.removeRelationByIndex(targetIndex);
-        this.removeAttrInfoByTableName(targetRelation.name);
-        this.storeCurrentState();
-      }
-    },
+    // onTabEdit(targetIndex, action) {
+    //   if (action == "remove") {
+    //     let targetRelation = this.relations[targetIndex];
+    //     this.removeRelationByIndex(targetIndex);
+    //     this.removeAttrInfoByTableName(targetRelation.name);
+    //     this.storeCurrentState();
+    //   }
+    // },
     attrDragHandler(event) {
       console.log(event.target);
       event.dataTransfer.setData("info", event.target.dataset.info);

@@ -74,7 +74,7 @@
               <div class="applypanelcontent">
                 <a-icon type="bulb" class="icon applypanelicon"/>
                 <!-- <span class="applypaneltext"> {{ suggestion.description }} </span> -->
-                <colorattr :spec="suggestion.description" class="applypaneltext"/>
+                <colorattr :spec="suggestion.description" :key="suggestion.description" class="applypaneltext"/>
               </div>
             </div>
           </div>

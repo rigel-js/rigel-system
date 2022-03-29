@@ -15,7 +15,7 @@ const state = {
   suggestions: [],
   currentTable: undefined,
   dragSourceIsCell: false,
-  associationRule: "union",
+  associationRule: "concat",
   alterSpecList: [],
   partialSpecSuggestion: null,
   deleteSpecSuggestion: null,
