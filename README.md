@@ -465,4 +465,4 @@ and
 
 ## References
 
-[1] S. Kasica, C. Berret, and T. Munzner. Table Scraps: An Actionable Framework for Multi-Table Data Wrangling From An Artifact Study of Computational Journalism.
+[1] S. Kasica, C. Berret, and T. Munzner. Table Scraps: An Actionable Framework for Multi-Table Data Wrangling From An Artifact Study of Computational Journalism. IEEE TVCG, 27(2):957-966, 2021.
