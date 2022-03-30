@@ -106,7 +106,7 @@ For all valid operations, we provide the corresponding details as follows.
 
 **Illustration:** ![delete-columns](https://github.com/rigel-js/rigel-system/blob/master/pics/delete-columns.png)
 
-**Example:** Take removing repeated variables as example. Consider the original specification is  *(state), () => (crime + crime)*, we can remove the duplicated *crime* by simply deleting it from the *cell* part. The derived specification will be *(state), () => (crime)*.
+**Example:** Take removing repeated variables as example. Consider the original specification is  **(state), () => (crime + crime)**, we can remove the duplicated *crime* by simply deleting it from the *cell* part. The derived specification will be **(state), () => (crime)**.
 
 **Example Input:** 
 
@@ -140,7 +140,7 @@ For all valid operations, we provide the corresponding details as follows.
 
 **Illustration:** ![transform-tables-rearrange](https://github.com/rigel-js/rigel-system/blob/master/pics/transform-tables-rearrange.png)
 
-**Example:** The *sort* operation in Rigel is an example. Specifically, by changing the specification from *(state), (year) => (crime)* to *(ascsort(state)), (year) => (crime)*, we can rearrange the rows according to the alphabetical order of the state names, where *ascsort* means sorting the variable in ascending order. Moreover, Rigel also has the potential to support more arbitrary rearrangements by adding more aggregation functions into the system.
+**Example:** The *sort* operation in Rigel is an example. Specifically, by changing the specification from **(state), (year) => (crime)** to **(ascsort(state)), (year) => (crime)**, we can rearrange the rows according to the alphabetical order of the state names, where *ascsort* means sorting the variable in ascending order. Moreover, Rigel also has the potential to support more arbitrary rearrangements by adding more aggregation functions into the system.
 
 **Example Input:** 
 
@@ -168,7 +168,7 @@ For all valid operations, we provide the corresponding details as follows.
 
 **Illustration:** ![transform-tables-reshape](https://github.com/rigel-js/rigel-system/blob/master/pics/transform-tables-reshape.png)
 
-**Example:** In Rigel, most interactions fall into this category. By dragging or inputting the variables into the *row*, *column* or *cell* part, users build their own table schema and restructure the dataset. The following example illustrates transforming the raw table in the dataset into a tidy form using the specification *(state), (year) => (crime)*.
+**Example:** In Rigel, most interactions fall into this category. By dragging or inputting the variables into the *row*, *column* or *cell* part, users build their own table schema and restructure the dataset. The following example illustrates transforming the raw table in the dataset into a tidy form using the specification **(state), (year) => (crime)**.
 
 **Example Input:** 
 
@@ -194,7 +194,7 @@ For all valid operations, we provide the corresponding details as follows.
 
 **Illustration:** ![transform-columns](https://github.com/rigel-js/rigel-system/blob/master/pics/transform-columns.png)
 
-**Example:** The *split* operation in Rigel meets the requirements, as it divides the values of some variable into some parts and take one segment as the result. (For the current version, this function is under development.) For example, consider a table including a list of addresses and corresponding owners. The address contains both the address type (Fax or Tel) and the number. The user only wants to keep the address type in the target table. So the user transforms the table by using the specification *(Name), () => (split(Number, ':')[0])*, as illustrated in the following input & output  table. Here *split(Number,':')[0]* means splitting the values of *Number* by ':' and take the substring with index *0* (i.e. the first part) as the result. For arbitrary mapping on column, more operations can be implemented into the system.
+**Example:** The *split* operation in Rigel meets the requirements, as it divides the values of some variable into some parts and take one segment as the result. (For the current version, this function is under development.) For example, consider a table including a list of addresses and corresponding owners. The address contains both the address type (Fax or Tel) and the number. The user only wants to keep the address type in the target table. So the user transforms the table by using the specification **(Name), () => (split(Number, ':')[0])**, as illustrated in the following input & output  table. Here *split(Number,':')[0]* means splitting the values of *Number* by ':' and take the substring with index *0* (i.e. the first part) as the result. For arbitrary mapping on column, more operations can be implemented into the system.
 
 **Example Input:** 
 
@@ -232,7 +232,7 @@ For all valid operations, we provide the corresponding details as follows.
 
 **Illustration:** ![separate-tables-subset](https://github.com/rigel-js/rigel-system/blob/master/pics/separate-tables-subset.png)
 
-**Example:**  As the output of such operations involve multiple tables, they are not directly implemented in current version of Rigel. Nevertheless, by using multiple specifications, Rigel still has the potential to handle this sort of transformation.  For example, the row-wise division can be seen as two filter operations, each leading to a new sub-table. Consider the tables given in example input. To divide the table, users can use specification *(filter(Name, 'Nile', 'Jean'), () => (Number))* and *(filter(Name, 'Bach', 'Peter'), () => (Number))* to derive two sub-tables.
+**Example:**  As the output of such operations involve multiple tables, they are not directly implemented in current version of Rigel. Nevertheless, by using multiple specifications, Rigel still has the potential to handle this sort of transformation.  For example, the row-wise division can be seen as two filter operations, each leading to a new sub-table. Consider the tables given in example input. To divide the table, users can use specification **(filter(Name, 'Nile', 'Jean'), () => (Number))** and **(filter(Name, 'Bach', 'Peter'), () => (Number))** to derive two sub-tables.
 
 **Example Input:** 
 
@@ -285,7 +285,7 @@ and
 
 **Illustration:** ![separate-columns](https://github.com/rigel-js/rigel-system/blob/master/pics/separate-columns.png)
 
-**Example:**  In Rigel, decomposing columns into multiple variables can be viewed as a combination of multiple operations, where each operation derives a new variable based on the original column and inserts the result into the corresponding *row* or *column* part of the specification. Consider the table including a list of addresses and corresponding owners mentioned above. When the user wants to divide the *Number* field into address type and address number, he/she can simply use the *split* operation twice to derive variables representing the left and right part of *Number*. Then he inserts the two variables into *column* part of the specification, deriving the specification *(Name), () => (Split(Number, ':')[0] + Split(Number, ':')[1])*. The example is illustrated as follows.
+**Example:**  In Rigel, decomposing columns into multiple variables can be viewed as a combination of multiple operations, where each operation derives a new variable based on the original column and inserts the result into the corresponding *row* or *column* part of the specification. Consider the table including a list of addresses and corresponding owners mentioned above. When the user wants to divide the *Number* field into address type and address number, he/she can simply use the *split* operation twice to derive variables representing the left and right part of *Number*. Then he inserts the two variables into *column* part of the specification, deriving the specification **(Name), () => (Split(Number, ':')[0] + Split(Number, ':')[1])**. The example is illustrated as follows.
 
 **Example Input:** 
 
@@ -323,7 +323,7 @@ and
 
 **Illustration:** ![combine-tables-extend](https://github.com/rigel-js/rigel-system/blob/master/pics/combine-tables-extend.png)
 
-**Example:**  Because concatenating two tables row-wise may ruin the schemas of the base tables, users are not encouraged to perform such operations in Rigel, since Rigel focuses on high-level transformations and is aimed to generate more meaningful target tables. However, for some simple cases, Rigel is still able to derive the target result. The *union* operation in Rigel supports the combination of tables based on a merge of multiple variables. (For current version, this operation is under development.) For example, given two original tables with specification *(state_1), (year_1) => (crime_1)* and *(state_2), (year_2) => (crime_2)*, the user can merge two tables row-wise by using specification *(union(state_1, state_2)), (union(year_1, year_2)) => (union(crime_1, crime_2))*.  
+**Example:**  Because concatenating two tables row-wise may ruin the schemas of the base tables, users are not encouraged to perform such operations in Rigel, since Rigel focuses on high-level transformations and is aimed to generate more meaningful target tables. However, for some simple cases, Rigel is still able to derive the target result. The *union* operation in Rigel supports the combination of tables based on a merge of multiple variables. (For current version, this operation is under development.) For example, given two original tables with specification **(state_1), (year_1) => (crime_1)** and **(state_2), (year_2) => (crime_2)**, the user can merge two tables row-wise by using specification **(union(state_1, state_2)), (union(year_1, year_2)) => (union(crime_1, crime_2))**.  
 
 **Example Input:** 
 
@@ -356,7 +356,7 @@ and
 
 **Illustration:** ![combine-tables-supplement](https://github.com/rigel-js/rigel-system/blob/master/pics/combine-tables-supplement.png)
 
-**Example:**  When the *union* operation in Rigel is exerted on the key column, two tables can be merged based on the corresponding values in the key column. (For current version, this operation is under development.) For example, given two tables indicating the relationship between states and GDP or crime rate respectively, the user can combine these tables and put the three variables in a single table by taking *state* as the key column. Specifically, let the specification of base tables be *(state_1), () => (GDP)* and *(state_2), () => (crime)*, the target specification will be *(union(state_1, state_2)), () => (GDP + crime)*.
+**Example:**  When the *union* operation in Rigel is exerted on the key column, two tables can be merged based on the corresponding values in the key column. (For current version, this operation is under development.) For example, given two tables indicating the relationship between states and GDP or crime rate respectively, the user can combine these tables and put the three variables in a single table by taking *state* as the key column. Specifically, let the specification of base tables be **(state_1), () => (GDP)** and **(state_2), () => (crime)**, the target specification will be **(union(state_1, state_2)), () => (GDP + crime)**.
 
 **Example Input:** 
 
@@ -387,7 +387,7 @@ and
 
 **Illustration:** ![combine-tables-match](https://github.com/rigel-js/rigel-system/blob/master/pics/combine-tables-match.png)
 
-**Example:**  When the *intersection* operation in Rigel is exerted on the key column, two tables can be merged based on the intersection of corresponding values in the key column. (For current version, this operation is under development.) For example, given two tables indicating the relationship between states and GDP or crime rate respectively and the states are not exactly equal, the user can combine these tables, including states that exist in both tables and corresponding GDP or crime. Specifically, let the specification of base tables be *(state_1), () => (GDP)* and *(state_2), () => (crime)*, the target specification will be *(intersection(state_1, state_2)), () => (GDP + crime)*.
+**Example:**  When the *intersection* operation in Rigel is exerted on the key column, two tables can be merged based on the intersection of corresponding values in the key column. (For current version, this operation is under development.) For example, given two tables indicating the relationship between states and GDP or crime rate respectively and the states are not exactly equal, the user can combine these tables, including states that exist in both tables and corresponding GDP or crime. Specifically, let the specification of base tables be **(state_1), () => (GDP)** and **(state_2), () => (crime)**, the target specification will be **(intersection(state_1, state_2)), () => (GDP + crime)**.
 
 **Example Input:** 
 
@@ -417,7 +417,7 @@ and
 
 **Illustration:** ![combine-columns](https://github.com/rigel-js/rigel-system/blob/master/pics/combine-columns.png)
 
-**Example:**  In Rigel, *Concat* is an operation to perform a concatenation of values from multiple columns. For example, a user wants to combine the address type field and address number field in the same table to derive a new field. One specification meeting the requirements can be *(Name), () => (Concat(Type, Number))*.
+**Example:**  In Rigel, *Concat* is an operation to perform a concatenation of values from multiple columns. For example, a user wants to combine the address type field and address number field in the same table to derive a new field. One specification meeting the requirements can be **(Name), () => (Concat(Type, Number))**.
 
 **Example Input:** 
 
@@ -443,7 +443,7 @@ and
 
 **Illustration:** ![combine-rows-summarize](https://github.com/rigel-js/rigel-system/blob/master/pics/combine-rows-summarize.png)
 
-**Example:**  In Rigel, plenty of frequently used aggregation functions are provided, such as *sum*, *average* and *count*. Take *sum* as an example. A user wants to know the total crime rates over a fixed set of years for each state. One valid specification would be *(state), (), (sum(crime))*.
+**Example:**  In Rigel, plenty of frequently used aggregation functions are provided, such as *sum*, *average* and *count*. Take *sum* as an example. A user wants to know the total crime rates over a fixed set of years for each state. One valid specification would be **(state), (), (sum(crime))**.
 
 **Example Input:** 
 
