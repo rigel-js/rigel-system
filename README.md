@@ -4,7 +4,29 @@
 
 This repo is the official implementation of Rigel, an interactive table transformation system based on declarative specifications.
 
-[TOC]
+- [Rigel: Transforming Tabular Data By Declarative Mapping](#rigel-transforming-tabular-data-by-declarative-mapping)
+  - [Transformation categories](#transformation-categories)
+    - [Create Tables](#create-tables)
+    - [Create Columns](#create-columns)
+    - [Create Rows](#create-rows)
+    - [Delete Tables](#delete-tables)
+    - [Delete Columns](#delete-columns)
+    - [Delete Rows](#delete-rows)
+    - [Transform Tables - Rearrange](#transform-tables---rearrange)
+    - [Transform Tables - Reshape](#transform-tables---reshape)
+    - [Transform Columns](#transform-columns)
+    - [Transform Rows](#transform-rows)
+    - [Separate Tables - Subset](#separate-tables---subset)
+    - [Separate Tables - Decompose](#separate-tables---decompose)
+    - [Separate Tables - Split](#separate-tables---split)
+    - [Separate Columns](#separate-columns)
+    - [Separate Rows](#separate-rows)
+    - [Combine Tables - Extend](#combine-tables---extend)
+    - [Combine Tables - Supplement](#combine-tables---supplement)
+    - [Combine Tables - Match](#combine-tables---match)
+    - [Combine Columns](#combine-columns)
+    - [Combine Rows](#combine-rows)
+  - [References](#references)
 
 ## Transformation categories
 
