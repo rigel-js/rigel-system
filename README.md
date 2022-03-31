@@ -1,8 +1,10 @@
-# Rigel: Transforming Tabular Data By Declarative Mapping
+# Rigel: An Interactive Data Transformation System
 
 [Online Demo](https://rigel-system.github.io/rigel-system/)
 
-This repo is the official implementation of Rigel, an interactive table transformation system based on declarative specifications.
+This repo is an implementation of the paper "Rigel: Transforming Tabular Data By Declarative Mapping" (submitted to IEEE VIS 2022).
+
+
 
 - [Rigel: Transforming Tabular Data By Declarative Mapping](#rigel-transforming-tabular-data-by-declarative-mapping)
   - [Tasks in user study](#tasks-in-user-study)
@@ -39,27 +41,27 @@ To illustrate the transformation capability of Rigel, we summarize the potential
 
 | Operation                    | Our model’s applicability |
 | ---------------------------- | ------------------------- |
-| Create Table                 | Yes                       |
-| Create Columns               | Yes                       |
-| Create Rows                  | Yes                       |
-| Delete Tables                | Yes                       |
-| Delete Columns               | Yes                       |
-| Delete Rows                  | Yes                       |
-| Transform Tables - Rearrange | Yes                       |
-| Transform Tables - Reshape   | Yes                       |
-| Transform Columns            | Yes                       |
-| Transform Rows               | Yes                       |
-| Separate Tables - Subset     | Yes                       |
-| Separate Tables - Decompose  | Yes                       |
-| Separate Tables - Split      | Yes                       |
-| Separate Columns             | Yes                       |
-| Separate Rows                | Yes                       |
-| Combine Tables - Extend      | Yes                       |
-| Combine Tables - Supplement  | Yes                       |
-| Combine Tables - Match       | Yes                       |
-| Combine Columns              | Yes                       |
-| Combine Rows - Summarize     | Yes                       |
-| Combine Rows - Interpolate   | No                        |
+| Create Table                 | :heavy_check_mark:	                       |
+| Create Columns               | :heavy_check_mark:	                       |
+| Create Rows                  | :heavy_check_mark:	                       |
+| Delete Tables                | :heavy_check_mark:	                       |
+| Delete Columns               | :heavy_check_mark:	                       |
+| Delete Rows                  | :heavy_check_mark:	                       |
+| Transform Tables - Rearrange | :heavy_check_mark:	                       |
+| Transform Tables - Reshape   | :heavy_check_mark:	                       |
+| Transform Columns            | :heavy_check_mark:	                       |
+| Transform Rows               | :heavy_check_mark:	                       |
+| Separate Tables - Subset     | :heavy_check_mark:	                       |
+| Separate Tables - Decompose  | :heavy_check_mark:	                       |
+| Separate Tables - Split      | :heavy_check_mark:	                       |
+| Separate Columns             | :heavy_check_mark:	                       |
+| Separate Rows                | :heavy_check_mark:	                       |
+| Combine Tables - Extend      | :heavy_check_mark:	                       |
+| Combine Tables - Supplement  | :heavy_check_mark:	                       |
+| Combine Tables - Match       | :heavy_check_mark:	                       |
+| Combine Columns              | :heavy_check_mark:	                       |
+| Combine Rows - Summarize     | :heavy_check_mark:	                       |
+| Combine Rows - Interpolate   | :x:	                       |
 
 
 
