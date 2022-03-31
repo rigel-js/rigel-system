@@ -1,7 +1,7 @@
 # Appendix -  Example gallery
 
 To evaluate the expressiveness extent of Rigel, we create a gallery of diverse transformation cases.
-These cases demonstrate the substantial coverage over Kasica et al.'s [[1](#references)] framework of basic multi-table data wrangling operations (20/21), suggesting that it may offer potential support for complex tasks.
+These cases demonstrate the substantial coverage over Kasica et al.'s [[1]](#references) framework of basic multi-table data wrangling operations (20/21), suggesting that it may offer potential support for complex tasks.
 
 For all valid operations, we provide the corresponding details as follows.
 
