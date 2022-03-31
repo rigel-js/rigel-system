@@ -5,6 +5,7 @@
 This repo is the official implementation of Rigel, an interactive table transformation system based on declarative specifications.
 
 - [Rigel: Transforming Tabular Data By Declarative Mapping](#rigel-transforming-tabular-data-by-declarative-mapping)
+  - [Tasks in user study](#tasks-in-user-study)
   - [Transformation categories](#transformation-categories)
     - [Create Tables](#create-tables)
     - [Create Columns](#create-columns)
@@ -28,6 +29,10 @@ This repo is the official implementation of Rigel, an interactive table transfor
     - [Combine Rows](#combine-rows)
   - [References](#references)
 
+
+## Tasks in user study
+
+For more information about the tasks we use in our user study, please click [here](https://github.com/rigel-js/rigel-system/blob/master/materials/tasks.md).
 ## Transformation categories
 
 To illustrate the transformation capability of Rigel, we summarize the potential transformation categories that can be done by Rigel in the following table. Note that the taxonomy and definition of operations is based on the framework from [1].
