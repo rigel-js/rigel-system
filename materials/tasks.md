@@ -1,30 +1,18 @@
 # Appendix -  Tasks for user study
 
-Here we list the tasks we use in our user study. 
+Here we list the tasks used in Rigel's user study. 
 
-- [Appendix -  Tasks for user study](#appendix----tasks-for-user-study)
-  - [Task 1](#task-1)
-    - [Description](#description)
-    - [Input](#input)
-    - [Sample Output](#sample-output)
-  - [Task 2](#task-2)
-    - [Description](#description-1)
-    - [Input](#input-1)
-    - [Sample Output](#sample-output-1)
-  - [Task 3](#task-3)
-    - [Description](#description-2)
-    - [Input](#input-2)
-    - [Sample Output](#sample-output-2)
-  - [Task 4](#task-4)
-    - [Description](#description-3)
-    - [Input](#input-3)
-    - [Sample Output](#sample-output-3)
+- [Task 1: Aggregate Observations](#task-1)
+- [Task 2: Generate Unique Key](#task-2)
+- [Task 3: Create Cross-tabulation](#task-3)
+- [Task 4: Transpose Table](#task-4)
 
-## Task 1
+## Task 1: Aggregate Observations
 
 ### Description
 
-Transform the input data into a table with one paper and all its authors per row. All authors should be placed into a cell and separate each author with a comma.
+Subjects started with data containing papers and authors in a relational format.
+They should group data records by paper names, aggregate paper authors into a cell, and separate author names with commas. 
 
 ### Input
 
@@ -55,11 +43,11 @@ Transform the input data into a table with one paper and all its authors per row
 
 
 
-## Task 2
+## Task 2: Generate Unique Key
 
 ### Description
 
-Generate a unique key for each row and place the key in the  last cell of each row.
+We gave subjects a relational table of housing crime data by years and states and asked them to generate a unique key for each row by concatenating year and state.
 
 ### Input
 
@@ -113,11 +101,12 @@ Generate a unique key for each row and place the key in the  last cell of each r
 
 
 
-## Task 3
+## Task 3: Create Cross-tabulation
 
 ### Description
 
-Remove invalid numbers without type, and create a  cross-tabulation using Name, Number Type and Number.
+Subjects started with a table comprising people's phone and fax numbers at home and work.
+They were asked to remove incomplete records and create a cross-tabulation of numbers by people, number types of phone or fax and at home or work.
 
 ### Input
 
@@ -144,11 +133,11 @@ Remove invalid numbers without type, and create a  cross-tabulation using Name, 
 
 
 
-## Task 4
+## Task 4: Transpose Table
 
 ### Description
 
-Transpose the table.
+Subjects were required to transpose the same table of housing crime in Task 2 from 20 rows $\times$ 3 columns into 3 rows $\times$ 20 columns.
 
 ### Input
 
