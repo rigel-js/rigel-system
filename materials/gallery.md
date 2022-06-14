@@ -23,13 +23,36 @@ These cases demonstrate the substantial coverage over Kasica et al.'s [[1]](#ref
 
 ### Create Tables 
 
+**Definition:** Import one or more tables to the workspace.
+
+**Illustration:** ![create-tables](/pics/create-tables.png)
+
 | Case | Description | Rigel's Applicability | 
 | - | - | - |
-| ![create-tables](/pics/create-tables.png) | *Fetch* from external sources, such as a HTTP request to publicly accessible API. | :ballot_box_with_check: |
+| (Omitted) | *Fetch* from external sources, such as a HTTP request to publicly accessible API. | :ballot_box_with_check: |
+| (Omitted) | *Create* directly in the wrangling environment. | :ballot_box_with_check: |
+| (Omitted) | *Load* locally from a file or database. | :white_check_mark: |
+
+### Create Columns 
+
+**Definition:**  Add a new column directly into some table, without referring to other data sources.
+
+**Illustration:** ![create-columns](/pics/create-columns.png)
+
+| Case | Description | Rigel's Applicability | 
+| - | - | - |
+|  | *Add* a new column as the first column with header values to a table without column headers. | :ballot_box_with_check: |
+|  | *Add* a new column with header values to a table with column headers. | :ballot_box_with_check: |
+|  | *Add* a new column with cell values. | :white_check_mark: |
+
+### Create Rows 
+
+| Case | Description | Rigel's Applicability | 
+| - | - | - |
+| ![create-rows](/pics/create-rows.png) | *Fetch* from external sources, such as a HTTP request to publicly accessible API. | :ballot_box_with_check: |
 |  | *Create* directly in the wrangling environment. | :ballot_box_with_check: |
 |  | *Load* locally from a file or database. | :white_check_mark: |
 
-...
 
  ### Rearrange Tables
 
