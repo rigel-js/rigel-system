@@ -54,22 +54,23 @@
         :key="`${attr.data}_${attr.attribute}_${index}`"
       >
         <div class="attrInfo-text" :style="`color: ${attr.color}`">
-          <a-tooltip placement="topLeft" :title="attr.data ? `${attr.data}.${attr.attribute}` : `${attr.attribute}`">
-          <p
-            :id="`attr_${JSON.stringify(attr)}`"
-            :data-info="JSON.stringify(attr)"
-            :draggable="true"
-            @dragstart="attrDragHandler"
-            @drop="attrDropHandler"
-            @dragover="attrAllowDrop"
-            @contextmenu.prevent="openMenu($event, attr)"
+          <a-tooltip
+            placement="topLeft"
+            :title="
+              attr.data ? `${attr.data}.${attr.attribute}` : `${attr.attribute}`
+            "
           >
-            
-              {{
-                `${attr.attribute}`
-              }}
-
-          </p>
+            <p
+              :id="`attr_${JSON.stringify(attr)}`"
+              :data-info="JSON.stringify(attr)"
+              :draggable="true"
+              @dragstart="attrDragHandler"
+              @drop="attrDropHandler"
+              @dragover="attrAllowDrop"
+              @contextmenu.prevent="openMenu($event, attr)"
+            >
+              {{ `${attr.attribute}` }}
+            </p>
           </a-tooltip>
         </div>
         <div class="attrInfo-barchart">
@@ -282,7 +283,11 @@
     </div>
 
     <div class="relations-container" id="relations-container">
-      <spreadsheet v-if="relations.length == 0" class="source-table" :style="`height: ${sheetHeight}px`"/>
+      <spreadsheet
+        v-if="relations.length == 0"
+        class="source-table"
+        :style="`height: ${sheetHeight}px`"
+      />
       <a-tabs
         v-else
         type="card"
@@ -350,6 +355,7 @@ export default {
       menuCountEnable: true,
       justreset: false,
       selectedValue: null,
+      fileName: null,
       value: "concat",
       sheetHeight: 0,
     };
@@ -484,8 +490,12 @@ export default {
     let el4 = document.getElementById("relations-container");
     let el5 = document.getElementById("dataset-toolbar");
     let el6 = document.getElementById("relation-container");
-    let tmp = el6.getBoundingClientRect().height - el2.getBoundingClientRect().height - el5.getBoundingClientRect().height - 50;
-    el4.style.height = `${tmp}px`
+    let tmp =
+      el6.getBoundingClientRect().height -
+      el2.getBoundingClientRect().height -
+      el5.getBoundingClientRect().height -
+      50;
+    el4.style.height = `${tmp}px`;
     this.sheetHeight = tmp - 40;
   },
   methods: {
@@ -537,6 +547,7 @@ export default {
         input.type = "file";
         input.onchange = (event) => {
           let file = event.target.files[0];
+          this.fileName = file.name;
           let file_reader = new FileReader();
           file_reader.onload = () => {
             let fc = file_reader.result;
@@ -551,11 +562,39 @@ export default {
       let rawData = await this.selectData();
       this.importData(rawData);
     },
+    importCSVData(rawData) {
+      let res = {};
+      res["name"] = this.fileName.slice(0, -4);
+      let valueList = [];
+      let csvarray = rawData.split("\r\n");
+      let attrList = csvarray[0].split(",");
+      if (attrList.length == 0) {
+        throw new Error("Unsupported Data Type!");
+      }
+      for (let i = 1; i < csvarray.length; i++) {
+        let values = csvarray[i].split(",");
+        let newobj = {};
+        for (let j = 0; j < attrList.length; j++) {
+          newobj[attrList[j]] = values[j];
+        }
+        valueList.push(newobj);
+      }
+      res["values"] = valueList;
+      return res;
+    },
     async importData(rawData) {
       // let rawData = await this.selectData();
-      console.log(rawData);
+      console.log(rawData, this.fileName);
+      let jsonData;
       try {
-        let jsonData = JSON.parse(rawData);
+        if (
+          this.fileName.slice(-3) == "csv" ||
+          this.fileName.slice(-3) == "CSV"
+        ) {
+          jsonData = this.importCSVData(rawData);
+        } else {
+          jsonData = JSON.parse(rawData);
+        }
         console.log(jsonData);
         // 这里留个坑，先只做一次导入一张表，多张表的情况后面迭代吧
         let keys = Object.keys(jsonData.values[0]);
@@ -588,7 +627,7 @@ export default {
         keys.forEach((key, index) => {
           let valueList = [];
           jsonData.values.forEach((item) => {
-            if(item[key] != undefined) {
+            if (item[key] != undefined) {
               valueList.push(item[key]);
             }
           });
@@ -934,7 +973,9 @@ export default {
           console.log(res);
         }
       } else if (this.menuSplitEnable) {
-        this.$message.warn("Warning: This function is still under development.");
+        this.$message.warn(
+          "Warning: This function is still under development."
+        );
         return;
         if (this.menuSplitPattern == "") {
           this.$message.error("Split pattern cannot be empty!");
