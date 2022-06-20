@@ -15,6 +15,7 @@ These cases demonstrate the substantial coverage over Kasica et al.'s [[1]](#ref
 
 ### Discuss
 - [ ] 基于 notion 模型的分析，讨论下 why expressive，以及需要的 ops
+- [ ] case 要不直接用 Arquero 的
 
 ## Cases
 
