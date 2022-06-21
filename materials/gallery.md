@@ -14,7 +14,7 @@ These cases demonstrate the substantial coverage over Kasica et al.'s [[1]](#ref
 | Combine | :heavy_check_mark:Extend Tables<br>:heavy_check_mark:Supplement Tables<br>:heavy_check_mark:Match Tables | :heavy_check_mark:Summarize Rows<br>:x:Interpolate Rows | :heavy_check_mark:Combine Columns |
 
 ### Discuss
-- [ ] 基于 notion 模型的分析，讨论下 why expressive，以及需要的 ops，
+- [ ] 基于 notion 模型的分析，讨论下 why expressive，以及需要的 ops （ops 也包括 + 和 x）
 
 
 
