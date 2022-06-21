@@ -14,10 +14,39 @@ These cases demonstrate the substantial coverage over Kasica et al.'s [[1]](#ref
 | Combine | :heavy_check_mark:Extend Tables<br>:heavy_check_mark:Supplement Tables<br>:heavy_check_mark:Match Tables | :heavy_check_mark:Summarize Rows<br>:x:Interpolate Rows | :heavy_check_mark:Combine Columns |
 
 ### Discuss
-- [ ] 基于 notion 模型的分析，讨论下 why expressive，以及需要的 ops
-- [ ] case 要不直接用 Arquero 的
+- [ ] 基于 notion 模型的分析，讨论下 why expressive，以及需要的 ops，
+“I am not sure how many use-cases exist where users do data transformation just for the sake of transforming data into different layouts. I would like to see more use-cases (ideally a user study?) that show the benefits of arranging the same data into different layouts and if it helps in obtaining new data insights.”
+
+\begin{compactitem}
+  \item \revise{\textbf{Create and Delete}.
+  Operations of \textit{create} and \textit{delete} can be realized by directly adding or removing variables in mappings from original datasets loaded by related functionalities in the user interface (e.g., loading local files, entering / deleting values in sheets).
+  In particular, applying \textit{filtering} functions can also delete rows.}
+  
+  \item \revise{\textbf{Transform}.
+  Operations of \textit{transform} modifies the arrangement or the content of variables in tables.
+  The former can be realized by rearranging variables in mappings, implementing functionalities of \textit{relocating}, \textit{folding} / \textit{unfolding}, \textit{transposing}, etc.
+  In addition, some specific transform functions such as \textit{sorting} can sort values of a variable and rearrange tables based on the new order.
+  Other generic transform functions such as \textit{formatting}, can be used to modify the content of variables in tables.}
+  
+  \item \revise{\textbf{Separate}.
+  \textit{Separate} operations separate variables of a table into multiple tables or separate values of a variable into multiple variables and then rearrange these variables.
+  The former can be directly implemented using mappings.
+  The latter first requires \textit{separate} functions or specific \textit{transform} functions that change the number of values (e.g., \textit{unnesting} and \textit{filtering}) to separate variables, and then these separated variables can be arranged in mappings.}
+  
+  \item \revise{\textbf{Combine}.
+  \textit{Combine} operations combine multiple variables in different tables or columns and rearrange a new table or column, which can be realized by \textit{combine} functions and mappings.
+  In addition, \textit{combine} operations can also summarize or interpolate rows.
+  The former can be implemented by mapping categorical variables into the row channel with aggregating functions.
+  The latter usually fills missing values based on the values of other rows, which directly retrieve and operate data values, violating Rigel's data variable mapping principles to indirectly arrange values.
+  As such, Rigel cannot support the operation currently.
+  }
+\end{compactitem}
 
 ## Cases
+
+- [ ] 基础 case 可以借鉴 Arquero（https://observablehq.com/@uwdata/an-illustrated-guide-to-arquero-verbs?collection=@uwdata/arquero） 的
+- [ ] complex cases（数据弄复杂点，几十个 columns，几百 rows，ops 可能差不多？不过把原本 ops sequence 列了出来，多举几个列在 gallery 里。）
+- [ ] open-ended exploration cases（探索不同 shape 的作用）
 
 :white_check_mark: Rigel can complete the case.<br>
 :ballot_box_with_check: A future version of Rigel with more (derivation) functions can complete the case.<br>
