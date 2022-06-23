@@ -588,10 +588,11 @@ export default {
       let jsonData;
       try {
         if (
-          this.fileName.slice(-3) == "csv" ||
-          this.fileName.slice(-3) == "CSV"
+          (this.fileName && (this.fileName.slice(-3) == "csv" ||
+          this.fileName.slice(-3) == "CSV"))
         ) {
           jsonData = this.importCSVData(rawData);
+          this.fileName = null;
         } else {
           jsonData = JSON.parse(rawData);
         }
