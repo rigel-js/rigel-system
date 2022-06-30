@@ -282,7 +282,7 @@ const genAlterSpec = (row_header, column_header, body) => {
         tmprow.push(column_header[j]);
       }
       let spec = genSpec(tmprow, [], body);
-      spec["description"] = "Row-wise Alternative: " + stringfySpec(spec);
+      spec["description"] = "A row-wise alternative: " + stringfySpec(spec);
       specList.push(spec);
     }
 
@@ -297,7 +297,7 @@ const genAlterSpec = (row_header, column_header, body) => {
         tmpcol.push(row_header[j]);
       }
       let spec = genSpec([], tmpcol, body);
-      spec["description"] = "Column-wise Alternative: " + stringfySpec(spec);
+      spec["description"] = "A column-wise alternative: " + stringfySpec(spec);
       specList.push(spec);
     }
 
@@ -333,7 +333,7 @@ const genAlterSpec = (row_header, column_header, body) => {
         tmpcol.push(row_header[row_header.length - 1]);
       }
       let spec = genSpec(tmprow, tmpcol, body);
-      spec["description"] = "Cross-tabulation Alternative: " + stringfySpec(spec);
+      spec["description"] = "A cross-tabulation alternative: " + stringfySpec(spec);
       specList.push(spec);
     }
   }
