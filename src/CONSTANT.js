@@ -638,102 +638,102 @@ export const EXAMPLE_DATA = [
       {
         "State": "Alabama",
         "Year": "2004",
-        "Crime-rate": "4029.3"
+        "Crime-rate": 4029.3
       },
       {
         "State": "Alabama",
         "Year": "2005",
-        "Crime-rate": "3900"
+        "Crime-rate": 3900
       },
       {
         "State": "Alabama",
         "Year": "2006",
-        "Crime-rate": "3937"
+        "Crime-rate": 3937
       },
       {
         "State": "Alabama",
         "Year": "2007",
-        "Crime-rate": "3974.9"
+        "Crime-rate": 3974.9
       },
       {
         "State": "Alabama",
         "Year": "2008",
-        "Crime-rate": "4081.9"
+        "Crime-rate": 4081.9
       },
       {
         "State": "District of Columbia",
         "Year": "2004",
-        "Crime-rate": "4852.8"
+        "Crime-rate": 4852.8
       },
       {
         "State": "District of Columbia",
         "Year": "2005",
-        "Crime-rate": "4490"
+        "Crime-rate": 4490
       },
       {
         "State": "District of Columbia",
         "Year": "2006",
-        "Crime-rate": "4653.9"
+        "Crime-rate": 4653.9
       },
       {
         "State": "District of Columbia",
         "Year": "2007",
-        "Crime-rate": "4916.3"
+        "Crime-rate": 4916.3
       },
       {
         "State": "District of Columbia",
         "Year": "2008",
-        "Crime-rate": "5104.6"
+        "Crime-rate": 5104.6
       },
       {
         "State": "California",
         "Year": "2004",
-        "Crime-rate": "3423.9"
+        "Crime-rate": 3423.9
       },
       {
         "State": "California",
         "Year": "2005",
-        "Crime-rate": "3321"
+        "Crime-rate": 3321
       },
       {
         "State": "California",
         "Year": "2006",
-        "Crime-rate": "3175.2"
+        "Crime-rate": 3175.2
       },
       {
         "State": "California",
         "Year": "2007",
-        "Crime-rate": "3032.6"
+        "Crime-rate": 3032.6
       },
       {
         "State": "California",
         "Year": "2008",
-        "Crime-rate": "2940.3"
+        "Crime-rate": 2940.3
       },
       {
         "State": "New Jersey",
         "Year": "2004",
-        "Crime-rate": "2433"
+        "Crime-rate": 2433
       },
       {
         "State": "New Jersey",
         "Year": "2005",
-        "Crime-rate": "2337"
+        "Crime-rate": 2337
       },
       {
         "State": "New Jersey",
         "Year": "2006",
-        "Crime-rate": "2278.4"
+        "Crime-rate": 2278.4
       },
       {
         "State": "New Jersey",
         "Year": "2007",
-        "Crime-rate": "2205.5"
+        "Crime-rate": 2205.5
       },
       {
         "State": "New Jersey",
         "Year": "2008",
-        "Crime-rate": "2293.4"
+        "Crime-rate": 2293.4
       }
     ]
   },

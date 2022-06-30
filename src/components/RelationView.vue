@@ -566,16 +566,29 @@ export default {
       let res = {};
       res["name"] = this.fileName.slice(0, -4);
       let valueList = [];
-      let csvarray = rawData.split("\r\n");
-      let attrList = csvarray[0].split(",");
+      let csvarray = rawData.split(/\r\n/);
+      let attrList_tmp = csvarray[0].split(",");
+      let attrList = attrList_tmp.reduce((current, item, index, arr) => {
+        let tmp = new String(item);
+        current.push(tmp.replaceAll(" ", "_").replace(/\r/, ""));
+        return current;
+      }, []);
+      console.log(csvarray[0]);
+      console.log(attrList);
       if (attrList.length == 0) {
         throw new Error("Unsupported Data Type!");
       }
+      console.log(csvarray.length, csvarray[csvarray.length - 1])
       for (let i = 1; i < csvarray.length; i++) {
         let values = csvarray[i].split(",");
         let newobj = {};
+        let exp = /^[+-]?\d*(\.\d*)?(e[+-]?\d+)?$/;
         for (let j = 0; j < attrList.length; j++) {
-          newobj[attrList[j]] = values[j];
+          if(exp.test(values[j])) {
+            newobj[attrList[j]] = Number(values[j]);
+          } else {
+            newobj[attrList[j]] = values[j];
+          }
         }
         valueList.push(newobj);
       }

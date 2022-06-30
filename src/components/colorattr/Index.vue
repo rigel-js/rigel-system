@@ -28,6 +28,7 @@ export default {
     },
   },
   mounted() {
+    console.log(this.spec)
     let oldString = this.spec;
     let newString = "",
       lastIndex = 0;

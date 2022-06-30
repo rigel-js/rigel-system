@@ -605,17 +605,17 @@ export default {
         let partialSpecList = [
           {
             row_header: dragSource,
-            description: `(${sourceDescription}), () => ()`,
+            description: `Add to Row Channel: (${sourceDescription}), () => ()`,
           },
           {
             column_header: dragSource,
-            description: `(), (${sourceDescription}) => ()`,
+            description: `Add to Column Channel: (), (${sourceDescription}) => ()`,
           },
         ];
         if (isHeaderExist) {
           partialSpecList.push({
             body: dragSource,
-            description: `(), () => (${sourceDescription})`,
+            description: `Add to Cell Channel: (), () => (${sourceDescription})`,
           });
         }
         return [
@@ -641,17 +641,17 @@ export default {
         let partialSpecList = [
           {
             row_header: key,
-            description: `(${sourceDescription}), () => ()`,
+            description: `Add to Row Channel: (${sourceDescription}), () => ()`,
           },
           {
             column_header: key,
-            description: `(), (${sourceDescription}) => ()`,
+            description: `Add to Column Channel: (), (${sourceDescription}) => ()`,
           },
         ];
         if (isHeaderExist) {
           partialSpecList.push({
             body: key,
-            description: `(), () => (${sourceDescription})`,
+            description: `Add to Cell Channel: (), () => (${sourceDescription})`,
           });
         }
         tmp["partialSpecList"] = partialSpecList;
@@ -672,18 +672,18 @@ export default {
       if (isRow) {
         partialSpecList.push({
           column_header: dragSource,
-          description: `(), (${sourceDescription}) => ()`,
+          description: `Add to Column Channel: (), (${sourceDescription}) => ()`,
         });
       } else {
         partialSpecList.push({
           row_header: dragSource,
-          description: `(${sourceDescription}), () => ()`,
+          description: `Add to Row Channel: (${sourceDescription}), () => ()`,
         });
       }
       if (isHeaderExist) {
         partialSpecList.push({
           body: dragSource,
-          description: `(), () => (${sourceDescription})`,
+          description: `Add to Cell Channel: (), () => (${sourceDescription})`,
         });
       }
       return [

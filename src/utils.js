@@ -173,9 +173,10 @@ const calString = (spec) => {
       })
     }
     if (spec.operator == "cross" || spec.operator == "add") {
+      let op = (spec.operator == "cross") ? '×' : '+';
       let tmp = res[0];
       for (let i = 1; i < res.length; i++) {
-        tmp += ` × ${res[i]}`;
+        tmp += ` ${op} ${res[i]}`;
       }
       return tmp;
     } else {
@@ -206,6 +207,7 @@ const isCategorical = (valueList) => {
   // let ok = true;
   for (let i = 0; i < valueList.length; i++) {
     if (typeof (valueList[i]) != "number") {
+      console.log(valueList[i]);
       return true;
     }
     // if(valueList[i] % 1 != 0) {
@@ -233,6 +235,9 @@ const refineStrName = (obj) => {
 
 //给定spec，生成alternative suggestion
 const genAlterSpec = (row_header, column_header, body) => {
+  if((!row_header || row_header.length == 0) && (!column_header || column_header.length == 0)) {
+    return [];
+  }
   let specList = [];
   let rowlen = row_header.length,
     collen = column_header.length;
@@ -242,25 +247,93 @@ const genAlterSpec = (row_header, column_header, body) => {
       "Too many attributes in header, alternative generation disabled"
     );
   } else {
-    let cur = (1 << num_attr) - (1 << rowlen);
-    let tmprow = [], tmpcol = [];
-    for (let i = 0; i < 1 << num_attr; i++) {
-      if (i == cur) continue;
-      tmprow = [];
-      tmpcol = [];
-      for (let j = 0; j < num_attr; j++) {
-        let item =
-          j < rowlen ? row_header[j] : column_header[j - rowlen];
-        console.log(item);
-        if ((i >> j) & 1) {
-          tmpcol.push(item);
-        } else {
-          tmprow.push(item);
+    // let cur = (1 << num_attr) - (1 << rowlen);
+    // let tmprow = [], tmpcol = [];
+    // for (let i = 0; i < 1 << num_attr; i++) {
+    //   if (i == cur) continue;
+    //   tmprow = [];
+    //   tmpcol = [];
+    //   for (let j = 0; j < num_attr; j++) {
+    //     let item =
+    //       j < rowlen ? row_header[j] : column_header[j - rowlen];
+    //     console.log(item);
+    //     if ((i >> j) & 1) {
+    //       tmpcol.push(item);
+    //     } else {
+    //       tmprow.push(item);
+    //     }
+    //   }
+    //   console.log(tmprow, tmpcol, body);
+    //   let spec = genSpec(tmprow, tmpcol, body);
+    //   spec["description"] = stringfySpec(spec);
+    //   specList.push(spec);
+    // }
+
+    // NEW
+    // row-wise
+    if(column_header && column_header.length > 0) {
+      let tmprow = [];
+      if(row_header) {
+        for(let j = 0; j < row_header.length; j++) {
+          tmprow.push(row_header[j]);
         }
       }
-      console.log(tmprow, tmpcol, body);
+      for(let j = 0; j < column_header.length; j++) {
+        tmprow.push(column_header[j]);
+      }
+      let spec = genSpec(tmprow, [], body);
+      spec["description"] = "Row-wise Alternative: " + stringfySpec(spec);
+      specList.push(spec);
+    }
+
+    if(row_header && row_header.length > 0) {
+      let tmpcol = [];
+      if(column_header) {
+        for(let j = 0; j < column_header.length; j++) {
+          tmpcol.push(column_header[j]);
+        }
+      }
+      for(let j = 0; j < row_header.length; j++) {
+        tmpcol.push(row_header[j]);
+      }
+      let spec = genSpec([], tmpcol, body);
+      spec["description"] = "Column-wise Alternative: " + stringfySpec(spec);
+      specList.push(spec);
+    }
+
+    if ((row_header && row_header.length > 1) || (column_header && column_header.length > 1) || (row_header && column_header && row_header.length > 0 && column_header.length > 0 && row_header.length + column_header.length > 2)) {
+      let tmprow = [], tmpcol = [];
+      if (row_header && row_header.length > 1) {
+        for(let j = 0; j < row_header.length - 1; j++) {
+          tmprow.push(row_header[j]);
+        }
+        if(column_header) {
+          for(let j = 0; j < column_header.length; j++) {
+            tmpcol.push(column_header[j]);
+          }
+        }
+        tmpcol.push(row_header[row_header.length - 1]);
+      } else if (column_header && column_header.length > 1) {
+        for(let j = 0; j < column_header.length - 1; j++) {
+          tmpcol.push(column_header[j]);
+        }
+        if(row_header) {
+          for(let j = 0; j < row_header.length; j++) {
+            tmprow.push(row_header[j]);
+          }
+        }
+        tmprow.push(column_header[column_header.length - 1]);
+      } else {
+        for(let j = 0; j < row_header.length - 1; j++) {
+          tmprow.push(row_header[j]);
+        }
+        for(let j = 0; j < column_header.length; j++) {
+          tmpcol.push(column_header[j]);
+        }
+        tmpcol.push(row_header[row_header.length - 1]);
+      }
       let spec = genSpec(tmprow, tmpcol, body);
-      spec["description"] = stringfySpec(spec);
+      spec["description"] = "Cross-tabulation Alternative: " + stringfySpec(spec);
       specList.push(spec);
     }
   }
@@ -318,6 +391,9 @@ const genSpec = (row_header, column_header, body) => {
 }
 
 const genExploreSpec = (row_header, column_header, body, attrInfo) => {
+  if((!row_header || row_header.length == 0) && (!column_header || column_header.length == 0)) {
+    return [];
+  }
   let specListWithAdd = [];
   let unusedSpec = [];
   if (attrInfo) {
