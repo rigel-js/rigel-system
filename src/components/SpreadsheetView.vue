@@ -20,9 +20,7 @@
         <div
           class="specinput"
           id="rowinput"
-          @dragenter="dragenterHandler"
           @dragover="dragoverHandler"
-          @dragleave="dragleaveHandler"
           @drop="dropHandler"
         >
           <div
@@ -55,9 +53,7 @@
         <div
           class="specinput"
           id="columninput"
-          @dragenter="dragenterHandler"
           @dragover="dragoverHandler"
-          @dragleave="dragleaveHandler"
           @drop="dropHandler"
         >
           <div
@@ -90,9 +86,7 @@
         <div
           class="specinput"
           id="bodyinput"
-          @dragenter="dragenterHandler"
           @dragover="dragoverHandler"
-          @dragleave="dragleaveHandler"
           @drop="dropHandler"
         >
           <div
@@ -500,8 +494,7 @@ export default {
       sessionStorage.setItem("type", "spec");
       sessionStorage.setItem("id", event.target.id);
     },
-    dragenterHandler(event) {
-      console.log("dragenter", event.target.id);
+    dragoverHandler(event) {
       let type = sessionStorage.getItem("type");
       if (type == "spec" || type == "attr") {
         event.preventDefault();
@@ -512,12 +505,14 @@ export default {
         current = event.target;
       let preItem = JSON.parse(pre);
       let preNode = document.getElementById(sessionStorage.getItem("id"));
-      if (type != "attr" && (!preNode || preNode == current)) return;
+      if (!preNode || preNode == current) return;
 
       let sourceList, targetList, sourceIndex, targetIndex;
       console.log(type);
 
-      if (type != "attr") {
+      if (type == "attr") {
+        // sessionStorage.setItem("type", "spec");
+      } else {
         sourceList = this.checkListType(preNode.parentNode);
         sourceIndex = this._index(preNode);
       }
@@ -537,8 +532,9 @@ export default {
         targetIndex = this._index(current);
       }
 
-      console.log(sourceList, targetList, targetIndex);
+      console.log(sourceList, targetList);
       if (type == "attr") {
+        sessionStorage.setItem("type", "spec");
         if (current.className == "specinput") {
           targetList.push(preItem);
         } else {
@@ -562,39 +558,6 @@ export default {
       let newId = `spec_${listId}_${targetIndex}_${pre}`;
       sessionStorage.setItem("id", newId);
       console.log(newId);
-    },
-    dragoverHandler(event) {
-      let type = sessionStorage.getItem("type");
-      if (type == "spec" || type == "attr") {
-        event.preventDefault();
-      } else {
-        return;
-      }
-    },
-    dragleaveHandler(event) {
-      console.log("dragleave", event.target);
-      let type = sessionStorage.getItem("type");
-      if (type == "attr") {
-        event.preventDefault();
-      } else {
-        return;
-      }
-
-      console.log(sessionStorage.getItem("id"))
-      let pre = sessionStorage.getItem("info");
-      let preItem = JSON.parse(pre);
-      let preNode = document.getElementById(sessionStorage.getItem("id"));
-      console.log(preNode)
-      if (!preNode) return;
-
-      let sourceList, sourceIndex;
-      console.log(type);
-      
-      sourceList = this.checkListType(preNode.parentNode);
-      sourceIndex = this._index(preNode);
-      console.log(sourceList, sourceIndex);
-      sourceList.splice(sourceIndex, 1);
-      // sessionStorage.setItem("type", "attr");
     },
     dropHandler(event) {
       event.preventDefault();
